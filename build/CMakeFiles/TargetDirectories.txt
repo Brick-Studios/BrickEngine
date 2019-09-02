@@ -1,0 +1,3 @@
+/home/peter-jan/Code/CPP/sdl-test/build/CMakeFiles/rebuild_cache.dir
+/home/peter-jan/Code/CPP/sdl-test/build/CMakeFiles/SDL2Test.dir
+/home/peter-jan/Code/CPP/sdl-test/build/CMakeFiles/edit_cache.dir

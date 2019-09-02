@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/SDL2Test.dir/Main.cpp.o  -o SDL2Test /usr/lib/libSDL2-2.0.so.0.10.0 -lm -ldl -ldbus-1 -libus-1.0 -lgio-2.0 -lgobject-2.0 -lglib-2.0 -lunwind -lunwind-generic -lrt -Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now -Wl,--no-undefined -pthread 
