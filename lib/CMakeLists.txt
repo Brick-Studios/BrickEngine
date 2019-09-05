@@ -6,5 +6,5 @@ target_link_libraries(BrickEngine
 
 target_sources(BrickEngine
     PUBLIC
-        BrickEngine.cpp
+        engine.cpp
 )
