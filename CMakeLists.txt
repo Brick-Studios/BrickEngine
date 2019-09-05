@@ -9,12 +9,12 @@ find_package(SDL2_net REQUIRED)
 add_library(BrickEngine STATIC
     ""
 )
+target_compile_features(BrickEngine PUBLIC cxx_std_17)
 
 add_subdirectory(lib)
 
-#target_include_directories(BrickEngine
-#    PUBLIC include
-#    PRIVATE src
-#)
-
+target_include_directories(BrickEngine
+    PUBLIC include
+    PRIVATE lib
+)
 

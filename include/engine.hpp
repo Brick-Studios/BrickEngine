@@ -1,3 +1,6 @@
+#ifndef FILE_BRICKENGINE_HPP
+#define FILE_BRICKENGINE_HPP
+
 #include <optional>
 
 #include "SDL2/SDL.h"
@@ -17,3 +20,5 @@ public:
 private:
     std::optional<SDL_Window> sdl_window;
 };
+
+#endif /* FILE_BRICKENGINE_HPP */
