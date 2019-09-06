@@ -2,12 +2,12 @@
 #include <memory>
 #include <iostream>
 
-#include "image.hpp"
+#include "brickengine/rendering/image.hpp"
 
 Image::Image(const std::string path)
 {
-    surface = std::make_unique<SDL_Surface>(SDL_LoadBMP(path.c_str()));
-    if(surface == NULL )
+    surface = SDL_LoadBMP(path.c_str());
+    if(surface == nullptr)
     {
         std::cout << "Opening an image asset failed!\nImage: " << path << " SDL_Error: " << SDL_GetError() << std::endl;
         exit(1);

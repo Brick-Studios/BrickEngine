@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 
-#include "engine.hpp"
+#include "brickengine/engine.hpp"
 
 BrickEngine::BrickEngine() {
     window = nullptr;

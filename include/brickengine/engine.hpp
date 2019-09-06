@@ -1,8 +1,12 @@
-#ifndef   FILE_INCLUDE_BRICKENGINE_HPP
-#define   FILE_INCLUDE_BRICKENGINE_HPP
+#ifndef FILE_BRICKENGINE_HPP
+#define FILE_BRICKENGINE_HPP
 
+#include <optional>
+#include <iostream>
 #include <string>
+
 #include "SDL2/SDL.h"
+
 
 class BrickEngine {
 public:
@@ -17,4 +21,4 @@ private:
     SDL_Surface* screenSurface;
 };
 
-#endif /* FILE_INCLUDE_BRICKENGINE_HPP */
+#endif /* FILE_BRICKENGINE_HPP */

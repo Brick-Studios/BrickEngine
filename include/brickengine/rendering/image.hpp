@@ -8,7 +8,7 @@
 class Image
 {
 private:
-    std::unique_ptr<SDL_Surface> surface;
+    SDL_Surface* surface;
 public:
     Image(const std::string path);
     ~Image();
