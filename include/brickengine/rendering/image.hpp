@@ -2,6 +2,7 @@
 #define FILE_IMAGE_HPP
 #include <memory>
 #include <string>
+#include <optional>
 
 #include "SDL2/SDL.h"
 

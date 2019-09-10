@@ -7,6 +7,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(SDL2 REQUIRED)
 find_package(SDL2_net REQUIRED)
+find_package(SDL2_gfx REQUIRED)
 
 add_library(BrickEngine STATIC
     ""

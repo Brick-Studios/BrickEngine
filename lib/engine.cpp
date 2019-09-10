@@ -3,6 +3,8 @@
 
 #include "brickengine/engine.hpp"
 
+#include "SDL2/SDL2_gfxPrimitives.h"
+
 BrickEngine::BrickEngine() {
     window = nullptr;
     renderer = nullptr;
@@ -28,7 +30,7 @@ void BrickEngine::Start(const std::string window_name) {
       480,
       0
     );
-    if( window == NULL )
+    if(window == nullptr)
     {
         std::cout << "SDL window failed to open! SDL_Error: " << SDL_GetError() << std::endl;
         exit(1);
@@ -45,8 +47,11 @@ void BrickEngine::Start(const std::string window_name) {
 
     SDL_LoadBMP( "02_getting_an_image_on_the_screen/hello_world.bmp" );
 
-//    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
-//    SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+    // Test for drawing a circle and a line
+    //circleRGBA(renderer, 150, 150, 50, 50, 50, 50, 50);
+
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE); 
+ //    SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
 //    SDL_RenderClear(renderer);
 //    SDL_RenderPresent(renderer);
 
