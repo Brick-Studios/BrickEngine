@@ -18,3 +18,7 @@ _deps
 # Unix library build
 *.a
 *.o
+
+# Do not include the build folder contents
+build/*
+!/build/.gitkeep
