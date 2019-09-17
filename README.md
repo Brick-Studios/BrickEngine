@@ -11,7 +11,7 @@
 - Spaces after every operator
 `13 + 37` instead of `13+37`
 
-- Use tabs to indent your code, the tabs must be the same as 4 spaces.
+- Indent your code with 4 spaces.
 
 - Curly braces on a seperate line, except if the code inside the block is only one line.
 So both
@@ -35,7 +35,7 @@ are good to use.
 ## Other
 - Comment code where you think it is necessary.
 - Everything must be `const` correct.
-- Use smart pointers.
+- Use smart pointers whenever possible. If smartpointers can not be used, use RAII and the Rule of Five.
 - Write the constructor and destructor at the same time so you do not forget to properly `delete`.
 
 ## Git
