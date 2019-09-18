@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+    branches:
+    - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Clone submodules
+      run: git submodule update --init --recursive
+    - name: Update
+      run: sudo apt-get update
+    - name: Install SDL dependencies
+      run: sudo apt-get install libsdl2-dev libsdl2-gfx-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-net-dev libsdl2-ttf-dev
+    - name: 
+      run: |
+        cd build
+        cmake ..
+        make
+    - uses: actions/upload-artifact@master
+      with:
+        name: artifact
+        path: build/
