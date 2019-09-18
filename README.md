@@ -4,6 +4,20 @@
 - Use `CaptialCase` for Types.
 - Use `camelCase` for functions.
 
+## Include all the things!
+- .hpp files in include.
+- .cpp files in lib (for a library) or src.
+- Always use include guards.
+
+```c++
+#ifndef FILE_*FILENAME*_HPP
+#define FILE_*FILENAME*_HPP
+
+// Your code here
+
+#endif /* FILE_*FILENAME*_HPP */
+```
+
 ## Spaces, Spacing and Bracing
 - Every comma is followed by a space, so for example
 `myFunction(int a, int b, int c)`
@@ -13,8 +27,7 @@
 
 - Indent your code with 4 spaces.
 
-- Curly braces on a seperate line, except if the code inside the block is only one line.
-So both
+- Curly braces on the same line as the statement or function except if there is only one line in the code block.
 
 ```c++
 if (condition)
@@ -24,8 +37,7 @@ if (condition)
 and
 
 ```c++
-if (condition)
-{
+if (condition) {
     int i = 1;
     return i;
 }
