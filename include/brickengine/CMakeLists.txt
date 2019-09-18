@@ -1,5 +1,2 @@
-target_sources(BrickEngine
-    PUBLIC
-        engine.hpp
-        rendering/image.hpp
-)
+list(APPEND INCLUDE_DIRS ${CMAKE_CURRENT_LIST_DIR})
+set(INCLUDE_DIRS ${INCLUDE_DIRS} PARENT_SCOPE)
