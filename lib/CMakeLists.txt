@@ -7,7 +7,7 @@ find_package(SDL2_gfx REQUIRED)
 add_library(BrickEngine STATIC
     ${SRC_FILES}
 )
-target_include_directories(BrickEngine PUBLIC ${INCLUDE_DIRS})
+target_include_directories(BrickEngine PUBLIC ../include)
 target_link_libraries(BrickEngine
     PRIVATE SDL2::Main
     PRIVATE SDL2::Net
