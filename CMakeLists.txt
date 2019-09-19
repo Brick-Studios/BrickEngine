@@ -1,8 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
 
-set (CMAKE_C_COMPILER "/usr/bin/clang")
-set (CMAKE_CXX_COMPILER "/usr/bin/clang++")
-
 project(BrickEngine)
 include(CMakePrintHelpers)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
