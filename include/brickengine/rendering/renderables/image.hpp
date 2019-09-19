@@ -7,7 +7,7 @@
 
 #include "SDL2/SDL.h"
 
-#include "rendering/renderable.hpp"
+#include "brickengine/rendering/renderable.hpp"
 
 class Image
 {

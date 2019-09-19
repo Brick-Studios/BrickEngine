@@ -3,7 +3,7 @@
 
 #include <functional>
 
-#include "rendering/renderables/image.hpp"
+#include "brickengine/rendering/renderables/image.hpp"
 
 class Renderer {
 public:

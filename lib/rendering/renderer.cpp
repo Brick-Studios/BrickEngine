@@ -1,4 +1,4 @@
-#include "rendering/renderer.hpp"
+#include "brickengine/rendering/renderer.hpp"
 
 void DrawScreen() {
     //Loads individual image as texture
