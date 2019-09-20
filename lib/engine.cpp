@@ -4,6 +4,7 @@
 #include "brickengine/engine.hpp"
 
 #include "SDL2/SDL2_gfxPrimitives.h"
+#include "SDL2/SDL.h"
 
 BrickEngine::BrickEngine() {
     window = nullptr;
