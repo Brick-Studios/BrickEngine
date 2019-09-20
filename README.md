@@ -16,7 +16,7 @@
 #endif /* FILE_*FILENAME*_HPP */
 ```
 
-# Filing your taxes
+## Filing your taxes
 - Put header files in the include/ folder and use the .hpp extention.
 - Put source files in the lib/ folder and use the .cpp extention.
 - Structure your code in sensible and modular folders and files.
@@ -48,6 +48,7 @@ if (condition) {
 are good to use.
 
 ## Other
+- ```using namespace "some namespace";``` is not allowed. Put the right namespace before the type.
 - Comment code where you think it is necessary.
 - Everything must be `const` correct.
 - Use smart pointers whenever possible. If smartpointers can not be used, use RAII and the Rule of Five.
