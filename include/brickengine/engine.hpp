@@ -5,20 +5,25 @@
 #include <iostream>
 #include <string>
 #include <memory>
+#include <string>
 
 #include "SDL2/SDL.h"
 #include "SDL2/SDL2_gfxPrimitives.h"
 
+#include "brickengine/rendering/renderer.hpp"
+#include "brickengine/rendering/renderables/animation.hpp"
+
 class BrickEngine {
 public:
-    BrickEngine();
-    void Start(const std::string window_name);
-    void Shutdown();
-    const void Delay(const Uint32 ms);
-    const Uint32 GetTicks();
+    BrickEngine(const std::string window_name, const int window_width, const int window_heigth);
+    ~BrickEngine();
+    const Animation createAnimation(std::string path);
+    const void delay(const Uint32 ms);
+    const static Uint32 getTicks();
+    // Moet de factory vast gaan houden
 private:
-    std::optional<std::unique_ptr<SDL_Window>> window;
-    std::optional<std::unique_ptr<Renderer>> renderer;
+    std::optional<SDL_Window*> window;
+    std::optional<std::shared_ptr<Renderer>> renderer;
 };
 
 #endif /* FILE_BRICKENGINE_HPP */

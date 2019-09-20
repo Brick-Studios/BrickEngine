@@ -8,7 +8,7 @@
 #include "SDL2/SDL2_gfxPrimitives.h"
 #include "SDL2/SDL.h"
 
-void BrickEngine::Start(const std::string window_name) {
+BrickEngine::BrickEngine(const std::string window_name, const int window_width, const int window_heigth) {
     //Initialize SDL
     if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
     {
@@ -16,14 +16,14 @@ void BrickEngine::Start(const std::string window_name) {
         exit(1);
     }
 
-    window = std::optional{ std::make_unique(SDL_CreateWindow(
+    window = SDL_CreateWindow(
       window_name.c_str(),
       SDL_WINDOWPOS_UNDEFINED,
       SDL_WINDOWPOS_UNDEFINED,
-      640,
-      480,
+      window_width,
+      window_heigth,
       0
-    ))};
+    );
     
     if(!window.has_value())
     {
@@ -31,28 +31,21 @@ void BrickEngine::Start(const std::string window_name) {
         exit(1);
     }
 
-    //Update the surface
-    SDL_UpdateWindowSurface(window.value);
-
-    SDL_LoadBMP( "02_getting_an_image_on_the_screen/hello_world.bmp" );
-
-    // Test for drawing a circle and a line
-    //circleRGBA(renderer, 150, 150, 50, 50, 50, 50, 50);
-
-    std::unique_ptr<SDL_Renderer> sdl_renderer = std::make_unique<SDL_Renderer>(SDL_CreateRenderer(window.value, -1, SDL_RENDERER_ACCELERATED));
-    renderer = std::make_unique<Renderer>(new Renderer(sdl_renderer));
- //    SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
-//    SDL_RenderClear(renderer);
-//    SDL_RenderPresent(renderer);
+    auto sdl_renderer = SDL_CreateRenderer(window.value(), -1, SDL_RENDERER_ACCELERATED);
+    renderer = std::make_shared<Renderer>(*new Renderer(sdl_renderer));
 
     std::cout << "Window openend finsihed";
 }
 
-void BrickEngine::Shutdown() {
-    SDL_DestroyWindow(window.value);
+BrickEngine::~BrickEngine() {
+    SDL_DestroyWindow(window.value());
     SDL_Quit();
 }
 
-const void BrickEngine::Delay(const Uint32 ms) {
+const void BrickEngine::delay(const Uint32 ms) {
     SDL_Delay(ms);
+}
+
+const Uint32 BrickEngine::getTicks() {
+    return SDL_GetTicks();
 }

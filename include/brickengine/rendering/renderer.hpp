@@ -4,18 +4,18 @@
 #include <functional>
 
 #include "SDL2/SDL.h"
-#include "brickengine/rendering/renderables/image.hpp"
+#include "brickengine/rendering/renderables/renderable.hpp"
 
 class Renderer {
 public:
-    Renderer(std::unique_ptr<const SDL_Renderer> r);
-    void ClearScreen();
-    void DrawScreen();
-    void Render(const Renderable renderable);
-    void Render(const Image renderable);
-    void Render();
+    Renderer(SDL_Renderer* r);
+    ~Renderer();
+    void clearScreen();
+    void drawScreen();
+    void render(const Renderable renderable);
+    void render();
 private:
-    const std::unique_ptr<const SDL_Renderer> sdl_renderer;
+    SDL_Renderer* sdl_renderer;
 };
 
 #endif
