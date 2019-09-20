@@ -55,7 +55,7 @@ void BrickEngine::Start(const std::string window_name) {
 //    SDL_RenderClear(renderer);
 //    SDL_RenderPresent(renderer);
 
-    std::cout << "Window openend finsihed";
+    std::cout << "Window openend finished";
 }
 
 void BrickEngine::Shutdown() {
