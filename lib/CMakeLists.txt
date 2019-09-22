@@ -3,5 +3,6 @@
 target_sources(BrickEngine
     PRIVATE
         engine.cpp
+        entities/entity_manager.cpp
         rendering/image.cpp
 )

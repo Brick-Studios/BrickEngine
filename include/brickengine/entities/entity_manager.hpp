@@ -1,7 +1,7 @@
 #ifndef FILE_ENTITY_MANAGER_HPP
 #define FILE_ENTITY_MANAGER_HPP
 
-#include "components/component.hpp"
+#include "brickengine/components/component.hpp"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -13,18 +13,18 @@ class EntityManager{
         EntityManager();
         ~EntityManager();
 
-        void CreateEntity(const std::vector<Component> components);
-        void RemoveEntity();
+        void createEntity(const std::vector<Component> components);
+        void removeEntity();
         
-        const Component GetComponent(const int entityId);
+        const Component getComponent(const int entityId);
 
-        void AddComponentToEntity(const int entityId, const Component component); 
-        void RemoveComponentFromEntity(const int entityId);
+        void addComponentToEntity(const int entityId, const Component component); 
+        void removeComponentFromEntity(const int entityId);
 
     private:
         std::vector<std::unique_ptr<int>> entities;
-        std::unique_ptr<int> lowestUnassignedEntityId { new int(-1) };
-        std::unordered_map<std::unique_ptr<std::string>, std::unique_ptr<Component>> componentsByClass;
+        std::unique_ptr<int> lowest_unassigned_entity_id { new int(-1) };
+        std::unordered_map<std::string, std::unique_ptr<Component>> components_by_class;
 };
 
 #endif /* FILE_ENTITY_MANAGER_HPP */

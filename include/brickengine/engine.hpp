@@ -21,4 +21,6 @@ private:
     SDL_Surface* screenSurface;
 };
 
+
+
 #endif /* FILE_BRICKENGINE_HPP */
