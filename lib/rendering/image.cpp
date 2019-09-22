@@ -2,7 +2,7 @@
 #include <memory>
 #include <iostream>
 
-#include "brickengine/rendering/image.hpp"
+#include "brickengine/rendering/renderables/image.hpp"
 
 Image::Image(const std::string path)
 {
