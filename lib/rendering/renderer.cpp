@@ -12,3 +12,7 @@ Renderer::Renderer(SDL_Renderer* r) {
 Renderer::~Renderer(){
     SDL_DestroyRenderer(sdl_renderer);
 }
+
+SDL_Texture* Renderer::CreateTextureFromSurface(SDL_Surface* surface) const {
+    return SDL_CreateTextureFromSurface(this->sdl_renderer, surface);
+}

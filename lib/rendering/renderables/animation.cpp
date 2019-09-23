@@ -7,7 +7,7 @@
 #include "brickengine/rendering/renderables/renderable.hpp"
 #include "brickengine/engine.hpp"
 
-Animation::Animation(SDL_Texture* texture, const Uint32 start_tick, const int speed, const int frames) : Renderable(texture){
+Animation::Animation(SDL_Texture* texture, Uint32 start_tick, const int speed, const int frames) : Renderable(texture){
     this->start_tick = start_tick;
     this->speed = speed;
     this->frames = frames;

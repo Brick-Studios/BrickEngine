@@ -13,6 +13,7 @@ public:
     void clearScreen();
     void drawScreen();
     void render(const Renderable renderable);
+    SDL_Texture* CreateTextureFromSurface(SDL_Surface* surface) const;
     void render();
 private:
     SDL_Renderer* sdl_renderer;

@@ -8,7 +8,7 @@
 
 class Animation : public Renderable {
 public:
-    Animation(SDL_Texture* texture, const Uint32 start_tick, const int speed, const int frames);
+    Animation(SDL_Texture* texture, Uint32 start_tick, const int speed, const int frames);
     SDL_Texture* const getTexture() override;
 private:
     Uint32 start_tick; //The tick the animation started at

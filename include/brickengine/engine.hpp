@@ -12,6 +12,7 @@
 
 #include "brickengine/rendering/renderer.hpp"
 #include "brickengine/rendering/renderables/animation.hpp"
+#include "brickengine/rendering/renderable_factory.hpp"
 
 class BrickEngine {
 public:
@@ -24,6 +25,7 @@ public:
 private:
     std::optional<SDL_Window*> window;
     std::optional<std::shared_ptr<Renderer>> renderer;
+    std::optional<std::unique_ptr<RenderableFactory>> renderableFactory;
 };
 
 #endif /* FILE_BRICKENGINE_HPP */

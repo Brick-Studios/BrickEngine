@@ -34,6 +34,8 @@ BrickEngine::BrickEngine(const std::string window_name, const int window_width, 
     auto sdl_renderer = SDL_CreateRenderer(window.value(), -1, SDL_RENDERER_ACCELERATED);
     renderer = std::make_shared<Renderer>(*new Renderer(sdl_renderer));
 
+    renderableFactory = std::make_unique<RenderableFactory>(*new RenderableFactory(renderer.value()));
+
     std::cout << "Window openend finsihed";
 }
 
