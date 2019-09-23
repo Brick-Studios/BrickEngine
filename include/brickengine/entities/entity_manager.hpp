@@ -13,7 +13,7 @@ class EntityManager{
         EntityManager();
         ~EntityManager();
 
-        void createEntity(const std::vector<Component> components);
+        int createEntity(const std::vector<Component> &components);
         void removeEntity();
         
         const Component getComponent(const int entityId);

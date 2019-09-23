@@ -3,4 +3,4 @@
 class Component{
 
 };
-#endif 
+#endif /* FILE_COMPONENT_HPP */
