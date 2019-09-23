@@ -13,14 +13,19 @@ Animation::Animation(SDL_Texture* texture, Uint32 start_tick, const int speed, c
     this->frames = frames;
 }
 
-SDL_Texture* const Animation::getTexture() {
+SDL_Rect* Animation::getSrcRect() {
+    //Calculate frame
     Uint32 ticks = BrickEngine::getTicks();
-    // vage voorbeeld code
-    int frame = 0;
-    int x = frame * this->w;
-    int y = 0;
-    int w = this->w;
-    int h = this->h;
 
-    return 0;
+    Uint32 diff = ticks - this->start_tick;
+    int frames = diff / this->frames;
+    int frame = frames / this->speed;
+
+    // vage voorbeeld code
+    //this->src.x = frame * this->w;
+    //this->src.y = 0;
+    //this->src.w = this->w;
+    //this->src.h = this->h;
+
+    return nullptr;
 }

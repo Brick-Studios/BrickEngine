@@ -2,6 +2,7 @@
 #define FILE_RENDERER_HPP
 
 #include <functional>
+#include <queue>
 
 #include "SDL2/SDL.h"
 #include "brickengine/rendering/renderables/renderable.hpp"
@@ -17,6 +18,7 @@ public:
     void render();
 private:
     SDL_Renderer* sdl_renderer;
+    std::queue<Renderable*> renderQueue;
 };
 
 #endif

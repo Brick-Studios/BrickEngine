@@ -16,3 +16,11 @@ Renderer::~Renderer(){
 SDL_Texture* Renderer::CreateTextureFromSurface(SDL_Surface* surface) const {
     return SDL_CreateTextureFromSurface(this->sdl_renderer, surface);
 }
+
+void Renderer::drawScreen() {
+    SDL_RenderPresent(this->sdl_renderer);
+};
+
+void Renderer::clearScreen() {
+    SDL_RenderClear(this->sdl_renderer);
+};
