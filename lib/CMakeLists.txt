@@ -1,10 +1,5 @@
 file(GLOB_RECURSE SRC_FILES RELATIVE ${CMAKE_CURRENT_LIST_DIR} *.c[p]*)
 
-target_sources(BrickEngine
-    PRIVATE
-        engine.cpp
-        entities/entity_manager.cpp
-        rendering/image.cpp
 find_package(SDL2 REQUIRED)
 find_package(SDL2_net REQUIRED)
 find_package(SDL2_gfx REQUIRED)
