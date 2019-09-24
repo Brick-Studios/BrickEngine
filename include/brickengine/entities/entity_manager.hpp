@@ -2,6 +2,7 @@
 #define FILE_ENTITY_MANAGER_HPP
 
 #include "brickengine/components/component.hpp"
+
 #include <iostream>
 #include <string>
 #include <vector>
