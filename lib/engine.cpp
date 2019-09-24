@@ -16,22 +16,23 @@ BrickEngine::BrickEngine(const std::string window_name, const int window_width, 
         exit(1);
     }
 
-    window = SDL_CreateWindow(
+    std::unique_ptr<SDL_Window, SDL_Window_deleter> window_ptr(SDL_CreateWindow(
       window_name.c_str(),
       SDL_WINDOWPOS_UNDEFINED,
       SDL_WINDOWPOS_UNDEFINED,
       window_width,
       window_heigth,
       0
-    );
-    
+    ), SDL_DestroyWindow);
+    auto window { std::make_optional(window_ptr) };
+
     if(!window.has_value())
     {
         std::cout << "SDL window failed to open! SDL_Error: " << SDL_GetError() << std::endl;
         exit(1);
     }
 
-    auto sdl_renderer = SDL_CreateRenderer(window.value(), -1, SDL_RENDERER_ACCELERATED);
+    auto sdl_renderer = SDL_CreateRenderer(window.value().get(), -1, SDL_RENDERER_ACCELERATED);
     renderer = std::make_shared<Renderer>(*new Renderer(sdl_renderer));
 
     renderableFactory = std::make_unique<RenderableFactory>(*new RenderableFactory(renderer.value()));
@@ -40,7 +41,6 @@ BrickEngine::BrickEngine(const std::string window_name, const int window_width, 
 }
 
 BrickEngine::~BrickEngine() {
-    SDL_DestroyWindow(window.value());
     SDL_Quit();
 }
 

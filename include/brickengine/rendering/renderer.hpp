@@ -3,6 +3,8 @@
 
 #include <functional>
 #include <queue>
+#include <vector>
+#include <unordered_map>
 
 #include "SDL2/SDL.h"
 #include "brickengine/rendering/renderables/renderable.hpp"
@@ -13,12 +15,12 @@ public:
     ~Renderer();
     void clearScreen();
     void drawScreen();
-    void render(const Renderable renderable);
+    void render(Renderable& renderable);
     SDL_Texture* CreateTextureFromSurface(SDL_Surface* surface) const;
     void render();
 private:
     SDL_Renderer* sdl_renderer;
-    std::queue<Renderable*> renderQueue;
+    std::unique_ptr<std::unordered_map<unsigned int, Renderable&>> renderQueue;
 };
 
 #endif

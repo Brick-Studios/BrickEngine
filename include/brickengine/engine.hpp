@@ -18,12 +18,11 @@ class BrickEngine {
 public:
     BrickEngine(const std::string window_name, const int window_width, const int window_heigth);
     ~BrickEngine();
-    const Animation createAnimation(std::string path);
-    const void delay(const Uint32 ms);
+    void delay(const Uint32 ms) const;
     const static Uint32 getTicks();
-    // Moet de factory vast gaan houden
 private:
-    std::optional<SDL_Window*> window;
+    using SDL_Window_deleter = void(*)(SDL_Window*);
+    std::optional<std::unique_ptr<SDL_Window, SDL_Window_deleter>> window;
     std::optional<std::shared_ptr<Renderer>> renderer;
     std::optional<std::unique_ptr<RenderableFactory>> renderableFactory;
 };

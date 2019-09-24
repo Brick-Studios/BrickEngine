@@ -12,6 +12,7 @@ SDL_Texture* const Renderable::getTexture() {
 SDL_Rect* Renderable::getSrcRect() {
     return nullptr;
 }
+
 SDL_Rect* Renderable::getDstRect() {
     return &this->dst;
 }
