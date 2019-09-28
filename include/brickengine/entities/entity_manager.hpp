@@ -17,10 +17,13 @@ class EntityManager{
         int createEntity(const std::vector<Component> &components);
         void removeEntity(const int entityId);
         
-        const Component getComponent(const int entityId);
+        template <class T>
+        const T getComponent(const int entityId, const T type);
 
         void addComponentToEntity(const int entityId, const Component component); 
-        void removeComponentFromEntity(const int entityId);
+
+        template <class T>
+        void removeComponentFromEntity(const int entityId, const T type);
 
         void printEntities();
 

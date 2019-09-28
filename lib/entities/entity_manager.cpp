@@ -15,13 +15,17 @@ EntityManager::EntityManager(){
     //     std::cout << "key: " + map.first << ", " << map.second << "\n";
     // }
     
-    // std::unique_ptr<std::vector<Component>> componentList;
-    // componentList->push_back(new Component());
-    // createEntity(componentList);
+    std::unique_ptr<std::vector<Component>> componentList;
 
-    //addComponentToEntity(1, Component());
+    componentList->push_back(Component());
+
+    // createEntity(*componentList);
+
+    // addComponentToEntity(1, Component());
     
-    printEntities();
+    // printEntities();
+
+    
 }
 
 int EntityManager::createEntity(const std::vector<Component> &components){
@@ -45,12 +49,23 @@ void EntityManager::addComponentToEntity(const int entityId, const Component com
     componentsPerId[entityId] = component;
 }
 
-void EntityManager::removeComponentFromEntity(const int entityId){
-    
+template <class T>
+void EntityManager::removeComponentFromEntity(const int entityId, const T type){    
+    std::string componentType {std::string(typeid(type).name())};
+    std::vector<Component> componentsPerId = components_by_class->at(componentType);
 }
 
-const Component EntityManager::getComponent(const int entityId){
-    
+template <class T>
+const T EntityManager::getComponent(const int entityId, const T type){
+    std::string componentType {std::string(typeid(type).name())};
+    if(components_by_class->count(componentType) > 0){
+        std::vector<Component> componentsPerId = components_by_class->at(componentType);
+        return (T)componentsPerId.at(entityId);
+    }
+    else
+    {
+        return nullptr;
+    }
 }
 
 void EntityManager::removeEntity(const int entityId){
@@ -58,8 +73,8 @@ void EntityManager::removeEntity(const int entityId){
 }
 
 void EntityManager::printEntities(){
-    for(std::unique_ptr<int>& e : entities){
-        std::cout << *e << '\n';
+    for(int& e : *entities){
+        std::cout << e << '\n';
     }
 }
 
