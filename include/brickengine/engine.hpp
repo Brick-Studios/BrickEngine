@@ -20,11 +20,12 @@ public:
     ~BrickEngine();
     void delay(const Uint32 ms) const;
     const static Uint32 getTicks();
+    RenderableFactory* const getRenderableFactory() const;
+    Renderer* const getRenderer() const;
 private:
-    using SDL_Window_deleter = void(*)(SDL_Window*);
-    std::optional<std::unique_ptr<SDL_Window, SDL_Window_deleter>> window;
-    std::optional<std::shared_ptr<Renderer>> renderer;
-    std::optional<std::unique_ptr<RenderableFactory>> renderableFactory;
+    std::unique_ptr<SDL_Window, void(*)(SDL_Window*)> window;
+    std::shared_ptr<Renderer> renderer;
+    std::unique_ptr<RenderableFactory> renderableFactory;
 };
 
 #endif /* FILE_BRICKENGINE_HPP */
