@@ -9,23 +9,22 @@
 
 EntityManager::EntityManager(){
     
-
-
-    // for(auto const& map: components_by_class){
-    //     std::cout << "key: " + map.first << ", " << map.second << "\n";
-    // }
+    entities = std::make_unique<std::vector<int>>();
+    components_by_class = std::make_unique<std::unordered_map<std::string, std::vector<Component>>>();
     
-    std::unique_ptr<std::vector<Component>> componentList;
+    std::vector<Component> componentList;
 
-    componentList->push_back(Component());
+    componentList.push_back(Component());
 
-    // createEntity(*componentList);
+    createEntity(componentList);
 
-    // addComponentToEntity(1, Component());
+    printEntities();
+
+    //std::cout << "Component: " << typeid(getComponent(0, Component())).name() << "\n";
+
+    removeComponentFromEntity(0, Component());
     
-    // printEntities();
-
-    
+    //std::cout << "Component: " << typeid(getComponent(0, Component())).name() << "\n";
 }
 
 int EntityManager::createEntity(const std::vector<Component> &components){
@@ -44,7 +43,7 @@ void EntityManager::addComponentToEntity(const int entityId, const Component com
     if(components_by_class->count(componentType) == 0){
         components_by_class->insert(std::make_pair(componentType, std::vector<Component>()));
     }
-    
+
     std::vector<Component> componentsPerId = components_by_class->at(componentType);
     componentsPerId[entityId] = component;
 }
@@ -53,6 +52,9 @@ template <class T>
 void EntityManager::removeComponentFromEntity(const int entityId, const T type){    
     std::string componentType {std::string(typeid(type).name())};
     std::vector<Component> componentsPerId = components_by_class->at(componentType);
+
+    std::cout << entityId << "entity Id" << std::endl;
+    componentsPerId.erase(componentsPerId.begin() + entityId);
 }
 
 template <class T>
@@ -73,7 +75,7 @@ void EntityManager::removeEntity(const int entityId){
 }
 
 void EntityManager::printEntities(){
-    for(int& e : *entities){
+    for(const int& e : *entities){
         std::cout << e << '\n';
     }
 }
