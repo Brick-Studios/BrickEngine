@@ -1,12 +1,10 @@
 # BrickStudios' guidelines
 ## Naming things
-- Use `snake_case` for variables.
+- Use `snake_case` for variables and file names.
 - Use `CaptialCase` for Types.
 - Use `camelCase` for functions.
 
 ## Include all the things!
-- .hpp files in include.
-- .cpp files in lib (for a library) or src.
 - Always use include guards.
 
 ```c++
@@ -17,6 +15,11 @@
 
 #endif /* FILE_*FILENAME*_HPP */
 ```
+
+## Filing your taxes
+- Put header files in the include/ folder and use the .hpp extention.
+- Put source files in the lib/ folder and use the .cpp extention.
+- Structure your code in sensible and modular folders and files.
 
 ## Spaces, Spacing and Bracing
 - Every comma is followed by a space, so for example
@@ -45,6 +48,7 @@ if (condition) {
 are good to use.
 
 ## Other
+- ```using namespace "some namespace";``` is not allowed. Put the right namespace before the type.
 - Comment code where you think it is necessary.
 - Everything must be `const` correct.
 - Use smart pointers whenever possible. If smartpointers can not be used, use RAII and the Rule of Five.
