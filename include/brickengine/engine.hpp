@@ -11,17 +11,16 @@
 #include "SDL2/SDL2_gfxPrimitives.h"
 
 #include "brickengine/rendering/renderer.hpp"
-#include "brickengine/rendering/renderables/animation.hpp"
 #include "brickengine/rendering/renderable_factory.hpp"
 
 class BrickEngine {
 public:
-    BrickEngine(const std::string window_name, const int window_width, const int window_heigth);
+    BrickEngine(const std::string window_name, const int window_width, const int window_heigth, std::vector<int> layers);
     ~BrickEngine();
     void delay(const Uint32 ms) const;
-    const static Uint32 getTicks();
-    RenderableFactory* const getRenderableFactory() const;
-    Renderer* const getRenderer() const;
+    static Uint32 getTicks();
+    RenderableFactory* getRenderableFactory() const;
+    Renderer* getRenderer() const;
 private:
     std::unique_ptr<SDL_Window, void(*)(SDL_Window*)> window;
     std::shared_ptr<Renderer> renderer;

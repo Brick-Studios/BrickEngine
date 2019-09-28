@@ -8,31 +8,14 @@
 #include "brickengine/engine.hpp"
 #include "brickengine/rendering/renderables/rect.hpp"
 
-RenderableFactory::RenderableFactory(std::shared_ptr<Renderer> r){
-    this->renderer = r;
+RenderableFactory::RenderableFactory(std::shared_ptr<Renderer> r) : renderer(r) {
 }
 
-RenderableFactory::~RenderableFactory() {
-    auto x = 1;
-    std::cout << this->renderer.use_count() << std::endl;
-}
-
-std::unique_ptr<Renderable> RenderableFactory::createImage(std::string path, std::unique_ptr<Rect> dst) const {
+std::unique_ptr<Renderable> RenderableFactory::createImage(std::string path, int layer, std::unique_ptr<Rect> dst) const {
     SDL_Texture* texture = this->createBMPTexture(path);
 
-    std::unique_ptr<Renderable> r = std::make_unique<Renderable>(Renderable(texture, std::move(dst)));
-
-    return r;
+    return std::unique_ptr<Renderable>(new Renderable(texture, layer, std::move(dst)));
 }
-
-// std::unique_ptr<Renderable> RenderableFactory::createAnimation(std::string path, int speed, int frames) const {
-//     SDL_Texture* texture = this->createBMPTexture(path);
-
-//     const Uint32 start_tick = BrickEngine::getTicks();
-//     std::unique_ptr<Animation> r = std::make_unique<Animation>(*new Animation(texture, start_tick, speed, frames));
-
-//     return r;
-// }
 
 SDL_Texture* RenderableFactory::createBMPTexture(std::string path) const {
     SDL_Surface* surface = SDL_LoadBMP(path.c_str());
@@ -43,5 +26,7 @@ SDL_Texture* RenderableFactory::createBMPTexture(std::string path) const {
         return nullptr;
     }
 
-    return renderer.get()->CreateTextureFromSurface(surface);
+    SDL_Texture* t = renderer.get()->CreateTextureFromSurface(surface);
+    SDL_FreeSurface(surface);
+    return t;
 }

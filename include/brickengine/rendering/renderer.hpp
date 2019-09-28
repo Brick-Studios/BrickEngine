@@ -12,16 +12,17 @@
 
 class Renderer {
 public:
-    Renderer(std::unique_ptr<SDL_Renderer, void(*)(SDL_Renderer*)> r);
-    ~Renderer();
+    Renderer(std::unique_ptr<SDL_Renderer, void(*)(SDL_Renderer*)> r, std::vector<int> layers);
     void clearScreen();
     void drawScreen();
-    void render(Renderable& renderable);
+    void queueRenderable(Renderable& r);
     SDL_Texture* CreateTextureFromSurface(SDL_Surface* surface) const;
     void render();
 private:
     std::unique_ptr<SDL_Renderer, void(*)(SDL_Renderer*)> sdl_renderer;
-    std::unique_ptr<std::unordered_map<unsigned int, Renderable&>> renderQueue;
+    std::unique_ptr<std::unordered_map<int, Renderable&>> renderQueue;
+    void render(Renderable& renderable);
+    std::vector<int> layers;
 };
 
 #endif
