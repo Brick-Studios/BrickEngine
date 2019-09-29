@@ -30,7 +30,7 @@ class EntityManager{
     private:
         std::unique_ptr<std::vector<int>> entities;
         std::unique_ptr<int> lowest_unassigned_entity_id { new int(-1) };
-        std::unique_ptr<std::unordered_map<std::string, std::vector<std::unique_ptr<Component>>>> components_by_class;
+        std::unique_ptr<std::unordered_map<std::string, std::unordered_map<int, std::unique_ptr<Component>>>> components_by_class;
 };
 
 #endif /* FILE_ENTITY_MANAGER_HPP */
