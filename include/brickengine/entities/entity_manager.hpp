@@ -18,7 +18,7 @@ class EntityManager{
         void removeEntity(const int entityId);
         
         template <class T>
-        const T getComponent(const int entityId, const T type);
+        const T* getComponent(const int entityId, const T type);
 
         void addComponentToEntity(const int entityId, const Component component); 
 
@@ -30,7 +30,7 @@ class EntityManager{
     private:
         std::unique_ptr<std::vector<int>> entities;
         std::unique_ptr<int> lowest_unassigned_entity_id { new int(-1) };
-        std::unique_ptr<std::unordered_map<std::string, std::vector<Component>>> components_by_class;
+        std::unique_ptr<std::unordered_map<std::string, std::vector<std::unique_ptr<Component>>>> components_by_class;
 };
 
 #endif /* FILE_ENTITY_MANAGER_HPP */

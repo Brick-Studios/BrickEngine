@@ -9,8 +9,8 @@
 
 EntityManager::EntityManager(){
     
-    entities = std::make_unique<std::vector<int>>();
-    components_by_class = std::make_unique<std::unordered_map<std::string, std::vector<Component>>>();
+    entities = std::unique_ptr<std::vector<int>>(new std::vector<int>());
+    components_by_class = std::unique_ptr<std::unordered_map<std::string, std::vector<std::unique_ptr<Component>>>>(new std::unordered_map<std::string, std::vector<std::unique_ptr<Component>>>());
     
     std::vector<Component> componentList;
 
@@ -22,7 +22,7 @@ EntityManager::EntityManager(){
 
     //std::cout << "Component: " << typeid(getComponent(0, Component())).name() << "\n";
 
-    removeComponentFromEntity(0, Component());
+    // removeComponentFromEntity(0, Component());
     
     //std::cout << "Component: " << typeid(getComponent(0, Component())).name() << "\n";
 }
@@ -37,32 +37,29 @@ int EntityManager::createEntity(const std::vector<Component> &components){
     return *lowest_unassigned_entity_id;
 }
 
-void EntityManager::addComponentToEntity(const int entityId, const Component component){
+void EntityManager::addComponentToEntity(const int entityId, Component component){
     std::string componentType {std::string(typeid(component).name())};
 
     if(components_by_class->count(componentType) == 0){
-        components_by_class->insert(std::make_pair(componentType, std::vector<Component>()));
+        components_by_class->insert(std::make_pair(componentType, std::vector<std::unique_ptr<Component>>()));
     }
 
-    std::vector<Component> componentsPerId = components_by_class->at(componentType);
-    componentsPerId[entityId] = component;
+    components_by_class->at(componentType).insert(components_by_class->at(componentType).begin() + entityId,std::make_unique<Component>(component));
 }
 
 template <class T>
 void EntityManager::removeComponentFromEntity(const int entityId, const T type){    
     std::string componentType {std::string(typeid(type).name())};
-    std::vector<Component> componentsPerId = components_by_class->at(componentType);
 
     std::cout << entityId << "entity Id" << std::endl;
-    componentsPerId.erase(componentsPerId.begin() + entityId);
+    components_by_class->at(componentType).erase(components_by_class->at(componentType).begin() + entityId);
 }
 
 template <class T>
-const T EntityManager::getComponent(const int entityId, const T type){
+const T* EntityManager::getComponent(const int entityId, const T type){
     std::string componentType {std::string(typeid(type).name())};
     if(components_by_class->count(componentType) > 0){
-        std::vector<Component> componentsPerId = components_by_class->at(componentType);
-        return (T)componentsPerId.at(entityId);
+        return (T)components_by_class->at(componentType).at(entityId).get();
     }
     else
     {
