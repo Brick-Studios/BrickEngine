@@ -7,11 +7,14 @@
 template <class T>
 class EntityWithComponent{
     public:
-        EntityWithComponent(int entityId, T component);
-        ~EntityWithComponent();
+        EntityWithComponent(int entityId, T* component) : id(entityId), component(component) {
+        }
+        ~EntityWithComponent() {
+        }
 
-        std::unique_ptr<int> id;
-        std::shared_ptr<T> component;
+        int id;
+        T* component;
+    private:
 };
 
 #endif /* FILE_ENTITY_WITH_COMPONENT_HPP */

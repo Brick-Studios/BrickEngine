@@ -7,8 +7,9 @@
 
 #include "brickengine/entities/entity_manager.hpp"
 
-EntityManager::EntityManager(){    
+EntityManager::EntityManager(){
     entities = std::unique_ptr<std::vector<int>>(new std::vector<int>());
+    lowest_unassigned_entity_id = std::unique_ptr<int>(new int(-1));
     components_by_class = std::unique_ptr<std::unordered_map<std::string, std::unordered_map<int, std::unique_ptr<Component>>>>(new std::unordered_map<std::string, std::unordered_map<int, std::unique_ptr<Component>>>());
 }
 
@@ -47,6 +48,20 @@ T* EntityManager::getComponent(const int entityId) const{
     }else{
         return (T*) nullptr;
     }
+}
+
+template <class T>
+std::unique_ptr<std::vector<std::unique_ptr<EntityWithComponent<T>>>> EntityManager::getAllEntities(){
+    std::string componentType {std::string(typeid(T).name())};
+    auto list = std::unique_ptr<std::vector<std::unique_ptr<EntityWithComponent<T>>>>(new std::vector<std::unique_ptr<EntityWithComponent<T>>>(components_by_class->at(componentType).size()));
+
+    if(components_by_class->count(componentType) > 0){
+        for(auto const& obj : components_by_class->at(componentType)){
+            std::unique_ptr<EntityWithComponent<T>> ewc (new EntityWithComponent<T>(obj.first, obj.second.get()));
+            list.get()->push_back(std::move(ewc));
+        }
+    }
+    return list;
 }
 
 void EntityManager::removeEntity(const int entityId){
