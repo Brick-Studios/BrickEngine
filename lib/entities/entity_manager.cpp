@@ -7,8 +7,7 @@
 
 #include "brickengine/entities/entity_manager.hpp"
 
-EntityManager::EntityManager(){
-    
+EntityManager::EntityManager(){    
     entities = std::unique_ptr<std::vector<int>>(new std::vector<int>());
     components_by_class = std::unique_ptr<std::unordered_map<std::string, std::unordered_map<int, std::unique_ptr<Component>>>>(new std::unordered_map<std::string, std::unordered_map<int, std::unique_ptr<Component>>>());
 }

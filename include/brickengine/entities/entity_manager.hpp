@@ -17,6 +17,7 @@ class EntityManager{
         int createEntity(const std::vector<Component> &components);
         void removeEntity(const int entityId);
         
+        
         template <class T>
         T* getComponent(const int entityId) const;
 
@@ -24,8 +25,6 @@ class EntityManager{
 
         template <class T>
         void removeComponentFromEntity(const int entityId);
-
-        void printEntities();
 
     private:
         std::unique_ptr<std::vector<int>> entities;
