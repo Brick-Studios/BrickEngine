@@ -10,8 +10,9 @@ public:
     BrickInput() = default;
     static BrickInput& getInstance();
     void setInputMapping(std::unordered_map<SDL_Keycode, PlayerInput>& gameInput);
-    //void popInput(PlayerInput const input);
-    //void checkInput(PlayerInput const input);
+    // This function is intended for the UI so the game loop is not affected.
+    void popInput(PlayerInput const input);
+    bool checkInput(PlayerInput const input);
     bool remapInput(PlayerInput const input);
     void processInput();
 private:

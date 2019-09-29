@@ -62,4 +62,15 @@ bool BrickInput::remapInput(PlayerInput input) {
             }
         }
     }
+};
+
+bool BrickInput::checkInput(PlayerInput const input) {
+    if(inputs.count(input))
+        return inputs[input];
+    return false;
+};
+
+void BrickInput::popInput(PlayerInput const input) {
+    if(inputs.count(input))
+        inputs[input] = false;
 }
