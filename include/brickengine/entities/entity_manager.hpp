@@ -18,12 +18,12 @@ class EntityManager{
         void removeEntity(const int entityId);
         
         template <class T>
-        const T* getComponent(const int entityId, const T type);
+        T* getComponent(const int entityId) const;
 
         void addComponentToEntity(const int entityId, const Component component); 
 
         template <class T>
-        void removeComponentFromEntity(const int entityId, const T type);
+        void removeComponentFromEntity(const int entityId);
 
         void printEntities();
 
