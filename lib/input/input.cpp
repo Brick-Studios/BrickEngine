@@ -26,11 +26,6 @@ void BrickInput::processInput(){
             
         }
     }
-    for(auto it : inputs) {
-        if(it.second) {
-            std::cout <<  it.first << std::endl;
-        }
-    }
 };
 
 void BrickInput::setInputMapping(std::unordered_map<SDL_Keycode, PlayerInput>& gameInput) {
