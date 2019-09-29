@@ -23,7 +23,7 @@ jobs:
       run: |
         cd build
         cmake ..
-        make
+        scan-build make
     - uses: actions/upload-artifact@master
       with:
         name: artifact
