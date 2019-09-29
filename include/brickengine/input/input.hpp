@@ -1,16 +1,22 @@
 #include <iostream>
 #include <unordered_map>
 
+#include "brickengine/input/player_input.hpp"
+#include "SDL2/SDL.h"
+
 class BrickInput {
 
-private:
-    std::unordered_map<std::string, bool> inputs;
-    // sdl mapped to game
-    std::unordered_map<std::string, std::string> inputMapping;
 public:
-    BrickInput();
-    void setInputMapping(std::unordered_map<std::string, std::string>& gameInput);
+    BrickInput() = default;
+    static BrickInput& getInstance();
+    void setInputMapping(std::unordered_map<SDL_Keycode, PlayerInput>& gameInput);
     void popInput(std::string const input);
     void checkInput(std::string const input);
     void processInput();
+private:
+    // List of mapped inputs
+    std::unordered_map<PlayerInput, bool> inputs;
+    // SDL inputs mapped to game input
+    std::unordered_map<SDL_Keycode, PlayerInput> inputMapping;
+
 };
