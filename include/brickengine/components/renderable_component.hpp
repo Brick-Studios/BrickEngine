@@ -3,7 +3,7 @@
 
 #include "component.hpp"
 
-class RenderableComponent: public Component {
+class RenderableComponent : public Component {
 
 };
 
