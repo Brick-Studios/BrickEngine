@@ -28,6 +28,4 @@ private:
     std::unique_ptr<RenderableFactory> renderableFactory;
 };
 
-
-
 #endif /* FILE_BRICKENGINE_HPP */
