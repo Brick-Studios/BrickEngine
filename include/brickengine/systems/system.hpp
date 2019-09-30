@@ -8,7 +8,7 @@ class System{
         System(std::shared_ptr<EntityManager> _entityManager) : entityManager(_entityManager) {
 
         };
-        ~System();
+        virtual ~System();
         virtual void Update(double deltaTime) = 0;
     protected:
         std::shared_ptr<EntityManager> entityManager;
