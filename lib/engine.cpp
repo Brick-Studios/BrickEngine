@@ -9,16 +9,9 @@
 #include "SDL2/SDL2_gfxPrimitives.h"
 #include "SDL2/SDL.h"
 
-void destory_window(SDL_Window* w) {
-    SDL_DestroyWindow(w);
-}
-void destory_renderer(SDL_Renderer* r) {
-    SDL_DestroyRenderer(r);
-}
-
 BrickEngine::BrickEngine(const std::string window_name, const int window_width, const int window_heigth, std::vector<int> layers) : window(nullptr, nullptr) {
     //Initialize SDL
-    if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
+    if( SDL_Init( SDL_INIT_VIDEO ) != 0 )
     {
         std::cout << "SDL failed to init! SDL_Error: " << SDL_GetError() << std::endl;
         exit(1);
@@ -32,21 +25,27 @@ BrickEngine::BrickEngine(const std::string window_name, const int window_width, 
       window_heigth,
       0
     ));
-
-    this->window = std::unique_ptr<SDL_Window, void(*)(SDL_Window*)>(window_ptr, destory_window);
-
-    if(!this->window)
+    if(!window_ptr)
     {
         std::cout << "SDL window failed to open! SDL_Error: " << SDL_GetError() << std::endl;
         exit(1);
     }
+    this->window = std::unique_ptr<SDL_Window, void(*)(SDL_Window*)>(window_ptr, SDL_DestroyWindow);
 
-    std::unique_ptr<SDL_Renderer, void(*)(SDL_Renderer*)> renderer_ptr(SDL_CreateRenderer(this->window.get(), -1, SDL_RENDERER_ACCELERATED), SDL_DestroyRenderer);
-    this->renderer = std::shared_ptr<Renderer>(new Renderer(std::move(renderer_ptr), layers));
+
+
+    SDL_Renderer* renderer_ptr(SDL_CreateRenderer(this->window.get(), -1, SDL_RENDERER_ACCELERATED));
+    if(!renderer_ptr)
+    {
+        std::cout << "SDL renderer failed to open! SDL_Error: " << SDL_GetError() << std::endl;
+        exit(1);
+    }
+    std::unique_ptr<SDL_Renderer, void(*)(SDL_Renderer*)> renderer_unique_ptr(renderer_ptr, SDL_DestroyRenderer);
+    this->renderer = std::shared_ptr<Renderer>(new Renderer(std::move(renderer_unique_ptr), layers));
 
     this->renderableFactory = std::unique_ptr<RenderableFactory>(new RenderableFactory(renderer));
 
-    std::cout << "Window openend finsihed" << std::endl << std::endl;
+    std::cout << "Window openend finished" << std::endl;
 }
 
 BrickEngine::~BrickEngine() {
