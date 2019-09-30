@@ -4,21 +4,28 @@
 #include <optional>
 #include <iostream>
 #include <string>
+#include <memory>
+#include <string>
 
 #include "SDL2/SDL.h"
 #include "SDL2/SDL2_gfxPrimitives.h"
 
+#include "brickengine/rendering/renderer.hpp"
+#include "brickengine/rendering/renderable_factory.hpp"
+
 class BrickEngine {
 public:
-    void Start(std::string window_name);
-    void Shutdown();
-    void Delay(Uint32 ms);
-    BrickEngine();
+    // You need to supply all the used layers to this constructors, layers that the engine doesn't know of will not get drawn!
+    BrickEngine(const std::string window_name, const int window_width, const int window_heigth, std::vector<int> layers);
     ~BrickEngine();
+    void delay(const Uint32 ms) const;
+    static Uint32 getTicks();
+    RenderableFactory* getRenderableFactory() const;
+    Renderer* getRenderer() const;
 private:
-    SDL_Window* window;
-    SDL_Renderer* renderer;
-    SDL_Surface* screenSurface;
+    std::unique_ptr<SDL_Window, void(*)(SDL_Window*)> window;
+    std::shared_ptr<Renderer> renderer;
+    std::unique_ptr<RenderableFactory> renderableFactory;
 };
 
 
