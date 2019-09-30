@@ -26,7 +26,7 @@ SDL_Texture* RenderableFactory::createBMPTexture(std::string path) const {
         return nullptr;
     }
 
-    SDL_Texture* t = renderer.get()->CreateTextureFromSurface(surface);
+    SDL_Texture* t = renderer.get()->createTextureFromSurface(surface);
     SDL_FreeSurface(surface);
     return t;
 }

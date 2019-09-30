@@ -16,7 +16,7 @@ public:
     void clearScreen();
     void drawScreen();
     void queueRenderable(Renderable& r);
-    SDL_Texture* CreateTextureFromSurface(SDL_Surface* surface) const;
+    SDL_Texture* createTextureFromSurface(SDL_Surface* surface) const;
     void render();
 private:
     std::unique_ptr<SDL_Renderer, void(*)(SDL_Renderer*)> sdl_renderer;

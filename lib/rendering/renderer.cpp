@@ -25,7 +25,7 @@ void Renderer::render(Renderable& r) {
     SDL_RenderCopy(this->sdl_renderer.get(), r.getTexture(), src, dst);
 };
 
-SDL_Texture* Renderer::CreateTextureFromSurface(SDL_Surface* surface) const {
+SDL_Texture* Renderer::createTextureFromSurface(SDL_Surface* surface) const {
     return SDL_CreateTextureFromSurface(this->sdl_renderer.get(), surface);
 }
 
