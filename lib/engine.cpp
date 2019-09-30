@@ -11,7 +11,7 @@
 
 BrickEngine::BrickEngine(const std::string window_name, const int window_width, const int window_heigth, std::vector<int> layers) : window(nullptr, nullptr) {
     //Initialize SDL
-    if( SDL_Init( SDL_INIT_VIDEO ) != 0 )
+    if(SDL_Init( SDL_INIT_VIDEO ) != 0)
     {
         std::cout << "SDL failed to init! SDL_Error: " << SDL_GetError() << std::endl;
         exit(1);
