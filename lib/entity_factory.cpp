@@ -1,4 +1,3 @@
-
 #include "brickengine/entity_factory.hpp"
 #include "brickengine/components/component.hpp"
 #include "brickengine/entities/entity_manager.hpp"
