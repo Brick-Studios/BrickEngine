@@ -9,7 +9,7 @@ class System{
 
         };
         virtual ~System();
-        virtual void Update(double deltaTime) = 0;
+        virtual void update(double deltaTime) = 0;
     protected:
         std::shared_ptr<EntityManager> entityManager;
 };
