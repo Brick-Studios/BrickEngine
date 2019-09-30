@@ -13,6 +13,7 @@ target_link_libraries(BrickEngine
     PRIVATE SDL2::Net
 )
 target_compile_features(BrickEngine PUBLIC cxx_std_17)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 # Export source file list so that it can be used for test compilation
 set(SRC_FILES ${SRC_FILES} PARENT_SCOPE)
