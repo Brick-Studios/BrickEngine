@@ -15,6 +15,7 @@
 
 class BrickEngine {
 public:
+    // You need to supply all the used layers to this constructors, layers that the engine doesn't know of will not get drawn!
     BrickEngine(const std::string window_name, const int window_width, const int window_heigth, std::vector<int> layers);
     ~BrickEngine();
     void delay(const Uint32 ms) const;
