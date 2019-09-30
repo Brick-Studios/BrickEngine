@@ -14,7 +14,6 @@ class EntityWithComponent{
 
         int id;
         T* component;
-    private:
 };
 
 #endif /* FILE_ENTITY_WITH_COMPONENT_HPP */
