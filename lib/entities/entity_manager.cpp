@@ -33,37 +33,6 @@ void EntityManager::addComponentToEntity(const int entityId, const Component com
     components_by_class->at(componentType).insert(std::make_pair(entityId, std::make_unique<Component>(component)));
 }
 
-template <class T>
-void EntityManager::removeComponentFromEntity(const int entityId){    
-    std::string componentType {std::string(typeid(T).name())};
-
-    components_by_class->at(componentType).erase(entityId);
-}
-
-template <class T>
-T* EntityManager::getComponent(const int entityId) const{
-    std::string componentType {std::string(typeid(T).name())};
-    if(components_by_class->count(componentType) > 0){
-        return (T*) components_by_class->at(componentType).at(entityId).get();
-    }else{
-        return (T*) nullptr;
-    }
-}
-
-template <class T>
-std::unique_ptr<std::vector<std::unique_ptr<EntityWithComponent<T>>>> EntityManager::getAllEntities(){
-    std::string componentType {std::string(typeid(T).name())};
-    auto list = std::unique_ptr<std::vector<std::unique_ptr<EntityWithComponent<T>>>>(new std::vector<std::unique_ptr<EntityWithComponent<T>>>(components_by_class->at(componentType).size()));
-
-    if(components_by_class->count(componentType) > 0){
-        for(auto const& obj : components_by_class->at(componentType)){
-            std::unique_ptr<EntityWithComponent<T>> ewc (new EntityWithComponent<T>(obj.first, obj.second.get()));
-            list.get()->push_back(std::move(ewc));
-        }
-    }
-    return list;
-}
-
 void EntityManager::removeEntity(const int entityId){
     entities->erase(entities->begin() + entityId);
 }
