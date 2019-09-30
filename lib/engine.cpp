@@ -45,7 +45,7 @@ BrickEngine::BrickEngine(const std::string window_name, const int window_width, 
 
     this->renderableFactory = std::unique_ptr<RenderableFactory>(new RenderableFactory(renderer));
 
-    std::cout << "Window openend finished";
+    std::cout << "Window openend finished" << std::endl;
 }
 
 BrickEngine::~BrickEngine() {
