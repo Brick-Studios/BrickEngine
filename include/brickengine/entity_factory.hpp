@@ -8,11 +8,8 @@
 class EntityFactory{
     public:
         EntityFactory(std::shared_ptr<EntityManager> _entityManager) : entityManager(_entityManager){
-            
         };
-        ~EntityFactory();
-        int createDefault();
-
+        ~EntityFactory() = default;
     private:
         std::shared_ptr<EntityManager> entityManager;
 };
