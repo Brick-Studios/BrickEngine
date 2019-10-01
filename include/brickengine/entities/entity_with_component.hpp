@@ -6,14 +6,14 @@
 
 template <class T>
 class EntityWithComponent{
-    public:
-        EntityWithComponent(int entityId, T* component) : id(entityId), component(component) {
-        }
-        ~EntityWithComponent() {
-        }
+public:
+    EntityWithComponent(int entityId, T* component) : id(entityId), component(component) {
+    }
+    ~EntityWithComponent() {
+    }
 
-        int id;
-        T* component;
+    int id;
+    T* component;
 };
 
 #endif /* FILE_ENTITY_WITH_COMPONENT_HPP */
