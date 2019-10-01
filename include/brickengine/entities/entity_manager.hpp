@@ -17,19 +17,18 @@ public:
         lowest_unassigned_entity_id = -1;
         components_by_class = std::unique_ptr<std::unordered_map<std::string, std::unordered_map<int, std::unique_ptr<Component>>>>(new std::unordered_map<std::string, std::unordered_map<int, std::unique_ptr<Component>>>());
     };
-    
     ~EntityManager() = default;
 
     int createEntity(const std::unique_ptr<std::vector<std::unique_ptr<Component>>> components){
         int entityId = ++lowest_unassigned_entity_id;
-        for(auto& c : *components){
+
+        for(auto& c : *components)
             addComponentToEntity(lowest_unassigned_entity_id, std::move(c));
-        }
 
         return entityId;
     }
 
-    template <class T>
+    template <typename T, typename = std::enable_if_t<std::is_base_of_v<Component, T>>>
     std::unique_ptr<std::vector<std::unique_ptr<EntityWithComponent<T>>>> getEntitiesByComponent(){
         auto c = std::unique_ptr<Component>(new T());
         std::string componentType = c->getName();
@@ -44,7 +43,7 @@ public:
         return list;
     }
 
-    template <class T>
+    template <typename T, typename = std::enable_if_t<std::is_base_of_v<Component, T>>>
     void removeComponentFromEntity(const int entityId){
         auto c = std::unique_ptr<Component>(new T());
         std::string componentType = c->getName();
@@ -53,32 +52,27 @@ public:
     }
 
     template <typename T, typename = std::enable_if_t<std::is_base_of_v<Component, T>>>
-    T* getComponent(const int entityId) const{
+    T* getComponent(const int entityId) const {
         auto c = std::unique_ptr<Component>(new T());
         std::string componentType { c->getName() };
-        if(components_by_class->count(componentType) > 0){
+        if(components_by_class->count(componentType) > 0)
             return (T*) components_by_class->at(componentType).at(entityId).get();
-        }else{
+        else
             return (T*) nullptr;
-        }
     }
 
     void addComponentToEntity(const int entityId, std::unique_ptr<Component> component){
         std::string componentType = component.get()->getName();
 
-        if(components_by_class->count(componentType) == 0) {
+        if(components_by_class->count(componentType) == 0)
             components_by_class->insert(std::make_pair(componentType, std::unordered_map<int, std::unique_ptr<Component>>()));
-        }
 
         components_by_class->at(componentType).insert(std::make_pair(entityId, std::move(component)));
     }
 
     void removeEntity(const int entityId){
-        for(auto& component : *components_by_class) {
-            std::cout << component.second.count(entityId) << std::endl;
+        for(auto& component : *components_by_class)
             component.second.erase(entityId);
-            std::cout << component.second.count(entityId) << std::endl;
-        }
     }
 
 private:
