@@ -8,12 +8,19 @@
 
 #include "SDL2/SDL2_gfxPrimitives.h"
 #include "SDL2/SDL.h"
+#include "SDL2/SDL_ttf.h"
 
 BrickEngine::BrickEngine(const std::string window_name, const int window_width, const int window_heigth, std::vector<int> layers) : window(nullptr, nullptr) {
     //Initialize SDL
     if(SDL_Init( SDL_INIT_VIDEO ) != 0)
     {
         std::cout << "SDL failed to init! SDL_Error: " << SDL_GetError() << std::endl;
+        exit(1);
+    }
+     //Initialize SDL_ttf
+    if(TTF_Init() == -1 )
+    {
+        std::cout << "SDL_ttf failed to init! SDL_Error: " << SDL_GetError() << std::endl;
         exit(1);
     }
 
@@ -50,6 +57,7 @@ BrickEngine::BrickEngine(const std::string window_name, const int window_width, 
 
 BrickEngine::~BrickEngine() {
     SDL_Quit();
+    TTF_Quit();
 }
 
 void BrickEngine::delay(const Uint32 ms) const {
