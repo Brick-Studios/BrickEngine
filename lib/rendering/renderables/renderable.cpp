@@ -3,10 +3,10 @@
 #include "SDL2/SDL.h"
 
 Renderable::Renderable(SDL_Texture* texture, int layer, std::unique_ptr<Rect> dst) :
-    texture(texture), layer(layer), dst(std::move(dst)) {
+    texture(texture), dst(std::move(dst)), layer(layer) {
 }
 Renderable::Renderable(SDL_Texture* texture, int layer, std::unique_ptr<Rect> dst, std::unique_ptr<Rect> src) :
-    texture(texture), layer(layer), dst(std::move(dst)), src(std::move(src)) {
+    texture(texture), src(std::move(src)), dst(std::move(dst)), layer(layer) {
 }
 
 Renderable::~Renderable() {

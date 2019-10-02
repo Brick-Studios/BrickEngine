@@ -23,7 +23,7 @@ void Renderer::render(Renderable& r) {
     SDL_Rect* src = (struct SDL_Rect*)r.getSrcRect();
     SDL_Rect* dst = (struct SDL_Rect*)r.getDstRect();
     SDL_RenderCopy(this->sdl_renderer.get(), r.getTexture(), src, dst);
-};
+}
 
 SDL_Texture* Renderer::createTextureFromSurface(SDL_Surface* surface) const {
     return SDL_CreateTextureFromSurface(this->sdl_renderer.get(), surface);
@@ -32,7 +32,7 @@ SDL_Texture* Renderer::createTextureFromSurface(SDL_Surface* surface) const {
 void Renderer::drawScreen() {
     auto renderQueue = this->renderQueue.get();
 
-    for(int i = 0; i < layers.size(); i++) {
+    for(unsigned int i = 0; i < layers.size(); i++) {
         auto bucket = renderQueue->bucket(layers[i]);
         for (auto o = renderQueue->begin(bucket); o != renderQueue->end(bucket); o++) {
             this->render(o->second);
@@ -40,9 +40,9 @@ void Renderer::drawScreen() {
     }
 
     SDL_RenderPresent(this->sdl_renderer.get());
-};
+}
 
 void Renderer::clearScreen() {
     SDL_RenderClear(this->sdl_renderer.get());
     renderQueue->clear();
-};
+}
