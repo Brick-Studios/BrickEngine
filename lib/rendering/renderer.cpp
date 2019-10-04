@@ -40,16 +40,16 @@ void Renderer::render(Texture& r) {
     SDL_Rect* src = (struct SDL_Rect*)r.getSrcRect();
     SDL_Rect* dst = (struct SDL_Rect*)r.getDstRect();
     SDL_RenderCopy(this->sdl_renderer.get(), r.getTexture(), src, dst);
-};
+}
 void Renderer::render(Circle& r) {
     if (r.getFilled())
         filledCircleRGBA(this->sdl_renderer.get(), r.getX(), r.getY(), r.getRadius(), r.getColor().r, r.getColor().g, r.getColor().b, r.getColor().a);
     else
         circleRGBA(this->sdl_renderer.get(), r.getX(), r.getY(), r.getRadius(), r.getColor().r, r.getColor().g, r.getColor().b, r.getColor().a);
-};
+}
 void Renderer::render(Line& r) {
     lineRGBA(this->sdl_renderer.get(), r.getX1(), r.getY1(), r.getX2(), r.getY2(), r.getColor().r, r.getColor().g, r.getColor().b, r.getColor().a);
-};
+}
 
 SDL_Texture* Renderer::createTextureFromSurface(SDL_Surface* surface) const {
     return SDL_CreateTextureFromSurface(this->sdl_renderer.get(), surface);
@@ -77,4 +77,4 @@ void Renderer::clearScreen() {
     for (int layer : layers) {
         renderQueue.get()->at(layer).clear();
     }
-};
+}
