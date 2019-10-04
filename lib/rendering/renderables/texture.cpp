@@ -8,12 +8,12 @@ void destroyT(SDL_Texture* t) {
 }
 
 Texture::Texture(SDL_Texture* texture, int layer, std::unique_ptr<Rect> dst) :
-    texture(std::unique_ptr<SDL_Texture, void(*)(SDL_Texture*)>(texture, destroyT)),
-    dst(std::move(dst)), Renderable(layer) {}
+    Renderable(layer), texture(std::unique_ptr<SDL_Texture, void(*)(SDL_Texture*)>(texture, destroyT)),
+    dst(std::move(dst)) {}
 
 Texture::Texture(SDL_Texture* texture, int layer, std::unique_ptr<Rect> dst, std::unique_ptr<Rect> src) :
-    texture(std::unique_ptr<SDL_Texture, void(*)(SDL_Texture*)>(texture, destroyT)),
-    dst(std::move(dst)), src(std::move(src)), Renderable(layer) {}
+    Renderable(layer), texture(std::unique_ptr<SDL_Texture, void(*)(SDL_Texture*)>(texture, destroyT)),
+    src(std::move(src)), dst(std::move(dst)) {}
 
 void Texture::render(Renderer& r) {
     r.render(*this);

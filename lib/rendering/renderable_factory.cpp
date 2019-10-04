@@ -20,7 +20,7 @@ std::unique_ptr<Texture> RenderableFactory::createImage(std::string path, int la
 }
 
 std::unique_ptr<Texture> RenderableFactory::createText(std::string text, int font_size, Color color, int layer, std::unique_ptr<Rect> dst) const {
-    TTF_Font* roboto = TTF_OpenFont("./assets/fonts/Roboto-Bold.ttf", 24);
+    TTF_Font* roboto = TTF_OpenFont("./assets/fonts/Roboto-Bold.ttf", font_size);
 
     SDL_Color sdlColor;
     sdlColor.r = color.r;
@@ -39,7 +39,7 @@ std::unique_ptr<Texture> RenderableFactory::createText(std::string text, int fon
     SDL_FreeSurface(surface);
     TTF_CloseFont(roboto);
 
-   return std::make_unique<Texture>(texture, layer, std::move(dst));
+    return std::make_unique<Texture>(texture, layer, std::move(dst));
 }
 
 std::unique_ptr<Circle> RenderableFactory::createCircle(int x, int y, int radius, bool filled, Color color, int layer) const {

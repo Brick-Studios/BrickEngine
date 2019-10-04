@@ -1,7 +1,7 @@
 #include "brickengine/rendering/renderables/circle.hpp"
 
 Circle::Circle(int x, int y, int radius, bool filled, Color color, int layer) :
-              x(x), y(y), radius(radius), filled(filled), color(color), Renderable(layer) {}
+               Renderable(layer), x(x), y(y), radius(radius), filled(filled), color(color) {}
 
 void Circle::render(Renderer& r) {
     r.render(*this);
