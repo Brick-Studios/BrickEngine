@@ -12,6 +12,7 @@ target_include_directories(BrickEngine PUBLIC ../include)
 target_link_libraries(BrickEngine
     PRIVATE SDL2::Main
     PRIVATE SDL2::Net
+    PRIVATE SDL2::GFX
     PRIVATE SDL2::TTF
 )
 target_compile_features(BrickEngine PUBLIC cxx_std_17)

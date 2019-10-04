@@ -1,6 +1,6 @@
 #ifndef FILE_COLOR_HPP
 #define FILE_COLOR_HPP
-struct SDL_Color
+struct Color
 {
     unsigned short int r;
     unsigned short int g;
