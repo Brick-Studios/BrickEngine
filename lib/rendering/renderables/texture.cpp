@@ -21,14 +21,14 @@ void Texture::render(Renderer& r) {
 
 
 
-Rect* Texture::getSrcRect() {
+Rect* Texture::getSrcRect() const {
     return this->src.get();
 }
 
-Rect* Texture::getDstRect() {
+Rect* Texture::getDstRect() const {
     return this->dst.get();
 }
 
-SDL_Texture* Texture::getTexture() {
+SDL_Texture* Texture::getTexture() const {
     return this->texture.get();
 }

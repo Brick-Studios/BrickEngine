@@ -11,9 +11,9 @@ public:
     Texture(SDL_Texture* texture, int layer, std::unique_ptr<Rect> dst);
     Texture(SDL_Texture* texture, int layer, std::unique_ptr<Rect> dst, std::unique_ptr<Rect> src);
     void render(Renderer& r);
-    virtual Rect* getSrcRect();
-    virtual Rect* getDstRect();
-    virtual SDL_Texture* getTexture();
+    virtual Rect* getSrcRect() const;
+    virtual Rect* getDstRect() const;
+    virtual SDL_Texture* getTexture() const;
 protected:
     std::unique_ptr<SDL_Texture, void(*)(SDL_Texture*)> texture;
     std::unique_ptr<Rect> src;
