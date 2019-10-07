@@ -15,8 +15,6 @@ void Texture::render(Renderer& r) {
     r.render(*this);
 }
 
-
-
 Rect* Texture::getSrcRect() const {
     return this->src.get();
 }
