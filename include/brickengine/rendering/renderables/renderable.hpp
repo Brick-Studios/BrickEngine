@@ -3,21 +3,16 @@
 
 #include <memory>
 #include "SDL2/SDL.h"
-#include "brickengine/rendering/renderables/rect.hpp"
+
+class Renderer;
 
 class Renderable {
 public:
-    Renderable(SDL_Texture* texture, int layer, std::unique_ptr<Rect> src);
-    Renderable(SDL_Texture* texture, int layer, std::unique_ptr<Rect> src, std::unique_ptr<Rect> dst);
-    virtual ~Renderable();
-    virtual SDL_Texture* getTexture();
-    virtual Rect* getSrcRect();
-    virtual Rect* getDstRect();
+    Renderable(int layer);
+    virtual ~Renderable() = default;
+    virtual void render(Renderer& r) = 0;
     int getLayer() const;
 protected:
-    SDL_Texture* texture;
-    std::unique_ptr<Rect> src;
-    std::unique_ptr<Rect> dst;
     int layer;
 };
 
