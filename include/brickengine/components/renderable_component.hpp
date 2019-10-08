@@ -1,10 +1,12 @@
 #ifndef FILE_RENDERABLE_COMPONENT_HPP
 #define FILE_RENDERABLE_COMPONENT_HPP
 
-#include "component.hpp"
+#include "brickengine/components/component_impl.hpp"
 
-class RenderableComponent : public Component {
-
+class RenderableComponent : public ComponentImpl<RenderableComponent> {
+    static std::string getNameStatic() {
+        return "RenderableComponent";
+    }
 };
 
 #endif /* FILE_RENDERABLE_COMPONENT_HPP */
