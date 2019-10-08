@@ -32,7 +32,13 @@ public:
     template <typename T, typename = std::enable_if_t<std::is_base_of_v<Component, T>>>
     std::unique_ptr<std::vector<std::unique_ptr<EntityWithComponent<T>>>> getEntitiesByComponent(){
         std::string componentType = T::getNameStatic();
-        auto list = std::unique_ptr<std::vector<std::unique_ptr<EntityWithComponent<T>>>>(new std::vector<std::unique_ptr<EntityWithComponent<T>>>(components_by_class->at(componentType).size()));
+        if (components_by_class->count(componentType) < 1)
+            return std::unique_ptr<std::vector<std::unique_ptr<EntityWithComponent<T>>>>(new std::vector<std::unique_ptr<EntityWithComponent<T>>>());
+        auto list = std::unique_ptr<std::vector<std::unique_ptr<EntityWithComponent<T>>>>(
+            new std::vector<std::unique_ptr<EntityWithComponent<T>>>(
+                components_by_class->at(componentType).size()
+            )
+        );
         list.get()->clear();
         if(components_by_class->count(componentType) > 0){
             for(auto const& obj : components_by_class->at(componentType)){
