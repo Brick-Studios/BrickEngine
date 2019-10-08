@@ -20,7 +20,12 @@ double CollisionSystem::canMove(int entity, Axis axis, Direction direction) {
 
     double spaceLeft = std::numeric_limits<double>::max(); //Distance to closest object
     for(auto& oppositeCollider : *collidableEntities) {
-        if(oppositeCollider->id != entity) {
+        int zStartEntity = entityRectCollider->z;
+        int zEndEntity = entityRectCollider->z + entityRectCollider->vz;
+        int zStartCollidable = oppositeCollider->component->z;
+        int zEndCollidable = oppositeCollider->component->z + oppositeCollider->component->vz;
+
+        if(oppositeCollider->id != entity && (zStartEntity <= zEndCollidable && zStartCollidable <= zEndEntity)) {
             if(axis == Axis::X) {
                 double yStartEntity = entityRectCollider->y;
                 double yEndEntity = entityRectCollider->y + entityRectCollider->h;
