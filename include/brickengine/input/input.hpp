@@ -4,11 +4,11 @@
 #include "brickengine/input/player_input.hpp"
 #include "SDL2/SDL.h"
 
-class BrickInput {
+class Input {
 
 public:
-    BrickInput() = default;
-    static BrickInput& getInstance();
+    Input() = default;
+    static Input& getInstance();
     void setInputMapping(std::unordered_map<SDL_Keycode, PlayerInput>& gameInput);
     // This function is intended for the UI so the game loop is not affected.
     void popInput(PlayerInput const input);

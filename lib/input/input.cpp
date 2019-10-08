@@ -3,12 +3,12 @@
 #include "SDL2/SDL.h"
 #include <algorithm>
 
-BrickInput& BrickInput::getInstance() {
-    static BrickInput INSTANCE;
+Input& Input::getInstance() {
+    static Input INSTANCE;
     return INSTANCE;
 }
 
-void BrickInput::processInput(){
+void Input::processInput(){
     SDL_Event e;
     while (SDL_PollEvent(&e))
     {
@@ -28,14 +28,14 @@ void BrickInput::processInput(){
     }
 }
 
-void BrickInput::setInputMapping(std::unordered_map<SDL_Keycode, PlayerInput>& gameInput) {
+void Input::setInputMapping(std::unordered_map<SDL_Keycode, PlayerInput>& gameInput) {
     inputMapping = gameInput;
     for(auto it : inputMapping) {
         inputs[it.second] = false;
     }
 }
 
-bool BrickInput::remapInput(PlayerInput input) {
+bool Input::remapInput(PlayerInput input) {
     //Search for the old value
     auto oldInput = std::find_if(inputMapping.begin(),inputMapping.end(),
                                                 [&input](const std::pair<SDL_Keycode, PlayerInput>& value)
@@ -64,13 +64,13 @@ bool BrickInput::remapInput(PlayerInput input) {
     }
 }
 
-bool BrickInput::checkInput(PlayerInput const input) {
+bool Input::checkInput(PlayerInput const input) {
     if(inputs.count(input))
         return inputs[input];
     return false;
 }
 
-void BrickInput::popInput(PlayerInput const input) {
+void Input::popInput(PlayerInput const input) {
     if(inputs.count(input))
         inputs[input] = false;
 }
