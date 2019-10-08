@@ -3,11 +3,11 @@
 
 #include "brickengine/components/component.hpp"
 
-class CollisionComponent : public Component {
+class CollisionComponent : public ComponentImpl<CollisionComponent> {
 public:
     CollisionComponent(double x, double y, int z, int vz): x(x), y(y), z(z), vz(vz) { };
     CollisionComponent() : x(0), y(0), z(0), vz(0) { };
-	std::string getName() {
+	static std::string getNameStatic() {
 		return "CollisionComponent";
 	};
     double x;

@@ -10,12 +10,11 @@
 #include "brickengine/components/collision/collision_component.hpp"
 #include "brickengine/components/collision/square_collision_component.hpp"
 
-CollisionSystem::CollisionSystem(EntityManager* entityManager) : entityManager(entityManager) {};
+CollisionSystem::CollisionSystem(EntityManager* entityManager) : entityManager(entityManager) {}
 
 double CollisionSystem::canMove(int entity, Axis axis, Direction direction) {
     //We only support squares.
     auto entityRectCollider = entityManager->getComponent<SquareCollisionComponent>(entity);
-    double collisionWallX;
     auto collidableEntities = entityManager->getEntitiesByComponent<SquareCollisionComponent>();
 
     double spaceLeft = std::numeric_limits<double>::max(); //Distance to closest object
