@@ -1,10 +1,14 @@
 #include "brickengine/rendering/renderables/circle.hpp"
 
 Circle::Circle(int x, int y, int radius, bool filled, Color color, int layer) :
-               Renderable(layer), x(x), y(y), radius(radius), filled(filled), color(color) {}
+               CloneRenderable(layer), x(x), y(y), radius(radius), filled(filled), color(color) {}
 
 void Circle::render(Renderer& r) {
     r.render(*this);
+}
+
+std::unique_ptr<CloneRenderable> Circle::clone() {
+    return std::make_unique<Circle>(x, y, radius, filled, color, layer);
 }
 
 // Getters

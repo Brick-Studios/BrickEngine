@@ -1,11 +1,15 @@
 #include "brickengine/rendering/renderables/line.hpp"
 
 Line::Line(int x1, int y1, int x2, int y2, Color color, int layer) :
-           Renderable(layer),
+           CloneRenderable(layer),
            x1(x1), y1(y1), x2(x2), y2(y2), color(color) {}
 
 void Line::render(Renderer& r) {
     r.render(*this);
+}
+
+std::unique_ptr<CloneRenderable> Line::clone() {
+    return std::make_unique<Line>(x1, y1, x2, y2, color, layer);
 }
 
 // Getters

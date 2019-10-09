@@ -1,13 +1,13 @@
 #ifndef FILE_LINE_HPP
 #define FILE_LINE_HPP
 
-#include "brickengine/rendering/renderables/renderable.hpp"
+#include "brickengine/rendering/renderables/clone_renderable.hpp"
 #include "brickengine/rendering/renderables/data/color.hpp"
 #include "brickengine/rendering/renderer.hpp"
 
 class Renderer;
 
-class Line : public Renderable {
+class Line : public CloneRenderable {
 public:
     Line(int x1, int y1, int x2, int y2, Color color, int layer);
     void render(Renderer& r);
@@ -16,6 +16,7 @@ public:
     int getX2() const;
     int getY2() const;
     Color getColor() const;
+    std::unique_ptr<CloneRenderable> clone();
 private:
     int x1, y1;
     int x2, y2;
