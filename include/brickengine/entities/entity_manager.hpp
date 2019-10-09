@@ -54,10 +54,11 @@ public:
     template <typename T, typename = std::enable_if_t<std::is_base_of_v<Component, T>>>
     T* getComponent(const int entityId) const {
         std::string componentType = T::getNameStatic();
-        if(components_by_class->count(componentType) > 0)
-            return (T*) components_by_class->at(componentType).at(entityId).get();
-        else
-            return (T*) nullptr;
+        if(components_by_class->count(componentType) > 0) {
+            if (components_by_class->at(componentType).count(entityId) > 0)
+                return (T*) components_by_class->at(componentType).at(entityId).get();
+        }
+        return (T*) nullptr;
     }
 
     void addComponentToEntity(const int entityId, std::unique_ptr<Component> component){

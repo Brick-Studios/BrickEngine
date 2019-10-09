@@ -9,6 +9,9 @@ class PhysicsSystem : public System {
 public:
     PhysicsSystem(std::shared_ptr<EntityManager>);
     void update(double deltatime);
+private:
+    static constexpr double GRAVITY = 50;
+    static constexpr double TERMINAL_VELOCITY = 200;
 };
 
 #endif // FILE_PHYSICS_SYSTEM_HPP

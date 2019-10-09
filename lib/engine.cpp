@@ -9,6 +9,7 @@
 #include "SDL2/SDL2_gfxPrimitives.h"
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_ttf.h"
+#include "SDL2/SDL_image.h"
 
 BrickEngine::BrickEngine(const std::string window_name, const int window_width, const int window_heigth, std::vector<int> layers) : window(nullptr, nullptr) {
     //Initialize SDL
@@ -23,6 +24,14 @@ BrickEngine::BrickEngine(const std::string window_name, const int window_width, 
         std::cout << "SDL_ttf failed to init! SDL_Error: " << SDL_GetError() << std::endl;
         exit(1);
     }
+     //Initialize SDL_image
+    // load support for the JPG and PNG image formats
+    int img_flags = IMG_INIT_JPG | IMG_INIT_PNG;
+    int img_initted_flags = IMG_Init(img_flags);
+    if((img_initted_flags&img_flags) != img_flags) {
+        std::cout << "SDL_image failed to init with JPG and PNG support! SDL_Error: " << TTF_GetError() << std::endl;
+        exit(1);
+    }
 
     SDL_Window* window_ptr(SDL_CreateWindow(
       window_name.c_str(),
@@ -34,7 +43,7 @@ BrickEngine::BrickEngine(const std::string window_name, const int window_width, 
     ));
     if(!window_ptr)
     {
-        std::cout << "SDL window failed to open! SDL_Error: " << SDL_GetError() << std::endl;
+        std::cout << "SDL window failed to open! SDL_Error: " << IMG_GetError() << std::endl;
         exit(1);
     }
     this->window = std::unique_ptr<SDL_Window, void(*)(SDL_Window*)>(window_ptr, SDL_DestroyWindow);
@@ -58,6 +67,7 @@ BrickEngine::BrickEngine(const std::string window_name, const int window_width, 
 BrickEngine::~BrickEngine() {
     SDL_Quit();
     TTF_Quit();
+    IMG_Quit();
 }
 
 void BrickEngine::delay(const Uint32 ms) const {
