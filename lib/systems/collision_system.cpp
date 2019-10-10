@@ -17,7 +17,7 @@ double CollisionSystem::canMove(int entity, Axis axis, Direction direction) {
     auto entityRectCollider = entityManager->getComponent<SquareCollisionComponent>(entity);
     auto collidableEntities = entityManager->getEntitiesByComponent<SquareCollisionComponent>();
 
-    double spaceLeft = std::numeric_limits<double>::max(); //Distance to closest object
+    double spaceLeft = std::numeric_limits<double>::infinity(); //Distance to closest object
     for(auto& oppositeCollider : *collidableEntities) {
         int zStartEntity = entityRectCollider->z;
         int zEndEntity = entityRectCollider->z + entityRectCollider->vz;
