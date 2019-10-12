@@ -2,6 +2,7 @@
 #define FILE_ENTITY_MANAGER_HPP
 
 #include "brickengine/components/component.hpp"
+#include "brickengine/components/component_impl.hpp"
 #include "brickengine/entities/entity_with_component.hpp"
 
 #include <iostream>
@@ -30,9 +31,14 @@ public:
 
     template <typename T, typename = std::enable_if_t<std::is_base_of_v<Component, T>>>
     std::unique_ptr<std::vector<std::unique_ptr<EntityWithComponent<T>>>> getEntitiesByComponent(){
-        auto c = std::unique_ptr<Component>(new T());
-        std::string componentType = c->getName();
-        auto list = std::unique_ptr<std::vector<std::unique_ptr<EntityWithComponent<T>>>>(new std::vector<std::unique_ptr<EntityWithComponent<T>>>(components_by_class->at(componentType).size()));
+        std::string componentType = T::getNameStatic();
+        if (components_by_class->count(componentType) < 1)
+            return std::unique_ptr<std::vector<std::unique_ptr<EntityWithComponent<T>>>>(new std::vector<std::unique_ptr<EntityWithComponent<T>>>());
+        auto list = std::unique_ptr<std::vector<std::unique_ptr<EntityWithComponent<T>>>>(
+            new std::vector<std::unique_ptr<EntityWithComponent<T>>>(
+                components_by_class->at(componentType).size()
+            )
+        );
         list.get()->clear();
         if(components_by_class->count(componentType) > 0){
             for(auto const& obj : components_by_class->at(componentType)){
@@ -45,16 +51,14 @@ public:
 
     template <typename T, typename = std::enable_if_t<std::is_base_of_v<Component, T>>>
     void removeComponentFromEntity(const int entityId){
-        auto c = std::unique_ptr<Component>(new T());
-        std::string componentType = c->getName();
+        std::string componentType = T::getNameStatic();
 
         components_by_class->at(componentType).erase(entityId);
     }
 
     template <typename T, typename = std::enable_if_t<std::is_base_of_v<Component, T>>>
     T* getComponent(const int entityId) const {
-        auto c = std::unique_ptr<Component>(new T());
-        std::string componentType { c->getName() };
+        std::string componentType = T::getNameStatic();
         if(components_by_class->count(componentType) > 0)
             return (T*) components_by_class->at(componentType).at(entityId).get();
         else
