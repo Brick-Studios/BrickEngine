@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <memory>
+#include <thread>
 
 #include "brickengine/engine.hpp"
 #include "brickengine/rendering/renderer.hpp"
@@ -10,7 +11,7 @@
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_ttf.h"
 
-BrickEngine::BrickEngine(const std::string window_name, const int window_width, const int window_heigth, std::vector<int> layers) : window(nullptr, nullptr) {
+BrickEngine::BrickEngine(const std::string window_name, const int window_width, const int window_heigth, std::vector<int> layers, int fps_cap) : fps_cap(fps_cap), window(nullptr, nullptr) {
     //Initialize SDL
     if(SDL_Init( SDL_INIT_VIDEO ) != 0)
     {
@@ -60,12 +61,29 @@ BrickEngine::~BrickEngine() {
     TTF_Quit();
 }
 
-void BrickEngine::delay(const Uint32 ms) const {
-    SDL_Delay(ms);
+void BrickEngine::delay(std::chrono::time_point<std::chrono::high_resolution_clock> start_time,
+                          std::chrono::time_point<std::chrono::high_resolution_clock> end_time) {
+    auto delta_time_in_nanoseconds = std::chrono::duration_cast<std::chrono::nanoseconds>(end_time - start_time).count();
+    auto delay = (1'000'000'000 / fps_cap) - delta_time_in_nanoseconds;
+    //Updating deltatime for ECS
+    this->delta_time = (delta_time_in_nanoseconds + delay) / 1'000'000'000.0;
+    this->fps = 1'000'000'000 / (delta_time_in_nanoseconds + delay);
+    std::this_thread::sleep_for(std::chrono::nanoseconds(delay));
 }
 
-Uint32 BrickEngine::getTicks() {
-    return SDL_GetTicks();
+void BrickEngine::drawFpsCounter() {
+    auto dst = std::unique_ptr<Rect>(new Rect { 0, 0, 75, 75});
+    this->fps_counter.~unique_ptr();
+    this->fps_counter = this->getRenderableFactory()->createText(std::to_string(this->fps), 24, { 255, 255, 255, 0}, 1, std::move(dst));
+    this->getRenderer()->queueRenderable(fps_counter.get());
+}
+
+int BrickEngine::getFps() const {
+    return this->fps;
+}
+
+double BrickEngine::getDeltatime() const {
+    return this->delta_time;
 }
 
 RenderableFactory* BrickEngine::getRenderableFactory() const {
