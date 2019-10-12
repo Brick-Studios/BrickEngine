@@ -6,7 +6,7 @@
 BrickInput& BrickInput::getInstance() {
     static BrickInput INSTANCE;
     return INSTANCE;
-};
+}
 
 void BrickInput::processInput(){
     SDL_Event e;
@@ -26,14 +26,14 @@ void BrickInput::processInput(){
             
         }
     }
-};
+}
 
 void BrickInput::setInputMapping(std::unordered_map<SDL_Keycode, PlayerInput>& gameInput) {
     inputMapping = gameInput;
     for(auto it : inputMapping) {
         inputs[it.second] = false;
     }
-};
+}
 
 bool BrickInput::remapInput(PlayerInput input) {
     //Search for the old value
@@ -62,13 +62,13 @@ bool BrickInput::remapInput(PlayerInput input) {
             }
         }
     }
-};
+}
 
 bool BrickInput::checkInput(PlayerInput const input) {
     if(inputs.count(input))
         return inputs[input];
     return false;
-};
+}
 
 void BrickInput::popInput(PlayerInput const input) {
     if(inputs.count(input))
