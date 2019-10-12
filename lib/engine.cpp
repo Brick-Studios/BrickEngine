@@ -75,7 +75,7 @@ void BrickEngine::drawFpsCounter() {
     auto dst = std::unique_ptr<Rect>(new Rect { 0, 0, 75, 75});
     this->fps_counter.~unique_ptr();
     this->fps_counter = this->getRenderableFactory()->createText(std::to_string(this->fps), 24, { 255, 255, 255, 0}, 1, std::move(dst));
-    this->getRenderer()->queueRenderable(fps_counter.get());
+    this->getRenderer()->queueRenderable(*fps_counter);
 }
 
 int BrickEngine::getFps() const {
