@@ -16,16 +16,18 @@
 
 class BrickEngine {
 public:
+    using EngineTick = std::chrono::time_point<std::chrono::high_resolution_clock>;
     // You need to supply all the used layers to this constructors, layers that the engine doesn't know of will not get drawn!
     BrickEngine(const std::string window_name, const int window_width, const int window_heigth, std::vector<int> layers, int fps_cap);
     ~BrickEngine();
-    void delay(std::chrono::time_point<std::chrono::high_resolution_clock> start_time,
-                std::chrono::time_point<std::chrono::high_resolution_clock> end_time);
+    void delay(EngineTick start_time,
+                EngineTick end_time);
     void drawFpsCounter();
     RenderableFactory* getRenderableFactory() const;
     Renderer* getRenderer() const;
     int getFps() const;
     double getDeltatime() const;
+    EngineTick getTicks() const;
 private:
     int top_layer;
     int fps;

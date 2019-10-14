@@ -83,7 +83,9 @@ void BrickEngine::delay(std::chrono::time_point<std::chrono::high_resolution_clo
         delay = (fps_frame_time - delta_time);
         SDL_Delay(delay);
     }
-    this->fps = 1.0 / (delta_time + delay);
+
+    this->delta_time += delay;
+    this->fps = 1.0 / delta_time;
 }
 
 void BrickEngine::drawFpsCounter() {
@@ -108,4 +110,8 @@ Renderer* BrickEngine::getRenderer() const {
     return this->renderer.get();
 }
 
+
+BrickEngine::EngineTick BrickEngine::getTicks() const {
+    return std::chrono::high_resolution_clock::now();
+}
 
