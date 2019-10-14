@@ -15,4 +15,4 @@ public:
     double yScale;
 };
 
-#endif /* FILE_TRANSFORM_HPP */
+#endif // FILE_TRANSFORM_HPP
