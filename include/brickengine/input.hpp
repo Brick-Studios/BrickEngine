@@ -23,7 +23,7 @@ public:
         if(inputs.count(input))
             inputs[input] = false;
     }
-    bool checkInput(T const input) {
+    bool checkInput(T const input) const {
         if(inputs.count(input))
             return inputs[input];
         return false;
