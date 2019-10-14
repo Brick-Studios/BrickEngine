@@ -5,11 +5,9 @@
 
 class System{
 public:
-    System(std::shared_ptr<EntityManager> _entityManager) : entityManager(_entityManager) {
-
-    };
-    virtual ~System();
-    virtual void update(double deltaTime) = 0;
+    System(std::shared_ptr<EntityManager> _entityManager) : entityManager(_entityManager) {}
+    virtual ~System() = default;
+    virtual void update(double deltatime) = 0;
 protected:
     std::shared_ptr<EntityManager> entityManager;
 };

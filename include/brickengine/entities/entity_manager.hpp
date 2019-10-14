@@ -3,7 +3,6 @@
 
 #include "brickengine/components/component.hpp"
 #include "brickengine/components/component_impl.hpp"
-#include "brickengine/entities/entity_with_component.hpp"
 
 #include <iostream>
 #include <string>
@@ -11,6 +10,7 @@
 #include <memory>
 #include <unordered_map> 
 #include <type_traits>
+#include <utility>
 
 class EntityManager{
 public:
@@ -30,20 +30,15 @@ public:
     }
 
     template <typename T, typename = std::enable_if_t<std::is_base_of_v<Component, T>>>
-    std::unique_ptr<std::vector<std::unique_ptr<EntityWithComponent<T>>>> getEntitiesByComponent(){
+    std::unique_ptr<std::vector<std::pair<int, T*>>> getEntitiesByComponent(){
         std::string componentType = T::getNameStatic();
         if (components_by_class->count(componentType) < 1)
-            return std::unique_ptr<std::vector<std::unique_ptr<EntityWithComponent<T>>>>(new std::vector<std::unique_ptr<EntityWithComponent<T>>>());
-        auto list = std::unique_ptr<std::vector<std::unique_ptr<EntityWithComponent<T>>>>(
-            new std::vector<std::unique_ptr<EntityWithComponent<T>>>(
-                components_by_class->at(componentType).size()
-            )
-        );
-        list.get()->clear();
+            return std::make_unique<std::vector<std::pair<int, T*>>>();
+        auto list = std::make_unique<std::vector<std::pair<int, T*>>>(components_by_class->at(componentType).size());
+        list->clear();
         if(components_by_class->count(componentType) > 0){
-            for(auto const& obj : components_by_class->at(componentType)){
-                std::unique_ptr<EntityWithComponent<T>> ewc (new EntityWithComponent<T>(obj.first, dynamic_cast<T*>(obj.second.get())));
-                list.get()->push_back(std::move(ewc));
+            for(auto const& [entityId, component] : components_by_class->at(componentType)){
+                list->push_back(std::make_pair(entityId, dynamic_cast<T*>(component.get())));
             }
         }
         return list;
@@ -59,10 +54,11 @@ public:
     template <typename T, typename = std::enable_if_t<std::is_base_of_v<Component, T>>>
     T* getComponent(const int entityId) const {
         std::string componentType = T::getNameStatic();
-        if(components_by_class->count(componentType) > 0)
-            return (T*) components_by_class->at(componentType).at(entityId).get();
-        else
-            return (T*) nullptr;
+        if(components_by_class->count(componentType) > 0) {
+            if (components_by_class->at(componentType).count(entityId) > 0)
+                return (T*) components_by_class->at(componentType).at(entityId).get();
+        }
+        return (T*) nullptr;
     }
 
     void addComponentToEntity(const int entityId, std::unique_ptr<Component> component){

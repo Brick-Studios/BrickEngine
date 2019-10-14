@@ -14,10 +14,13 @@ public:
     virtual Rect* getSrcRect() const;
     virtual Rect* getDstRect() const;
     virtual SDL_Texture* getTexture() const;
+    SDL_RendererFlip getFlip() const;
+    void setFlip(SDL_RendererFlip flip);
 protected:
     std::unique_ptr<SDL_Texture, void(*)(SDL_Texture*)> texture;
     std::unique_ptr<Rect> src;
     std::unique_ptr<Rect> dst;
+    SDL_RendererFlip flip;
 };
 
 #endif // FILE_TEXTURE_HPP
