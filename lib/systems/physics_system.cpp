@@ -9,29 +9,29 @@ void PhysicsSystem::update(double deltatime) {
     auto entitiesWithPhysics = entityManager->getEntitiesByComponent<PhysicsComponent>();
 
     for(auto [entityId, physics] : *entitiesWithPhysics){
-        if (physics->getKinematic()) {
-            physics->setXVelocity(0);
-            physics->setYVelocity(0);
+        if (physics->kinematic) {
+            physics->vx = 0;
+            physics->vy = 0;
             continue;
         }
 
         auto transform = entityManager->getComponent<TransformComponent>(entityId);
-        double mass = physics->getMass();
+        double mass = physics->mass;
 
-        if (physics->getGravity()) {
+        if (physics->gravity) {
             // Also do collisions
-            double vy = physics->getYVelocity() + (GRAVITY * mass * deltatime);
+            double vy = physics->vy + (GRAVITY * mass * deltatime);
 
             if (vy > TERMINAL_VELOCITY)
                 vy = TERMINAL_VELOCITY;
 
-            physics->setYVelocity(vy);
+            physics->vy = vy;
         }
 
-        double x = transform->getXPos() + (physics->getXVelocity() * deltatime);
-        double y = transform->getYPos() + (physics->getYVelocity() * deltatime);
+        double x = transform->xPos + (physics->vx * deltatime);
+        double y = transform->yPos + (physics->vy * deltatime);
 
-        transform->setXPos(x);
-        transform->setYPos(y);
+        transform->xPos = x;
+        transform->yPos = y;
     }
 }

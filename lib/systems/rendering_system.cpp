@@ -14,18 +14,18 @@ void RenderingSystem::update(double){
         auto transform = entityManager->getComponent<TransformComponent>(entityId);
 
         auto dst = texture->getTexture()->getDstRect();
-        int x = transform->getXPos() - (transform->getXScale() / 2);
-        int y = transform->getYPos() - (transform->getYScale() / 2);
+        int x = transform->xPos - (transform->xScale / 2);
+        int y = transform->yPos - (transform->yScale / 2);
         dst->x = x;
         dst->y = y;
-        dst->w = transform->getXScale();
-        dst->h = transform->getYScale();
+        dst->w = transform->xScale;
+        dst->h = transform->yScale;
 
         auto physics = entityManager->getComponent<PhysicsComponent>(entityId);
         if (physics) {
-            if (physics->getXVelocity() < 0) {
+            if (physics->vx < 0) {
                 texture->getTexture()->setFlip(SDL_FLIP_HORIZONTAL);
-            } else if (physics->getXVelocity() > 0) {
+            } else if (physics->vx > 0) {
                 texture->getTexture()->setFlip(SDL_FLIP_NONE);
             }
         }
