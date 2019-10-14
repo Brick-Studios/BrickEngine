@@ -14,4 +14,4 @@ private:
     Renderer& renderer;
 };
 
-#endif /* FILE_RENDERING_SYSTEM_HPP */
+#endif // FILE_RENDERING_SYSTEM_HPP
