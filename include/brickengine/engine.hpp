@@ -27,6 +27,7 @@ public:
     int getFps() const;
     double getDeltatime() const;
 private:
+    int top_layer;
     int fps;
     int fps_cap;
     double delta_time;
