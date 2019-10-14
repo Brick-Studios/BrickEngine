@@ -1,5 +1,6 @@
 #include <iostream>
 #include <unordered_map>
+#include <algorithm>
 
 #include "SDL2/SDL.h"
 
@@ -25,7 +26,7 @@ public:
     }
     bool checkInput(T const input) const {
         if(inputs.count(input))
-            return inputs[input];
+            return inputs.at(input);
         return false;
     }
     bool remapInput(T const input) {
