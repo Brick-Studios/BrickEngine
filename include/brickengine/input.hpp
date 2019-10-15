@@ -6,7 +6,6 @@
 
 template<typename T>
 class BrickInput {
-
 public:
     BrickInput() = default;
     static BrickInput<T>& getInstance() {
@@ -81,5 +80,4 @@ private:
     std::unordered_map<T, bool> inputs;
     // SDL inputs mapped to game input
     std::unordered_map<SDL_Keycode, T> inputMapping;
-
 };

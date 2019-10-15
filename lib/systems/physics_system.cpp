@@ -3,7 +3,8 @@
 #include "brickengine/components/transform_component.hpp"
 #include <iostream>
 
-PhysicsSystem::PhysicsSystem(std::shared_ptr<EntityManager> em) : System(em) {}
+PhysicsSystem::PhysicsSystem(std::shared_ptr<CollisionDetector> cd, std::shared_ptr<EntityManager> em)
+                : System(em), collisionDetector(cd) {}
 
 void PhysicsSystem::update(double deltatime) {
     auto entitiesWithPhysics = entityManager->getEntitiesByComponent<PhysicsComponent>();
@@ -28,10 +29,41 @@ void PhysicsSystem::update(double deltatime) {
             physics->vy = vy;
         }
 
-        double x = transform->xPos + (physics->vx * deltatime);
-        double y = transform->yPos + (physics->vy * deltatime);
+        if (physics->vx > 0) { // Moving right
+            double canMove = collisionDetector->canMove(entityId, Axis::X, Direction::POSITIVE);
+            double wantToMove  = physics->vx * deltatime;
 
-        transform->xPos = x;
-        transform->yPos = y;
+            if (wantToMove >= canMove)
+                transform->xPos = transform->xPos + canMove;
+            else if (wantToMove < canMove)
+                transform->xPos = transform->xPos + wantToMove;
+        }
+        if (physics->vx < 0) { // Moving left
+            double canMove = collisionDetector->canMove(entityId, Axis::X, Direction::NEGATIVE);
+            double wantToMove = physics->vx * deltatime;
+
+            if (wantToMove <= canMove) {
+                transform->xPos = transform->xPos + canMove;
+            } else if (wantToMove > canMove)
+                transform->xPos = transform->xPos + wantToMove;
+        }
+        if (physics->vy > 0) { // Moving down
+            double canMove = collisionDetector->canMove(entityId, Axis::Y, Direction::POSITIVE);
+            double wantToMove = physics->vy * deltatime;
+
+            if (wantToMove >= canMove)
+                transform->yPos = transform->yPos + canMove;
+            else if (wantToMove < canMove)
+                transform->yPos = transform->yPos + wantToMove;
+        }
+        if (physics->vy < 0) { // Moving up
+            double canMove = collisionDetector->canMove(entityId, Axis::Y, Direction::NEGATIVE);
+            double wantToMove = physics->vy * deltatime;
+
+            if (wantToMove <= canMove)
+                transform->yPos = transform->yPos + canMove;
+            else if (wantToMove > canMove)
+                transform->yPos = transform->yPos + wantToMove;
+        }
     }
 }
