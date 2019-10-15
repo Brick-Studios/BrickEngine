@@ -41,7 +41,7 @@ BrickEngine::BrickEngine(const std::string window_name, const int window_width, 
 
 
 
-    SDL_Renderer* renderer_ptr(SDL_CreateRenderer(this->window.get(), -1, SDL_RENDERER_ACCELERATED));
+    SDL_Renderer* renderer_ptr(SDL_CreateRenderer(this->window.get(), -1, SDL_RENDERER_SOFTWARE));
     if(!renderer_ptr)
     {
         std::cout << "SDL renderer failed to open! SDL_Error: " << SDL_GetError() << std::endl;
