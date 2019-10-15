@@ -2,6 +2,7 @@
 #include <string>
 #include <iostream>
 #include "SDL2/SDL_ttf.h"
+#include "SDL2/SDL_image.h"
 
 #include "brickengine/rendering/renderable_factory.hpp"
 #include "brickengine/rendering/renderer.hpp"
@@ -51,11 +52,11 @@ std::unique_ptr<Line> RenderableFactory::createLine(int x1, int y1, int x2, int 
 }
 
 SDL_Texture* RenderableFactory::createBMPTexture(std::string path) const {
-    SDL_Surface* surface = SDL_LoadBMP(path.c_str());
+    SDL_Surface* surface = IMG_Load(path.c_str());
 
     if (surface == nullptr) {
         std::cout << "Failed to load surface " << path
-            << " error : " << SDL_GetError() << std::endl;
+            << " error : " << IMG_GetError() << std::endl;
         return nullptr;
     }
 

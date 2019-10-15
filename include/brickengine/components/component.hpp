@@ -11,4 +11,4 @@ public:
     virtual std::string getName() = 0;
 };
 
-#endif /* FILE_COMPONENT_HPP */
+#endif // FILE_COMPONENT_HPP
