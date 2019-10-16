@@ -6,4 +6,4 @@ enum class Axis {
     Y 
 };
 
-#endif
+#endif //FILE_AXIS_HPP

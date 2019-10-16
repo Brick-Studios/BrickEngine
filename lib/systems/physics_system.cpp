@@ -30,39 +30,39 @@ void PhysicsSystem::update(double deltatime) {
         }
 
         if (physics->vx > 0) { // Moving right
-            double canMove = collisionDetector->canMove(entityId, Axis::X, Direction::POSITIVE);
+            double spaceLeft = collisionDetector->spaceLeft(entityId, Axis::X, Direction::POSITIVE);
             double wantToMove  = physics->vx * deltatime;
 
-            if (wantToMove >= canMove)
-                transform->xPos = transform->xPos + canMove;
-            else if (wantToMove < canMove)
+            if (wantToMove >= spaceLeft)
+                transform->xPos = transform->xPos + spaceLeft;
+            else if (wantToMove < spaceLeft)
                 transform->xPos = transform->xPos + wantToMove;
         }
         if (physics->vx < 0) { // Moving left
-            double canMove = collisionDetector->canMove(entityId, Axis::X, Direction::NEGATIVE);
+            double spaceLeft = collisionDetector->spaceLeft(entityId, Axis::X, Direction::NEGATIVE);
             double wantToMove = physics->vx * deltatime;
 
-            if (wantToMove <= canMove) {
-                transform->xPos = transform->xPos + canMove;
-            } else if (wantToMove > canMove)
+            if (wantToMove <= spaceLeft) {
+                transform->xPos = transform->xPos + spaceLeft;
+            } else if (wantToMove > spaceLeft)
                 transform->xPos = transform->xPos + wantToMove;
         }
         if (physics->vy > 0) { // Moving down
-            double canMove = collisionDetector->canMove(entityId, Axis::Y, Direction::POSITIVE);
+            double spaceLeft = collisionDetector->spaceLeft(entityId, Axis::Y, Direction::POSITIVE);
             double wantToMove = physics->vy * deltatime;
 
-            if (wantToMove >= canMove)
-                transform->yPos = transform->yPos + canMove;
-            else if (wantToMove < canMove)
+            if (wantToMove >= spaceLeft)
+                transform->yPos = transform->yPos + spaceLeft;
+            else if (wantToMove < spaceLeft)
                 transform->yPos = transform->yPos + wantToMove;
         }
         if (physics->vy < 0) { // Moving up
-            double canMove = collisionDetector->canMove(entityId, Axis::Y, Direction::NEGATIVE);
+            double spaceLeft = collisionDetector->spaceLeft(entityId, Axis::Y, Direction::NEGATIVE);
             double wantToMove = physics->vy * deltatime;
 
-            if (wantToMove <= canMove)
-                transform->yPos = transform->yPos + canMove;
-            else if (wantToMove > canMove)
+            if (wantToMove <= spaceLeft)
+                transform->yPos = transform->yPos + spaceLeft;
+            else if (wantToMove > spaceLeft)
                 transform->yPos = transform->yPos + wantToMove;
         }
     }
