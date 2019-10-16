@@ -12,25 +12,31 @@ public:
         static BrickInput<T> INSTANCE;
         return INSTANCE;
     }
-    void setInputMapping(std::unordered_map<SDL_Keycode, T>& gameInput) {
+
+    void setInputMapping(std::unordered_map<int, std::unordered_map<SDL_Keycode, T>>& gameInput) {
         inputMapping = gameInput;
-        for(auto it : inputMapping) {
-            inputs[it.second] = false;
+        for(auto [playerId, mapping] : inputMapping) {
+            for(auto [sdl_key, input] : mapping){
+                inputs[playerId][input] = false;
+            }
         }
     }
+    
     // This function is intended for the UI so the game loop is not affected.
-    void popInput(T const input) {
-        if(inputs.count(input))
-            inputs[input] = false;
+    void popInput(int playerId, T const input) {
+        if(inputs[playerId].count(input))
+            inputs[playerId][input] = false;
     }
-    bool checkInput(T const input) const {
-        if(inputs.count(input))
-            return inputs.at(input);
+
+    bool checkInput(int playerId, T const input) {
+        if(inputs[playerId].count(input))
+            return inputs[playerId].at(input);
         return false;
     }
-    bool remapInput(T const input) {
+
+    bool remapInput(int playerId, T const input) {
         //Search for the old value
-        auto oldInput = std::find_if(inputMapping.begin(),inputMapping.end(),
+        auto oldInput = std::find_if(inputMapping.at(playerId).begin(),inputMapping.at(playerId).end(),
                                                     [&input](const std::pair<SDL_Keycode, T>& value)
                                                    { return value.second == input; });
         SDL_Event e;
@@ -42,42 +48,45 @@ public:
                         return true;
                     }
                     //Input is not already used
-                    if(inputMapping.count(e.key.keysym.sym) == 0)
+                    if(inputMapping.at(playerId).count(e.key.keysym.sym) == 0)
                     {
-                        inputMapping[e.key.keysym.sym] = input;
+                        inputMapping[playerId][e.key.keysym.sym] = input;
                         //Removing old key mapping
-                        inputMapping.erase(oldInput->first);
+                        inputMapping.at(playerId).erase(oldInput->first);
                         return true; 
                     }
                     //Key is used
-                    if(inputMapping.count(e.key.keysym.sym) == 1)
+                    if(inputMapping.at(playerId).count(e.key.keysym.sym) == 1)
                         return false;
                 }
             }
         }
     }
+    
     void processInput() {
         SDL_Event e;
         while (SDL_PollEvent(&e))
         {
             // Checking if input is mapped.
-            if(inputMapping.find(e.key.keysym.sym) != inputMapping.end() && e.key.repeat == 0) {
-                switch(e.type) {
-                    case SDL_KEYDOWN:
-                        inputs[inputMapping[e.key.keysym.sym]] = true;
-                        break;
-                    case SDL_KEYUP:
-                        inputs[inputMapping[e.key.keysym.sym]] = false;
-                    default:
-                        break;
+            for(auto [playerId, mapping] : inputs){
+                if(inputMapping.at(playerId).find(e.key.keysym.sym) != inputMapping.at(playerId).end() && e.key.repeat == 0) {
+                    switch(e.type) {
+                        case SDL_KEYDOWN:
+                            inputs[playerId][inputMapping[playerId][e.key.keysym.sym]] = true;
+                            break;
+                        case SDL_KEYUP:
+                            inputs[playerId][inputMapping[playerId][e.key.keysym.sym]] = false;
+                        default:
+                            break;
+                    }
+                    
                 }
-                
             }
         }
     }
 private:
     // List of mapped inputs
-    std::unordered_map<T, bool> inputs;
+    std::unordered_map<int, std::unordered_map<T, bool>> inputs;
     // SDL inputs mapped to game input
-    std::unordered_map<SDL_Keycode, T> inputMapping;
+    std::unordered_map<int, std::unordered_map<SDL_Keycode, T>> inputMapping;
 };
