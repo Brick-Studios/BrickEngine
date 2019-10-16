@@ -11,8 +11,8 @@ public:
     PhysicsSystem(std::shared_ptr<CollisionDetector> cd, std::shared_ptr<EntityManager> em);
     void update(double deltatime);
 private:
-    static constexpr double GRAVITY = 1;
-    static constexpr double TERMINAL_VELOCITY = 200;
+    static constexpr double GRAVITY = 10;
+    static constexpr double TERMINAL_VELOCITY = 10000;
 
     std::shared_ptr<CollisionDetector> collisionDetector;
 };
