@@ -1,6 +1,7 @@
 #include <iostream>
 #include <unordered_map>
 #include <algorithm>
+#include <tuple>
 
 #include "SDL2/SDL.h"
 
@@ -17,6 +18,7 @@ public:
         inputMapping = gameInput;
         for(auto [playerId, mapping] : inputMapping) {
             for(auto [sdl_key, input] : mapping){
+                std::ignore = sdl_key;
                 inputs[playerId][input] = false;
             }
         }
@@ -69,6 +71,7 @@ public:
         {
             // Checking if input is mapped.
             for(auto [playerId, mapping] : inputs){
+                std::ignore = mapping;
                 if(inputMapping.at(playerId).find(e.key.keysym.sym) != inputMapping.at(playerId).end() && e.key.repeat == 0) {
                     switch(e.type) {
                         case SDL_KEYDOWN:
