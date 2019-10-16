@@ -1,9 +1,9 @@
-#ifndef FILE_ENGINE_INPUT_HPP
-#define FILE_ENGINE_INPUT_HPP
+#ifndef FILE_INPUT_KEYCODES_HPP
+#define FILE_INPUT_KEYCODES_HPP
 
 #include "SDL2/SDL.h"
 
-enum EngineInput {
+enum InputKeyCodes {
     // Numbers
     EKey_0 = SDLK_0,
     EKey_1 = SDLK_1,
@@ -53,4 +53,4 @@ enum EngineInput {
     // More to be added?
 };
 
- #endif // FILE_ENGINE_INPUT_HPP 
+ #endif // FILE_INPUT_KEYCODES_HPP 
