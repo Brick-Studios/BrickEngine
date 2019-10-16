@@ -14,4 +14,4 @@ public:
     double zScale;
 };
 
-#endif
+#endif //FILE_SQUARE_COLLISION_COMPONENT_HPP

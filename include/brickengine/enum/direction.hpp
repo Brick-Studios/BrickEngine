@@ -6,4 +6,4 @@ enum class Direction {
     NEGATIVE 
 };
 
-#endif
+#endif //FILE_DIRECTION_HPP

@@ -14,7 +14,7 @@
 
 CollisionDetector::CollisionDetector(std::shared_ptr<EntityManager> em) : entityManager(em) {}
 
-double CollisionDetector::canMove(int entity, Axis axis, Direction direction) {
+double CollisionDetector::spaceLeft(int entity, Axis axis, Direction direction) {
     //We only support squares.
     auto entityRectCollider = entityManager->getComponent<RectangleColliderComponent>(entity);
     auto entityTransform = entityManager->getComponent<TransformComponent>(entity);
