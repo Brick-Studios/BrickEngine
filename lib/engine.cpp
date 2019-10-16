@@ -14,7 +14,7 @@
 #include "SDL2/SDL_ttf.h"
 #include "SDL2/SDL_image.h"
 
-BrickEngine::BrickEngine(const std::string window_name, const int window_width, const int window_heigth, std::vector<int> layers, int fps_cap) : fps_cap(fps_cap), window(nullptr, nullptr) {
+BrickEngine::BrickEngine(const std::string window_name, const int window_width, const int window_height, std::vector<int> layers, int fps_cap) : fps_cap(fps_cap), window(nullptr, nullptr) {
     //Initialize SDL
     if(SDL_Init( SDL_INIT_VIDEO ) != 0)
     {
@@ -41,7 +41,7 @@ BrickEngine::BrickEngine(const std::string window_name, const int window_width, 
       SDL_WINDOWPOS_UNDEFINED,
       SDL_WINDOWPOS_UNDEFINED,
       window_width,
-      window_heigth,
+      window_height,
       0
     ));
     if(!window_ptr)
