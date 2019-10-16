@@ -1,6 +1,7 @@
 #include <iostream>
 #include <unordered_map>
 #include <algorithm>
+#include <tuple>
 
 #include "SDL2/SDL.h"
 
@@ -17,6 +18,7 @@ public:
         inputMapping = gameInput;
         for(auto [playerId, mapping] : inputMapping) {
             for(auto [sdl_key, input] : mapping){
+                std::ignore = sdl_key;
                 inputs[playerId][input] = false;
             }
         }
