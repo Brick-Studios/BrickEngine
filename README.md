@@ -13,7 +13,7 @@
 
 // Your code here
 
-#endif /* FILE_*FILENAME*_HPP */
+#endif // FILE_*FILENAME*_HPP
 ```
 
 ## Filing your taxes
