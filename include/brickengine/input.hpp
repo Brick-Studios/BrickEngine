@@ -71,6 +71,7 @@ public:
         {
             // Checking if input is mapped.
             for(auto [playerId, mapping] : inputs){
+                std::ignore = mapping;
                 if(inputMapping.at(playerId).find(e.key.keysym.sym) != inputMapping.at(playerId).end() && e.key.repeat == 0) {
                     switch(e.type) {
                         case SDL_KEYDOWN:
