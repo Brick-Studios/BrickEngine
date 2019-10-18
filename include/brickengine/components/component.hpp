@@ -3,11 +3,12 @@
 
 #include <iostream>
 
-class Component{
+class Component {
 public:
     Component() = default;
     virtual ~Component() = default;
 
     virtual std::string getName() = 0;
 };
-#endif /* FILE_COMPONENT_HPP */
+
+#endif // FILE_COMPONENT_HPP
