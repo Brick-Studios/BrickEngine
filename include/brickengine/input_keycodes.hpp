@@ -48,7 +48,14 @@ enum InputKeyCodes {
     EKey_right = SDLK_RIGHT,
     EKey_left = SDLK_LEFT,
     EKey_down = SDLK_DOWN,
-    EKey_up = SDLK_UP
+    EKey_up = SDLK_UP,
+
+    // Special
+    EKey_lshift = SDLK_LSHIFT,
+    EKey_lctrl = SDLK_LCTRL,
+    EKey_space = SDLK_SPACE,
+    Ekey_enter = SDLK_KP_ENTER,
+    EKey_backspace = SDLK_BACKSPACE
 
     // More to be added?
 };
