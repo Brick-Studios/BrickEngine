@@ -12,4 +12,4 @@ public:
     int playerId;
 };
 
-#endif // FILE_PLAYER_COMPONENT_HPP 
+#endif // FILE_PLAYER_COMPONENT_HPP
