@@ -106,7 +106,10 @@ private:
     std::unordered_map<SDL_Keycode, InputKeyCode> keycode_mapping;
 
     std::optional<SDL_Keycode> convertInputKeyCodeToSDLKeycode(InputKeyCode i) {
-        return sdl_mapping.at(i);
+        auto input = sdl_mapping.at(i);
+        if(input != sdl_mapping.end())
+            return std::optional<InputKeyCode>(input->second);
+        return std::nullopt;
     }
     std::optional<InputKeyCode> convertSDLKeycodeInputKeyCode(SDL_Keycode s) {
         auto input = keycode_mapping.find(s);
