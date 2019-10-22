@@ -19,3 +19,4 @@ Please describe the tests that you can run to verify your changes. Please also n
 - [ ] I have commented my code, particularly in hard-to-understand areas
 - [ ] Any dependent changes have been merged and published in downstream modules
 - [ ] Included 1 or more screenshots
+- [ ] Code is const correct
