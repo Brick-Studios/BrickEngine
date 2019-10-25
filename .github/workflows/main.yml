@@ -37,9 +37,6 @@ jobs:
         cd build
         cmake --config Release ..
         make
-    - name: Run tests
-      run: |
-        ./build/BeastArena_Test
     - name: C++ check
       run: |
         sudo apt-get install cppcheck
