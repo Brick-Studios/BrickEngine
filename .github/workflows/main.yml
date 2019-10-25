@@ -19,11 +19,27 @@ jobs:
       run: sudo apt-get update
     - name: Install SDL dependencies
       run: sudo apt-get install libsdl2-dev libsdl2-gfx-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-net-dev libsdl2-ttf-dev
-    - name: Build
+    - name: Build with G++ and Clang++
+      if: github.event_name == 'pull_request'
       run: |
+        export CXX=g++
         cd build
         cmake ..
         make
+        rm -rf *
+        export CXX=clang++
+        cmake ..
+        make
+    - name: Build master
+      if: github.ref == 'master'
+      run: |
+        export CXX=clang++
+        cd build
+        cmake --config Release ..
+        make
+    - name: Run tests
+      run: |
+        ./build/BeastArena_Test
     - name: C++ check
       run: |
         sudo apt-get install cppcheck
