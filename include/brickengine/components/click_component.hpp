@@ -6,10 +6,12 @@
 
 class ClickComponent : public ComponentImpl<ClickComponent> {
 public:
-    ClickComponent(std::function<void ()> fn);
+    ClickComponent(std::function<void ()> fn, double xScale, double yScale);
     static std::string getNameStatic();
 
     std::function<void ()> fn;
+    double xScale;
+    double yScale;
 };
 
 #endif // FILE_CLICK_COMPONENT_HPP

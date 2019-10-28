@@ -1,3 +1,6 @@
+#ifndef FILE_INPUT_HPP
+#define FILE_INPUT_HPP
+
 #include <iostream>
 #include <unordered_map>
 #include <algorithm>
@@ -268,3 +271,4 @@ private:
         keycode_mapping.insert({SDL_BUTTON_RIGHT, InputKeyCode::EKey_mouse_right});
     }
 };
+#endif // FILE_INPUT_HPP
