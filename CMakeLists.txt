@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.13.5)
 project(BrickEngine)
 include(CMakePrintHelpers)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 # Force colors when using ninja with clang
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
