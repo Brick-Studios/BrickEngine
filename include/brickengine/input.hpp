@@ -2,6 +2,7 @@
 #include <unordered_map>
 #include <algorithm>
 #include <tuple>
+#include <utility>
 
 #include "SDL2/SDL.h"
 #include "brickengine/input_keycode.hpp"
@@ -10,7 +11,7 @@ template<typename T>
 class BrickInput {
 public:
     BrickInput(){
-        generateInputs();        
+        generateInputs();
     }
 
     static BrickInput<T>& getInstance() {
@@ -71,32 +72,63 @@ public:
             }
         }
     }
-    
+
     void processInput() {
         SDL_Event e;
         while (SDL_PollEvent(&e))
         {
-            // Checking if input is mapped.
-            for(auto [playerId, mapping] : inputs){
-                std::ignore = mapping;
-                auto input = convertSDLKeycodeInputKeyCode(e.key.keysym.sym);
-                if(input.has_value()) {
-                    if(inputMapping.at(playerId).find(input.value()) != inputMapping.at(playerId).end() && e.key.repeat == 0) {
-                        switch(e.type) {
-                            case SDL_KEYDOWN:
-                                inputs[playerId][inputMapping[playerId][input.value()]] = true;
-                                break;
-                            case SDL_KEYUP:
-                                inputs[playerId][inputMapping[playerId][input.value()]] = false;
-                            default:
-                                break;
+            switch (e.type) {
+                case SDL_KEYDOWN:
+                case SDL_KEYUP:
+                    // Checking if input is mapped.
+                    for(auto [playerId, mapping] : inputs){
+                        std::ignore = mapping;
+                        auto input = convertSDLKeycodeInputKeyCode(e.key.keysym.sym);
+                        if(input.has_value()) {
+                            if(inputMapping.at(playerId).find(input.value()) != inputMapping.at(playerId).end() && e.key.repeat == 0) {
+                                switch(e.type) {
+                                    case SDL_KEYDOWN:
+                                        inputs[playerId][inputMapping[playerId][input.value()]] = true;
+                                        break;
+                                    case SDL_KEYUP:
+                                        inputs[playerId][inputMapping[playerId][input.value()]] = false;
+                                    default:
+                                        break;
+                                }
+                            }
                         }
                     }
-                }
+                    break;
+                case SDL_MOUSEBUTTONDOWN:
+                case SDL_MOUSEBUTTONUP:
+                    // Checking if input is mapped.
+                    for(auto [playerId, mapping] : inputs){
+                        std::ignore = mapping;
+                        auto input = convertSDLKeycodeInputKeyCode(e.button.button);
+                        if(input.has_value()) {
+                            if(inputMapping.at(playerId).find(input.value()) != inputMapping.at(playerId).end()) {
+                                switch(e.button.state) {
+                                    case SDL_PRESSED:
+                                        inputs[playerId][inputMapping[playerId][input.value()]] = true;
+                                        break;
+                                    case SDL_RELEASED:
+                                        inputs[playerId][inputMapping[playerId][input.value()]] = false;
+                                    default:
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                    break;
             }
         }
     }
 
+    std::pair<int, int> getMousePosition() {
+        int x, y;
+        SDL_GetMouseState(&x, &y);
+        return { x, y };
+    }
 private:
     // List of mapped inputs
     std::unordered_map<int, std::unordered_map<T, bool>> inputs;
@@ -173,6 +205,10 @@ private:
         sdl_mapping.insert({InputKeyCode::Ekey_enter, SDLK_KP_ENTER});
         sdl_mapping.insert({InputKeyCode::EKey_backspace, SDLK_BACKSPACE});
 
+        // Mouse input
+        sdl_mapping.insert({InputKeyCode::EKey_mouse_left, SDL_BUTTON_LEFT});
+        sdl_mapping.insert({InputKeyCode::EKey_mouse_right, SDL_BUTTON_RIGHT});
+
         // Mapping for the unordered_map keycode_mapping
         // Numbers
         keycode_mapping.insert({SDLK_0, InputKeyCode::EKey_0});
@@ -226,5 +262,9 @@ private:
         keycode_mapping.insert({SDLK_SPACE, InputKeyCode::EKey_space});
         keycode_mapping.insert({SDLK_KP_ENTER, InputKeyCode::Ekey_enter});
         keycode_mapping.insert({SDLK_BACKSPACE, InputKeyCode::EKey_backspace});
+
+        // Mouse input
+        keycode_mapping.insert({SDL_BUTTON_LEFT, InputKeyCode::EKey_mouse_left});
+        keycode_mapping.insert({SDL_BUTTON_RIGHT, InputKeyCode::EKey_mouse_right});
     }
 };
