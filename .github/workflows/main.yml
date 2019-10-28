@@ -35,14 +35,14 @@ jobs:
         make
         rm -rf *
         export CXX=clang++
-        cmake ..
+        /usr/bin/cmake ..
         make
     - name: Build master
       if: github.ref == 'master'
       run: |
         export CXX=clang++
         cd build
-        cmake --config Release ..
+        /usr/bin/cmake --config Release ..
         make
     - name: Run tests
       run: |
