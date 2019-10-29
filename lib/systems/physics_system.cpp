@@ -21,7 +21,7 @@ void PhysicsSystem::update(double deltatime) {
 
         if (physics->gravity) {
             // Also do collisions
-            double vy = physics->vy + (GRAVITY * mass);
+            double vy = physics->vy + (GRAVITY * mass) * deltatime;
 
             if (vy > TERMINAL_VELOCITY)
                 vy = TERMINAL_VELOCITY;
@@ -35,7 +35,6 @@ void PhysicsSystem::update(double deltatime) {
             double spaceLeft = collisionDetector->spaceLeft(entityId, Axis::X, Direction::POSITIVE);
             double wantToMove = vx;
             double toMove = (wantToMove >= spaceLeft) ? spaceLeft : wantToMove;
-            std::cout << "TO MOVE RIGHT: " << toMove << std::endl;
 
             transform->xPos = transform->xPos + toMove;
         }
@@ -43,7 +42,6 @@ void PhysicsSystem::update(double deltatime) {
             double spaceLeft = collisionDetector->spaceLeft(entityId, Axis::X, Direction::NEGATIVE);
             double wantToMove = vx;
             double toMove = (wantToMove <= spaceLeft) ? spaceLeft : wantToMove;
-            std::cout << "TO MOVE LEFT: " << toMove << std::endl;
 
             transform->xPos = transform->xPos + toMove;
         }
@@ -51,7 +49,6 @@ void PhysicsSystem::update(double deltatime) {
             double spaceLeft = collisionDetector->spaceLeft(entityId, Axis::Y, Direction::POSITIVE);
             double wantToMove = vy;
             double toMove = (wantToMove >= spaceLeft) ? spaceLeft : wantToMove;
-            std::cout << "TO MOVE DOWN: " << toMove << std::endl;
 
             transform->yPos = transform->yPos + toMove;
         }
@@ -59,7 +56,6 @@ void PhysicsSystem::update(double deltatime) {
             double spaceLeft = collisionDetector->spaceLeft(entityId, Axis::Y, Direction::NEGATIVE);
             double wantToMove = vy;
             double toMove = (wantToMove <= spaceLeft) ? spaceLeft : wantToMove;
-            std::cout << "TO MOVE UP: " << toMove << std::endl;
 
             transform->yPos = transform->yPos + toMove;
         }
