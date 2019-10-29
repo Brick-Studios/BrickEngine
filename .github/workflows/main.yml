@@ -38,7 +38,7 @@ jobs:
         /usr/bin/cmake ..
         make
     - name: Build master
-      if: github.ref == 'master'
+      if: github.ref == 'refs/heads/master'
       run: |
         export CXX=clang++
         cd build
