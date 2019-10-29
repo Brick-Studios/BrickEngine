@@ -15,8 +15,12 @@ endif()
 # Add custom cmake modules
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/sdl2)
 
+# Disable JSON library tests (before the add_subdirectory, otherwise it does not work)
+set(JSON_BuildTests OFF CACHE INTERNAL "")
+
 add_subdirectory(include/brickengine)
 add_subdirectory(lib)
+add_subdirectory(${nlohmann_json_source} extern/json)
 
 option(BrickEngine_Test "Build the tests" ON)
 if(BrickEngine_Test)
