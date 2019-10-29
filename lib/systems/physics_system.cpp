@@ -1,6 +1,7 @@
 #include "brickengine/systems/physics_system.hpp"
 #include "brickengine/components/physics_component.hpp"
 #include "brickengine/components/transform_component.hpp"
+#include "brickengine/components/colliders/rectangle_collider_component.hpp"
 #include <iostream>
 
 PhysicsSystem::PhysicsSystem(std::shared_ptr<CollisionDetector> cd, std::shared_ptr<EntityManager> em)
@@ -30,38 +31,57 @@ void PhysicsSystem::update(double deltatime) {
         }
 
         if (physics->vx > 0) { // Moving right
-            double spaceLeft = collisionDetector->spaceLeft(entityId, Axis::X, Direction::POSITIVE);
+            auto spaceLeft = collisionDetector->spaceLeft(entityId, Axis::X, Direction::POSITIVE).first;
+            auto collider = entityManager->getComponent<RectangleColliderComponent>(collisionDetector->spaceLeft(entityId, Axis::X, Direction::POSITIVE).second);
             double wantToMove  = physics->vx * deltatime;
 
-            if (wantToMove >= spaceLeft)
-                transform->xPos = transform->xPos + spaceLeft;
+            if (wantToMove >= spaceLeft){
+                if(collider->isTrigger)
+                    transform->xPos = transform->xPos + wantToMove;
+                else
+                    transform->xPos = transform->xPos + spaceLeft;
+                
+            }
             else if (wantToMove < spaceLeft)
-                transform->xPos = transform->xPos + wantToMove;
+                transform->xPos = transform->xPos + wantToMove;            
         }
         if (physics->vx < 0) { // Moving left
-            double spaceLeft = collisionDetector->spaceLeft(entityId, Axis::X, Direction::NEGATIVE);
+            double spaceLeft = collisionDetector->spaceLeft(entityId, Axis::X, Direction::NEGATIVE).first;
+            auto collider = entityManager->getComponent<RectangleColliderComponent>(collisionDetector->spaceLeft(entityId, Axis::X, Direction::NEGATIVE).second);
             double wantToMove = physics->vx * deltatime;
 
             if (wantToMove <= spaceLeft) {
-                transform->xPos = transform->xPos + spaceLeft;
-            } else if (wantToMove > spaceLeft)
+                if(collider->isTrigger)
+                    transform->xPos = transform->xPos + wantToMove;
+                else
+                transform->xPos = transform->xPos + spaceLeft;                
+            }
+            else if (wantToMove > spaceLeft)
                 transform->xPos = transform->xPos + wantToMove;
         }
         if (physics->vy > 0) { // Moving down
-            double spaceLeft = collisionDetector->spaceLeft(entityId, Axis::Y, Direction::POSITIVE);
+            double spaceLeft = collisionDetector->spaceLeft(entityId, Axis::Y, Direction::POSITIVE).first;
+            auto collider = entityManager->getComponent<RectangleColliderComponent>(collisionDetector->spaceLeft(entityId, Axis::Y, Direction::POSITIVE).second);
             double wantToMove = physics->vy * deltatime;
 
             if (wantToMove >= spaceLeft)
-                transform->yPos = transform->yPos + spaceLeft;
+                if(collider->isTrigger)
+                    transform->yPos = transform->yPos + wantToMove;
+                else
+                    transform->yPos = transform->yPos + spaceLeft;
             else if (wantToMove < spaceLeft)
                 transform->yPos = transform->yPos + wantToMove;
         }
         if (physics->vy < 0) { // Moving up
-            double spaceLeft = collisionDetector->spaceLeft(entityId, Axis::Y, Direction::NEGATIVE);
+            double spaceLeft = collisionDetector->spaceLeft(entityId, Axis::Y, Direction::NEGATIVE).first;
+            auto collider = entityManager->getComponent<RectangleColliderComponent>(collisionDetector->spaceLeft(entityId, Axis::Y, Direction::NEGATIVE).second);
             double wantToMove = physics->vy * deltatime;
 
             if (wantToMove <= spaceLeft)
-                transform->yPos = transform->yPos + spaceLeft;
+                if(collider->isTrigger)
+                    transform->yPos = transform->yPos + wantToMove;
+                else
+                    transform->yPos = transform->yPos + spaceLeft;
             else if (wantToMove > spaceLeft)
                 transform->yPos = transform->yPos + wantToMove;
         }

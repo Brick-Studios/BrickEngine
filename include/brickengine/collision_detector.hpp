@@ -43,8 +43,8 @@ Inspector Collision Detector
 class CollisionDetector {
 public:
 		CollisionDetector(std::shared_ptr<EntityManager> em);
-		//Returns amount of pixels that can still be moved to the collidable object.
-		double spaceLeft(int entity, Axis axis, Direction direction);
+		// Returns amount of pixels that can still be moved to the collidable object.
+		std::pair<double, int> spaceLeft(int entity, Axis axis, Direction direction);
 private:
 		std::shared_ptr<EntityManager> entityManager;
 };

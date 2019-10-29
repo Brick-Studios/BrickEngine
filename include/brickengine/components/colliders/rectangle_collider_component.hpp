@@ -5,13 +5,14 @@
 
 class RectangleColliderComponent : public ComponentImpl<RectangleColliderComponent> {
 public:
-    RectangleColliderComponent(double xScale, double yScale, double zScale);
+    RectangleColliderComponent(double xScale, double yScale, double zScale, bool isTrigger);
     static std::string getNameStatic();
 
     // data
     double xScale;
     double yScale;
     double zScale;
+    bool isTrigger;
 };
 
 #endif //FILE_SQUARE_COLLISION_COMPONENT_HPP

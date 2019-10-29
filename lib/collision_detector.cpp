@@ -14,14 +14,16 @@
 
 CollisionDetector::CollisionDetector(std::shared_ptr<EntityManager> em) : entityManager(em) {}
 
-double CollisionDetector::spaceLeft(int entity, Axis axis, Direction direction) {
-    //We only support squares.
+std::pair<double, int> CollisionDetector::spaceLeft(int entity, Axis axis, Direction direction) {
+    // We only support rectangles
     auto entityRectCollider = entityManager->getComponent<RectangleColliderComponent>(entity);
     auto entityTransform = entityManager->getComponent<TransformComponent>(entity);
 
     auto collidableEntities = entityManager->getEntitiesByComponent<RectangleColliderComponent>();
 
-    double spaceLeft = 0; //Distance to the closed object
+    double spaceLeft = 0; // Distance to the closed object
+    int objectId; // EntityId of the object
+
     if(direction == Direction::NEGATIVE){
         spaceLeft = -100000;
     } else {
@@ -47,11 +49,11 @@ double CollisionDetector::spaceLeft(int entity, Axis axis, Direction direction) 
 
                 if(direction == Direction::POSITIVE) { //Right
                     /**
-                     * Als (entiteit x+w >= collidable x) && (check entiteit y-y+h in range collidable y-y+h)
+                     * If (entiteit x+w >= collidable x) && (check entiteit y-y+h in range collidable y-y+h)
                      **/
 
                     if(yStartEntity < yEndCollidable && yStartCollidable < yEndEntity) {
-                        //Entities align on y-axis
+                        // Entities align on y-axis
                         double opposibleColliderHitwall = transformComponent->xPos - ((transformComponent->xScale * collider->xScale) / 2);
                         double entityColliderHitwall = entityTransform->xPos + ((entityTransform->xScale * entityRectCollider->xScale) / 2);
 
@@ -59,15 +61,16 @@ double CollisionDetector::spaceLeft(int entity, Axis axis, Direction direction) 
 
                         if(difference >= 0 && spaceLeft > difference) {
                             spaceLeft = difference;
+                            objectId = id;
                         }
                     }
-                } else if(direction == Direction::NEGATIVE) { //Left
+                } else if(direction == Direction::NEGATIVE) { // Left
                     /**
-                     * Als (entiteit x <= collidable x+w) && (check entiteit y-y+h in range collidable y-y+h)
+                     * If (entiteit x <= collidable x+w) && (check entiteit y-y+h in range collidable y-y+h)
                     **/
 
                     if(yStartEntity < yEndCollidable && yStartCollidable < yEndEntity) {
-                        //Entities align on y-axiss
+                        // Entities align on y-axiss
                         double opposibleColliderHitwall = transformComponent->xPos + ((transformComponent->xScale * collider->xScale) / 2);
                         double entityColliderHitwall = entityTransform->xPos - ((entityTransform->xScale * entityRectCollider->xScale) / 2);
                         
@@ -75,6 +78,7 @@ double CollisionDetector::spaceLeft(int entity, Axis axis, Direction direction) 
 
                         if(difference <= 0 && spaceLeft < difference){
                             spaceLeft = difference;
+                            objectId = id;
                         }
                     }
                 }
@@ -86,7 +90,7 @@ double CollisionDetector::spaceLeft(int entity, Axis axis, Direction direction) 
 
                 if(direction == Direction::POSITIVE) { //Down
                     /**
-                     * Als (check entiteit x-x+w in range collidable x-x+w) && (entiteit y+h >= collidable y)
+                     * If (check entiteit x-x+w in range collidable x-x+w) && (entiteit y+h >= collidable y)
                      **/
                     if(xStartEntity < xEndCollidable && xStartCollidable < xEndEntity) {
                         double opposibleColliderHitwall = transformComponent->yPos - ((transformComponent->yScale * collider->yScale) / 2);
@@ -96,14 +100,15 @@ double CollisionDetector::spaceLeft(int entity, Axis axis, Direction direction) 
 
                         if(difference >= 0 && spaceLeft > difference){
                             spaceLeft = difference;
+                            objectId = id;
                         }
                     }
                 } else if(direction == Direction::NEGATIVE) { //Up
                     /**
-                     * Als (check entiteit x-x+w in range collidable x-x+w) && (entiteit y <= collidable y+h)
+                     * If (check entiteit x-x+w in range collidable x-x+w) && (entiteit y <= collidable y+h)
                      **/
                     if(xStartEntity < xEndCollidable && xStartCollidable < xEndEntity) {
-                        //Entities align on x-axis
+                        // Entities align on x-axis
                         double opposibleColliderHitwall = transformComponent->yPos + ((transformComponent->yScale * collider->yScale) / 2);
                         double entityColliderHitwall = entityTransform->yPos - ((entityTransform->yScale * entityRectCollider->yScale) / 2);
 
@@ -111,14 +116,14 @@ double CollisionDetector::spaceLeft(int entity, Axis axis, Direction direction) 
 
                         if(difference <= 0 && spaceLeft < difference){
                             spaceLeft = difference;
+                            objectId = id;
                         }
                     } 
                 }
             }
         }
     }
-    
-    return spaceLeft;
+    return std::make_pair(spaceLeft, objectId);
 }
 
-#endif
+#endif // FILE_COLLISION_DETECTOR_CPP
