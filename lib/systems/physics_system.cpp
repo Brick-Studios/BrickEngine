@@ -26,7 +26,7 @@ void PhysicsSystem::update(double deltatime) {
             if (vy > TERMINAL_VELOCITY)
                 vy = TERMINAL_VELOCITY;
 
-            physics->vy = vy;
+            //physics->vy = vy;
         }
 
         if (physics->vx > 0) { // Moving right
@@ -65,5 +65,7 @@ void PhysicsSystem::update(double deltatime) {
             else if (wantToMove > spaceLeft)
                 transform->yPos = transform->yPos + wantToMove;
         }
+        std::cout << physics->vy * deltatime << std::endl;
+        std::cout << physics->vx * deltatime << std::endl;
     }
 }

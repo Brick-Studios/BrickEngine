@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <string>
 #include <memory>
@@ -81,16 +80,31 @@ void BrickEngine::stop() {
 
 void BrickEngine::delay(std::chrono::time_point<std::chrono::high_resolution_clock> start_time,
                           std::chrono::time_point<std::chrono::high_resolution_clock> end_time) {
-    auto delta_time_in_nanoseconds = std::chrono::duration_cast<std::chrono::nanoseconds>(end_time - start_time).count();
-    this->delta_time = delta_time_in_nanoseconds / 1'000'000'000.0;
-    double fps_frame_time = 1.0 / fps_cap;
-    auto delay = 0.0;
-    if(delta_time < fps_frame_time) {
-        delay = (fps_frame_time - delta_time);
-        SDL_Delay(delay);
-    }
+    typedef std::chrono::nanoseconds nanoseconds;
+    typedef std::chrono::duration<double> seconds;
 
-    this->fps = 1.0 / (delta_time + delay);
+    nanoseconds delta_time_in_nanoseconds = std::chrono::duration_cast<nanoseconds>(end_time - start_time);;
+    //this->delta_time = delta_time_in_nanoseconds / 1'000'000'000.0;
+
+    nanoseconds fps_frame_time { (1'000'000'000 / fps_cap)};
+    //auto fps_frame_time = std::chrono::duration<double, std::chrono::nanoseconds>(std::chrono::seconds(1) / fps_cap);
+    nanoseconds delay { 0 };
+    if(delta_time_in_nanoseconds < fps_frame_time) {
+        delay = (fps_frame_time - delta_time_in_nanoseconds);
+        //int d = delay * 1000;
+        std::this_thread::sleep_for(delay);
+    }
+    this->delta_time = std::chrono::duration_cast<seconds>(delta_time_in_nanoseconds + delay).count();
+    //this->delta_time = std::chrono::duration<double>(std::chrono::duration_cast<std::chrono::seconds>(delta_time_in_nanoseconds + delay)).count();
+    std::cout << "FPSFRAMETIME: " << fps_frame_time.count()  << std::endl;
+    std::cout << "Delta: " << delta_time_in_nanoseconds.count()  << std::endl;
+    std::cout << "Delta + delay: " << delta_time << std::endl;
+    std::cout << "Delay: " << delay.count() << std::endl;
+    std::cout << "FPS: " << (1.0 / delta_time) << std::endl;
+    this->fps = 1.0 / delta_time;
+    //this->delta_time = std::chrono::duration_cast<std::chrono::seconds>(delta_time_in_nanoseconds) + std::chrono::duration_cast<std::chrono::seconds>(delay);
+    //this->delta_time += delay;
+    //this->fps = 1.0 / delta_time + delay;
 }
 
 void BrickEngine::drawFpsCounter() {
