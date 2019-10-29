@@ -21,7 +21,7 @@ void PhysicsSystem::update(double deltatime) {
 
         if (physics->gravity) {
             // Also do collisions
-            double vy = physics->vy + (GRAVITY * mass) * deltatime;
+            double vy = physics->vy + (GRAVITY * mass);
 
             if (vy > TERMINAL_VELOCITY)
                 vy = TERMINAL_VELOCITY;
