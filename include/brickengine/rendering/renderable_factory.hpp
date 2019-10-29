@@ -25,4 +25,4 @@ private:
     std::shared_ptr<ResourceManager> resource_manager;
 };
 
-#endif
+#endif // FILE_RENDERABLE_FACTORY_HPP

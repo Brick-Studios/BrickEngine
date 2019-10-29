@@ -47,4 +47,4 @@ private:
     std::shared_ptr<ResourceManager> resource_manager;
 };
 
-#endif /* FILE_BRICKENGINE_HPP */
+#endif // FILE_BRICKENGINE_HPP

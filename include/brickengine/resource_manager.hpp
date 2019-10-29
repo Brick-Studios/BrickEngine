@@ -18,4 +18,4 @@ private:
     std::shared_ptr<Renderer> renderer;
 };
 
-#endif /* FILE_RESOURCE_MANAGER_HPP */
+#endif // FILE_RESOURCE_MANAGER_HPP
