@@ -68,7 +68,8 @@ void BrickEngine::start() {
     std::unique_ptr<SDL_Renderer, void(*)(SDL_Renderer*)> renderer_unique_ptr(renderer_ptr, SDL_DestroyRenderer);
     this->renderer = std::shared_ptr<Renderer>(new Renderer(std::move(renderer_unique_ptr), layers));
 
-    this->renderableFactory = std::unique_ptr<RenderableFactory>(new RenderableFactory(renderer));
+    this->resource_manager = std::make_shared<ResourceManager>(renderer);
+    this->renderableFactory = std::unique_ptr<RenderableFactory>(new RenderableFactory(renderer, resource_manager));
 
     std::cout << "Window openend finished" << std::endl;
 }
