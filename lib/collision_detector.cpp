@@ -156,6 +156,7 @@ triggerReturnValues CollisionDetector::isInTrigger(int entity){
             double entityColliderHitwallDown = entityTransform->yPos + ((entityTransform->yScale * entityRectCollider->yScale) / 2);
             double entityColliderHitwallUp = entityTransform->yPos - ((entityTransform->yScale * entityRectCollider->yScale) / 2);
 
+            // Check if you are inside the x and y of the collidable
             if(entityColliderHitwallLeft >= opposibleColliderHitwallLeft 
             && entityColliderHitwallRight <= opposibleColliderHitwallRight
             && entityColliderHitwallDown >= opposibleColliderHitwallDown
