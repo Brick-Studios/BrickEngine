@@ -43,12 +43,12 @@ Inspector Collision Detector
 
 class CollisionDetector {
 public:
-	CollisionDetector(std::shared_ptr<EntityManager> em);
-	// Returns amount of pixels that can still be moved to the collidable object.
-	CollisionReturnValues spaceLeft(int entity, Axis axis, Direction direction);
-    	TriggerReturnValues isInTrigger(int entity);
+    CollisionDetector(std::shared_ptr<EntityManager> em);
+    // Returns amount of pixels that can still be moved to the collidable object.
+    CollisionReturnValues spaceLeft(int entity, Axis axis, Direction direction);
+    TriggerReturnValues isInTrigger(int entity);
 private:
-	std::shared_ptr<EntityManager> entityManager;
+    std::shared_ptr<EntityManager> entityManager;
 };
 
 #endif // FILE_COLLISION_DETECTOR_HPP
