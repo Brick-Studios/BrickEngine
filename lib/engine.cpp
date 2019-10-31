@@ -15,6 +15,15 @@
 #include "SDL2/SDL_image.h"
 
 BrickEngine::BrickEngine(const std::string window_name, const int window_width, const int window_height, std::vector<int> layers, int fps_cap) : fps_cap(fps_cap), window(nullptr, nullptr) {
+    this->fps = 0;
+    this->layers = layers;
+    this->top_layer = layers.back();
+    this->window_name = window_name;
+    this->window_height = window_height;
+    this->window_width = window_width;
+}
+
+void BrickEngine::start() {
     //Initialize SDL
     if(SDL_Init( SDL_INIT_VIDEO ) != 0)
     {
@@ -37,11 +46,11 @@ BrickEngine::BrickEngine(const std::string window_name, const int window_width, 
     }
 
     SDL_Window* window_ptr(SDL_CreateWindow(
-      window_name.c_str(),
+      this->window_name.c_str(),
       SDL_WINDOWPOS_UNDEFINED,
       SDL_WINDOWPOS_UNDEFINED,
-      window_width,
-      window_height,
+      this->window_width,
+      this->window_height,
       0
     ));
     if(!window_ptr)
@@ -50,9 +59,6 @@ BrickEngine::BrickEngine(const std::string window_name, const int window_width, 
         exit(1);
     }
     this->window = std::unique_ptr<SDL_Window, void(*)(SDL_Window*)>(window_ptr, SDL_DestroyWindow);
-    this->fps = 0;
-    this->top_layer = layers.back();
-
     SDL_Renderer* renderer_ptr(SDL_CreateRenderer(this->window.get(), -1, SDL_RENDERER_ACCELERATED));
     if(!renderer_ptr)
     {
@@ -67,7 +73,7 @@ BrickEngine::BrickEngine(const std::string window_name, const int window_width, 
     std::cout << "Window openend finished" << std::endl;
 }
 
-BrickEngine::~BrickEngine() {
+void BrickEngine::stop() {
     SDL_Quit();
     TTF_Quit();
     IMG_Quit();
@@ -113,4 +119,3 @@ Renderer* BrickEngine::getRenderer() const {
 BrickEngine::EngineTick BrickEngine::getTicks() const {
     return std::chrono::high_resolution_clock::now();
 }
-
