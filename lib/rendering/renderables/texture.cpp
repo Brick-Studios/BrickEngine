@@ -3,12 +3,12 @@
 #include "brickengine/rendering/renderables/texture.hpp"
 #include "brickengine/rendering/renderer.hpp"
 
-Texture::Texture(SDL_Texture* texture, int layer, std::unique_ptr<Rect> dst) :
-    Renderable(layer), texture(std::unique_ptr<SDL_Texture, void(*)(SDL_Texture*)>(texture, SDL_DestroyTexture)),
+Texture::Texture(std::shared_ptr<SDL_Texture> texture, int layer, std::unique_ptr<Rect> dst) :
+    Renderable(layer), texture(std::move(texture)),
     dst(std::move(dst)), flip(SDL_FLIP_NONE) {}
 
-Texture::Texture(SDL_Texture* texture, int layer, std::unique_ptr<Rect> dst, std::unique_ptr<Rect> src) :
-    Renderable(layer), texture(std::unique_ptr<SDL_Texture, void(*)(SDL_Texture*)>(texture, SDL_DestroyTexture)),
+Texture::Texture(std::shared_ptr<SDL_Texture> texture, int layer, std::unique_ptr<Rect> dst, std::unique_ptr<Rect> src) :
+    Renderable(layer), texture(std::move(texture)),
     src(std::move(src)), dst(std::move(dst)), flip(SDL_FLIP_NONE) {}
 
 void Texture::render(Renderer& r) {
