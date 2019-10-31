@@ -1,5 +1,3 @@
-#include <nlohmann/json.hpp> 
-
 #include "brickengine/json_parser/json.hpp"
 
 Json::Json(std::string raw_json) {

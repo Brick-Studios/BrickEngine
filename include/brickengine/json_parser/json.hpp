@@ -4,14 +4,15 @@
 #include <iostream>
 #include <string>
 #include <memory>
+#include <fstream>
 
-#include <nlohmann/json.hpp> 
+#include "nlohmann_json/json.hpp"
 
 class Json {
 public:
-    Json(std::string raw_json);
+    Json(std::ifstream& source);
     const std::string getString(std::string const name) const;
-    const int getInt(std::string const name) const;
+    int getInt(std::string const name) const;
     const std::unique_ptr<Json> getArray(std::string const name) const;
 private:
     nlohmann::json external_json;

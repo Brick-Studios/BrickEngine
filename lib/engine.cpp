@@ -8,6 +8,7 @@
 #include "brickengine/engine.hpp"
 #include "brickengine/rendering/renderer.hpp"
 #include "brickengine/rendering/renderable_factory.hpp"
+#include "brickengine/json_parser/json_parser.hpp"
 
 #include "SDL2/SDL2_gfxPrimitives.h"
 #include "SDL2/SDL.h"
@@ -70,6 +71,8 @@ void BrickEngine::start() {
 
     this->renderableFactory = std::unique_ptr<RenderableFactory>(new RenderableFactory(renderer));
 
+    this->json_parser = std::unique_ptr<JsonParser>(new JsonParser());
+
     std::cout << "Window openend finished" << std::endl;
 }
 
@@ -115,6 +118,9 @@ Renderer* BrickEngine::getRenderer() const {
     return this->renderer.get();
 }
 
+JsonParser* BrickEngine::getJsonParser() const {
+    return this->json_parser.get();
+}
 
 BrickEngine::EngineTick BrickEngine::getTicks() const {
     return std::chrono::high_resolution_clock::now();

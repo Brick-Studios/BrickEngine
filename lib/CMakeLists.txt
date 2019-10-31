@@ -19,7 +19,7 @@ target_link_libraries(BrickEngine
     PRIVATE SDL2::GFX
     PRIVATE SDL2::TTF
     PRIVATE SDL2::Image
-    PRIVATE nlohmann_json::nlohmann_json
+    PRIVATE nlohmann_json
 )
 target_compile_features(BrickEngine PUBLIC cxx_std_17)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
