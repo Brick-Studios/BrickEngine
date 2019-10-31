@@ -4,6 +4,7 @@
 #include <limits>
 #include <map>
 #include <unordered_map>
+#include <tuple>
 
 #include "brickengine/collision_detector.hpp"
 #include "brickengine/enum/axis.hpp"
@@ -14,7 +15,7 @@
 
 CollisionDetector::CollisionDetector(std::shared_ptr<EntityManager> em) : entityManager(em) {}
 
-std::pair<double, int> CollisionDetector::spaceLeft(int entity, Axis axis, Direction direction) {
+collisionReturnValues CollisionDetector::spaceLeft(int entity, Axis axis, Direction direction) {
     // We only support rectangles
     auto entityRectCollider = entityManager->getComponent<RectangleColliderComponent>(entity);
     auto entityTransform = entityManager->getComponent<TransformComponent>(entity);
@@ -59,6 +60,9 @@ std::pair<double, int> CollisionDetector::spaceLeft(int entity, Axis axis, Direc
 
                         double difference = opposibleColliderHitwall - entityColliderHitwall;
 
+                        //std::cout << opposibleColliderHitwall << std::endl;
+                        //std::cout << entityColliderHitwall << std::endl;
+                        
                         if(difference >= 0 && spaceLeft > difference) {
                             spaceLeft = difference;
                             objectId = id;
@@ -75,6 +79,7 @@ std::pair<double, int> CollisionDetector::spaceLeft(int entity, Axis axis, Direc
                         double entityColliderHitwall = entityTransform->xPos - ((entityTransform->xScale * entityRectCollider->xScale) / 2);
                         
                         double difference = opposibleColliderHitwall - entityColliderHitwall;
+                        //std::cout << "LEFT " << difference << std::endl;
 
                         if(difference <= 0 && spaceLeft < difference){
                             spaceLeft = difference;
@@ -88,7 +93,7 @@ std::pair<double, int> CollisionDetector::spaceLeft(int entity, Axis axis, Direc
                 int xStartCollidable = transformComponent->xPos - ((transformComponent->xScale * collider->xScale) / 2);
                 int xEndCollidable = transformComponent->xPos + ((transformComponent->xScale * collider->xScale) / 2);
 
-                if(direction == Direction::POSITIVE) { //Down
+                if(direction == Direction::POSITIVE) { // Down
                     /**
                      * If (check entiteit x-x+w in range collidable x-x+w) && (entiteit y+h >= collidable y)
                      **/
@@ -103,7 +108,7 @@ std::pair<double, int> CollisionDetector::spaceLeft(int entity, Axis axis, Direc
                             objectId = id;
                         }
                     }
-                } else if(direction == Direction::NEGATIVE) { //Up
+                } else if(direction == Direction::NEGATIVE) { // Up
                     /**
                      * If (check entiteit x-x+w in range collidable x-x+w) && (entiteit y <= collidable y+h)
                      **/
@@ -113,6 +118,7 @@ std::pair<double, int> CollisionDetector::spaceLeft(int entity, Axis axis, Direc
                         double entityColliderHitwall = entityTransform->yPos - ((entityTransform->yScale * entityRectCollider->yScale) / 2);
 
                         double difference = opposibleColliderHitwall - entityColliderHitwall;
+                        //std::cout << "UP " << difference << std::endl;
 
                         if(difference <= 0 && spaceLeft < difference){
                             spaceLeft = difference;
@@ -123,7 +129,43 @@ std::pair<double, int> CollisionDetector::spaceLeft(int entity, Axis axis, Direc
             }
         }
     }
-    return std::make_pair(spaceLeft, objectId);
+    return collisionReturnValues(spaceLeft, objectId);
+}
+
+triggerReturnValues CollisionDetector::isInTrigger(int entity){
+    // We only support rectangles
+    auto entityRectCollider = entityManager->getComponent<RectangleColliderComponent>(entity);
+    auto entityTransform = entityManager->getComponent<TransformComponent>(entity);
+
+    auto collidableEntities = entityManager->getEntitiesByComponent<RectangleColliderComponent>();
+
+    bool isInTrigger = false;
+    int objectId = -1;
+
+    for(auto& [id, collider] : *collidableEntities) {
+        auto transformComponent = entityManager->getComponent<TransformComponent>(id);
+
+        if(collider->isTrigger){
+            double opposibleColliderHitwallLeft = transformComponent->xPos - ((transformComponent->xScale * collider->xScale) / 2);
+            double opposibleColliderHitwallRight = transformComponent->xPos + ((transformComponent->xScale * collider->xScale) / 2);
+            double opposibleColliderHitwallDown = transformComponent->yPos - ((transformComponent->yScale * collider->yScale) / 2);
+            double opposibleColliderHitwallUp = transformComponent->yPos + ((transformComponent->yScale * collider->yScale) / 2);
+
+            double entityColliderHitwallLeft = entityTransform->xPos + ((entityTransform->xScale * entityRectCollider->xScale) / 2);
+            double entityColliderHitwallRight = entityTransform->xPos - ((entityTransform->xScale * entityRectCollider->xScale) / 2);
+            double entityColliderHitwallDown = entityTransform->yPos + ((entityTransform->yScale * entityRectCollider->yScale) / 2);
+            double entityColliderHitwallUp = entityTransform->yPos - ((entityTransform->yScale * entityRectCollider->yScale) / 2);
+
+            if(entityColliderHitwallLeft >= opposibleColliderHitwallLeft 
+            && entityColliderHitwallRight <= opposibleColliderHitwallRight
+            && entityColliderHitwallDown >= opposibleColliderHitwallDown
+            && entityColliderHitwallUp <= opposibleColliderHitwallUp){
+                isInTrigger = true;
+                objectId = id;
+            }
+        }
+    }
+    return triggerReturnValues(isInTrigger, objectId);
 }
 
 #endif // FILE_COLLISION_DETECTOR_CPP

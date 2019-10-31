@@ -39,12 +39,14 @@ Inspector Collision Detector
 #include "brickengine/entities/entity_manager.hpp"
 #include "brickengine/enum/axis.hpp"
 #include "brickengine/enum/direction.hpp"
+#include "brickengine/collision_return_values.hpp"
 
 class CollisionDetector {
 public:
 		CollisionDetector(std::shared_ptr<EntityManager> em);
 		// Returns amount of pixels that can still be moved to the collidable object.
-		std::pair<double, int> spaceLeft(int entity, Axis axis, Direction direction);
+		collisionReturnValues spaceLeft(int entity, Axis axis, Direction direction);
+    triggerReturnValues isInTrigger(int entity);
 private:
 		std::shared_ptr<EntityManager> entityManager;
 };
