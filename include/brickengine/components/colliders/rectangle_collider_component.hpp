@@ -12,7 +12,7 @@ public:
     double xScale;
     double yScale;
     double zScale;
-    bool isTrigger;
+    bool isTrigger; // If the component is able to be moved through and only be used as a "trigger"
 };
 
 #endif //FILE_SQUARE_COLLISION_COMPONENT_HPP

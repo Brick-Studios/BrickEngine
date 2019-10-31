@@ -1,11 +1,13 @@
-struct collisionReturnValues{
+#include <optional>
+
+struct CollisionReturnValues{
+    CollisionReturnValues(double spaceLeft, int objectId) : spaceLeft(spaceLeft), objectId(objectId) {}
     double spaceLeft;
     int objectId;
-    collisionReturnValues(double spaceLeft, int objectId) : spaceLeft(spaceLeft), objectId(objectId){}
 };
 
-struct triggerReturnValues{
+struct TriggerReturnValues{
+    TriggerReturnValues(bool isInTrigger, int objectId) : isInTrigger(isInTrigger), objectId(objectId) {}
     bool isInTrigger;
-    int objectId;
-    triggerReturnValues(bool isInTrigger, int objectId) : isInTrigger(isInTrigger), objectId(objectId){}
+    std::optional<int> objectId;
 };

@@ -15,7 +15,7 @@
 
 CollisionDetector::CollisionDetector(std::shared_ptr<EntityManager> em) : entityManager(em) {}
 
-collisionReturnValues CollisionDetector::spaceLeft(int entity, Axis axis, Direction direction) {
+CollisionReturnValues CollisionDetector::spaceLeft(int entity, Axis axis, Direction direction) {
     // We only support rectangles
     auto entityRectCollider = entityManager->getComponent<RectangleColliderComponent>(entity);
     auto entityTransform = entityManager->getComponent<TransformComponent>(entity);
@@ -129,10 +129,10 @@ collisionReturnValues CollisionDetector::spaceLeft(int entity, Axis axis, Direct
             }
         }
     }
-    return collisionReturnValues(spaceLeft, objectId);
+    return CollisionReturnValues(spaceLeft, objectId);
 }
 
-triggerReturnValues CollisionDetector::isInTrigger(int entity){
+TriggerReturnValues CollisionDetector::isInTrigger(int entity){
     // We only support rectangles
     auto entityRectCollider = entityManager->getComponent<RectangleColliderComponent>(entity);
     auto entityTransform = entityManager->getComponent<TransformComponent>(entity);
@@ -140,7 +140,7 @@ triggerReturnValues CollisionDetector::isInTrigger(int entity){
     auto collidableEntities = entityManager->getEntitiesByComponent<RectangleColliderComponent>();
 
     bool isInTrigger = false;
-    int objectId = -1;
+    int objectId;
 
     for(auto& [id, collider] : *collidableEntities) {
         auto transformComponent = entityManager->getComponent<TransformComponent>(id);
@@ -166,7 +166,7 @@ triggerReturnValues CollisionDetector::isInTrigger(int entity){
             }
         }
     }
-    return triggerReturnValues(isInTrigger, objectId);
+    return TriggerReturnValues(isInTrigger, objectId);
 }
 
 #endif // FILE_COLLISION_DETECTOR_CPP

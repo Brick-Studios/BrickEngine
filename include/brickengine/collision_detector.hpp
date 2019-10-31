@@ -45,8 +45,8 @@ class CollisionDetector {
 public:
 		CollisionDetector(std::shared_ptr<EntityManager> em);
 		// Returns amount of pixels that can still be moved to the collidable object.
-		collisionReturnValues spaceLeft(int entity, Axis axis, Direction direction);
-    		triggerReturnValues isInTrigger(int entity);
+		CollisionReturnValues spaceLeft(int entity, Axis axis, Direction direction);
+    TriggerReturnValues isInTrigger(int entity);
 private:
 		std::shared_ptr<EntityManager> entityManager;
 };
