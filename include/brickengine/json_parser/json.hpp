@@ -10,8 +10,7 @@
 
 class Json {
 public:
-    Json(std::ifstream& source);
-    Json(nlohmann::json json);
+    Json(std::string source, bool isPath); // You cannot make a difference between a string and an external json object so we need a bool
     const std::string getString(std::string const name) const;
     int getInt(std::string const name) const;
     double getDouble(std::string const name) const;

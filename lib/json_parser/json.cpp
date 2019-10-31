@@ -6,14 +6,14 @@
 #include "brickengine/extern/nlohmann_json.hpp"
 #include "brickengine/json_parser/exceptions/objectOrTypeException.hpp"
 
-Json::Json(std::ifstream& source) {
-    nlohmann::json json;
-    source >> json;
-    this->external_json = json;
-}
-
-Json::Json(nlohmann::json json) {
-    this->external_json = json;
+Json::Json(std::string source, bool isPath) {
+    if(isPath) {
+        nlohmann::json json;
+        std::ifstream(source) >> json;
+        this->external_json = json;
+    } else {
+        this->external_json = source;
+    }
 }
 
 const std::string Json::getString(std::string const name) const {
@@ -53,7 +53,7 @@ const std::vector<Json> Json::getVector(std::string const name) const {
         std::vector<Json> vector = std::vector<Json>();
         
         for(nlohmann::json part : external_json[name]) {
-            vector.push_back(Json(part));
+            vector.push_back(Json(part, false));
         }
         
         return vector;
