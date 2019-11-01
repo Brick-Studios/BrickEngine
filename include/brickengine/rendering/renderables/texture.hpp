@@ -8,8 +8,8 @@ class Renderer;
 
 class Texture : public Renderable {
 public:
-    Texture(SDL_Texture* texture, int layer, std::unique_ptr<Rect> dst);
-    Texture(SDL_Texture* texture, int layer, std::unique_ptr<Rect> dst, std::unique_ptr<Rect> src);
+    Texture(std::shared_ptr<SDL_Texture> texture, int layer, std::unique_ptr<Rect> dst);
+    Texture(std::shared_ptr<SDL_Texture> texture, int layer, std::unique_ptr<Rect> dst, std::unique_ptr<Rect> src);
     void render(Renderer& r);
     virtual Rect* getSrcRect() const;
     virtual Rect* getDstRect() const;
@@ -17,7 +17,7 @@ public:
     SDL_RendererFlip getFlip() const;
     void setFlip(SDL_RendererFlip flip);
 protected:
-    std::unique_ptr<SDL_Texture, void(*)(SDL_Texture*)> texture;
+    std::shared_ptr<SDL_Texture> texture;
     std::unique_ptr<Rect> src;
     std::unique_ptr<Rect> dst;
     SDL_RendererFlip flip;
