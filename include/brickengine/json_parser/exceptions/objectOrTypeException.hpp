@@ -4,17 +4,13 @@
 #include <iostream>
 #include <exception>
 
-class ObjectOrTypeException : public std::exception
-{
+class ObjectOrTypeException : public std::exception {
+private:
   std::string m_msg;
 public:
+  ObjectOrTypeException(const std::string& bn) : m_msg(std::string("JSON object unknown or type mismatch calling type ") + bn){}
 
-  ObjectOrTypeException(const std::string& bn)
-    : m_msg(std::string("JSON object unknown or type mismatch calling type ") + bn)
-  {}
-
-  virtual const char* what() const throw()
-  {
+  virtual const char* what() const throw() {
     return m_msg.c_str();
   }
 };
