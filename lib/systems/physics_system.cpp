@@ -33,6 +33,10 @@ void PhysicsSystem::update(double deltatime) {
         double vy = physics->vy * deltatime;
         if (physics->vx > 0) { // Moving right
             double spaceLeft = collisionDetector->spaceLeft(entityId, Axis::X, Direction::POSITIVE);
+            if (spaceLeft == 0) {
+                physics->vx = 0;
+            }
+
             double wantToMove = vx;
             double toMove = (wantToMove >= spaceLeft) ? spaceLeft : wantToMove;
 
@@ -40,6 +44,10 @@ void PhysicsSystem::update(double deltatime) {
         }
         if (physics->vx < 0) { // Moving left
             double spaceLeft = collisionDetector->spaceLeft(entityId, Axis::X, Direction::NEGATIVE);
+            if (spaceLeft == 0) {
+                physics->vx = 0;
+            }
+
             double wantToMove = vx;
             double toMove = (wantToMove <= spaceLeft) ? spaceLeft : wantToMove;
 
@@ -47,6 +55,9 @@ void PhysicsSystem::update(double deltatime) {
         }
         if (physics->vy > 0) { // Moving down
             double spaceLeft = collisionDetector->spaceLeft(entityId, Axis::Y, Direction::POSITIVE);
+            if (spaceLeft == 0) {
+                physics->vy = 0;
+            }
             double wantToMove = vy;
             double toMove = (wantToMove >= spaceLeft) ? spaceLeft : wantToMove;
 
@@ -54,6 +65,10 @@ void PhysicsSystem::update(double deltatime) {
         }
         if (physics->vy < 0) { // Moving up
             double spaceLeft = collisionDetector->spaceLeft(entityId, Axis::Y, Direction::NEGATIVE);
+            if (spaceLeft == 0) {
+                physics->vy = 0;
+            }
+
             double wantToMove = vy;
             double toMove = (wantToMove <= spaceLeft) ? spaceLeft : wantToMove;
 
