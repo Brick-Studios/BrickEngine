@@ -70,7 +70,7 @@ void PhysicsSystem::update(double deltatime) {
             }
             else
                 toMove = vx;
-
+          
             transform->xPos = transform->xPos + toMove;
         }
         if (physics->vy > 0) { // Moving down
