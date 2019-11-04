@@ -53,9 +53,11 @@ enum class InputKeyCode {
     EKey_lctrl,
     EKey_space,
     Ekey_enter,
-    EKey_backspace
+    EKey_backspace,
 
-    // More to be added?
+    // Mouse
+    EKey_mouse_left,
+    EKey_mouse_right
 };
 
  #endif // FILE_INPUT_KEYCODE_HPP 

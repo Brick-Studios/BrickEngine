@@ -22,67 +22,78 @@ void PhysicsSystem::update(double deltatime) {
 
         if (physics->gravity) {
             // Also do collisions
-            double vy = physics->vy + (GRAVITY * mass * deltatime);
+            double vy = physics->vy + (GRAVITY * mass);
 
             if (vy > TERMINAL_VELOCITY)
                 vy = TERMINAL_VELOCITY;
-
+            
             physics->vy = vy;
         }
+
+        double vx = physics->vx * deltatime;
+        double vy = physics->vy * deltatime;
 
         if (physics->vx > 0) { // Moving right
             auto collision = collisionDetector->spaceLeft(entityId, Axis::X, Direction::POSITIVE);
             auto collider = entityManager->getComponent<RectangleColliderComponent>(collision.objectId);
-            double wantToMove  = physics->vx * deltatime;
+            double toMove;
 
-            if (wantToMove >= collision.spaceLeft){
+            if (vx >= collision.spaceLeft){
                 if(collider->isTrigger)
-                    transform->xPos = transform->xPos + wantToMove;
+                    toMove = vx;
                 else
-                    transform->xPos = transform->xPos + collision.spaceLeft;                
+                    toMove = collision.spaceLeft;        
             }
-            else if (wantToMove < collision.spaceLeft)
-                transform->xPos = transform->xPos + wantToMove;            
+            else if (vx < collision.spaceLeft)
+                    toMove = vx;
+
+            transform->xPos = transform->xPos + toMove;      
         }
         if (physics->vx < 0) { // Moving left
             auto collision = collisionDetector->spaceLeft(entityId, Axis::X, Direction::NEGATIVE);
             auto collider = entityManager->getComponent<RectangleColliderComponent>(collision.objectId);
-            double wantToMove = physics->vx * deltatime;
+            double toMove;
 
-            if (wantToMove <= collision.spaceLeft) {
+            if (vx <= collision.spaceLeft) {
                 if(collider->isTrigger)
-                    transform->xPos = transform->xPos + wantToMove;
+                    toMove = vx;
                 else
-                transform->xPos = transform->xPos + collision.spaceLeft;                
+                    toMove = collision.spaceLeft;            
             }
-            else if (wantToMove > collision.spaceLeft)
-                transform->xPos = transform->xPos + wantToMove;
+            else if (vx > collision.spaceLeft)
+                    toMove = vx;
+
+            transform->xPos = transform->xPos + toMove;
         }
         if (physics->vy > 0) { // Moving down
             auto collision = collisionDetector->spaceLeft(entityId, Axis::Y, Direction::POSITIVE);
             auto collider = entityManager->getComponent<RectangleColliderComponent>(collision.objectId);
-            double wantToMove = physics->vy * deltatime;
+            double toMove;
 
-            if (wantToMove >= collision.spaceLeft)
+            if (vy >= collision.spaceLeft)
                 if(collider->isTrigger)
-                    transform->yPos = transform->yPos + wantToMove;
+                    toMove = vy;
                 else
-                    transform->yPos = transform->yPos + collision.spaceLeft;
-            else if (wantToMove < collision.spaceLeft)
-                transform->yPos = transform->yPos + wantToMove;
+                    toMove = collision.spaceLeft;
+            else if (vy < collision.spaceLeft)
+                toMove = vy;
+
+            transform->yPos = transform->yPos + toMove;
         }
         if (physics->vy < 0) { // Moving up
             auto collision = collisionDetector->spaceLeft(entityId, Axis::Y, Direction::NEGATIVE);
             auto collider = entityManager->getComponent<RectangleColliderComponent>(collision.objectId);
-            double wantToMove = physics->vy * deltatime;
+            double toMove;
 
-            if (wantToMove <= collision.spaceLeft)
+            if (vy <= collision.spaceLeft)
                 if(collider->isTrigger)
-                    transform->yPos = transform->yPos + wantToMove;
+                    toMove = vy;
                 else
-                    transform->yPos = transform->yPos + collision.spaceLeft;
-            else if (wantToMove > collision.spaceLeft)
-                transform->yPos = transform->yPos + wantToMove;
+                    toMove = collision.spaceLeft;
+            else if (vy > collision.spaceLeft)
+                toMove = vy;
+
+            transform->yPos = transform->yPos + toMove;
         }
     }
 }
