@@ -32,47 +32,102 @@ void PhysicsSystem::update(double deltatime) {
         double vx = physics->vx * deltatime;
         double vy = physics->vy * deltatime;
         if (physics->vx > 0) { // Moving right
-            double spaceLeft = collisionDetector->spaceLeft(entityId, Axis::X, Direction::POSITIVE);
-            if (spaceLeft == 0) {
+            if (physics->flipXDirection)
+                transform->xDirection = Direction::POSITIVE;
+
+            double spaceLeft = getSpaceLeftFromEntity(entityId, Axis::X, Direction::POSITIVE);
+            
+            if (spaceLeft != 0) {
+                double wantToMove = vx;
+                double toMove = (wantToMove >= spaceLeft) ? spaceLeft : wantToMove;
+
+                transform->xPos = transform->xPos + toMove;
+            }
+            else {
                 physics->vx = 0;
             }
-
-            double wantToMove = vx;
-            double toMove = (wantToMove >= spaceLeft) ? spaceLeft : wantToMove;
-
-            transform->xPos = transform->xPos + toMove;
         }
         if (physics->vx < 0) { // Moving left
-            double spaceLeft = collisionDetector->spaceLeft(entityId, Axis::X, Direction::NEGATIVE);
-            if (spaceLeft == 0) {
+            if (physics->flipXDirection)
+                transform->xDirection = Direction::NEGATIVE;
+
+            double spaceLeft = getSpaceLeftFromEntity(entityId, Axis::X, Direction::NEGATIVE);
+
+            if (spaceLeft != 0) {
+                double wantToMove = vx;
+                double toMove = (wantToMove <= spaceLeft) ? spaceLeft : wantToMove;
+
+                transform->xPos = transform->xPos + toMove;
+            } else {
                 physics->vx = 0;
             }
-
-            double wantToMove = vx;
-            double toMove = (wantToMove <= spaceLeft) ? spaceLeft : wantToMove;
-
-            transform->xPos = transform->xPos + toMove;
         }
         if (physics->vy > 0) { // Moving down
-            double spaceLeft = collisionDetector->spaceLeft(entityId, Axis::Y, Direction::POSITIVE);
-            if (spaceLeft == 0) {
+            if (physics->flipYDirection)
+                transform->yDirection = Direction::POSITIVE;
+
+            double spaceLeft = getSpaceLeftFromEntity(entityId, Axis::Y, Direction::POSITIVE);
+
+            if (spaceLeft != 0) {
+                double wantToMove = vy;
+                double toMove = (wantToMove >= spaceLeft) ? spaceLeft : wantToMove;
+
+                transform->yPos = transform->yPos + toMove;
+            }
+            else {
                 physics->vy = 0;
             }
-            double wantToMove = vy;
-            double toMove = (wantToMove >= spaceLeft) ? spaceLeft : wantToMove;
-
-            transform->yPos = transform->yPos + toMove;
         }
         if (physics->vy < 0) { // Moving up
-            double spaceLeft = collisionDetector->spaceLeft(entityId, Axis::Y, Direction::NEGATIVE);
-            if (spaceLeft == 0) {
+            if (physics->flipYDirection)
+                transform->yDirection = Direction::NEGATIVE;
+
+            double spaceLeft = getSpaceLeftFromEntity(entityId, Axis::Y, Direction::NEGATIVE);
+
+            if (spaceLeft != 0) {
+                double wantToMove = vy;
+                double toMove = (wantToMove <= spaceLeft) ? spaceLeft : wantToMove;
+
+                transform->yPos = transform->yPos + toMove;
+            } else {
                 physics->vy = 0;
             }
-
-            double wantToMove = vy;
-            double toMove = (wantToMove <= spaceLeft) ? spaceLeft : wantToMove;
-
-            transform->yPos = transform->yPos + toMove;
         }
+        updateChildren(entityId);
     }
+}
+
+void PhysicsSystem::updateChildren(int parentId) {
+    auto transformParent = entityManager->getComponent<TransformComponent>(parentId);
+    auto children = entityManager->getChildren(parentId);
+    for (const int& child : children) {
+        auto transformChild = entityManager->getComponent<TransformComponent>(child);
+
+        if (transformChild->xDirection != transformParent->xDirection) {
+            transformChild->xPos *= -1;
+        }
+        if (transformChild->yDirection != transformParent->yDirection) {
+            transformChild->yPos *= -1;
+        }
+
+        transformChild->xDirection = transformParent->xDirection;
+        transformChild->yDirection = transformParent->yDirection;
+
+        updateChildren(child);
+    }
+}
+
+double PhysicsSystem::getSpaceLeftFromEntity(int entityId, Axis axis, Direction direction) {
+    double leastAmountOfSpace = collisionDetector->spaceLeft(entityId, axis, direction);
+
+    auto children = entityManager->getChildren(entityId);
+    for (const int& child : children) {
+        double spaceLeft = getSpaceLeftFromEntity(child, axis, direction);
+        if (direction == Direction::NEGATIVE && spaceLeft > leastAmountOfSpace)
+            leastAmountOfSpace = spaceLeft;
+        else if (direction == Direction::POSITIVE && spaceLeft < leastAmountOfSpace)
+            leastAmountOfSpace = spaceLeft;
+    }
+
+    return leastAmountOfSpace;
 }
