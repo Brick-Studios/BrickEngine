@@ -59,9 +59,6 @@ CollisionReturnValues CollisionDetector::spaceLeft(int entity, Axis axis, Direct
                         double entityColliderHitwall = entityTransform->xPos + ((entityTransform->xScale * entityRectCollider->xScale) / 2);
 
                         double difference = opposibleColliderHitwall - entityColliderHitwall;
-
-                        //std::cout << opposibleColliderHitwall << std::endl;
-                        //std::cout << entityColliderHitwall << std::endl;
                         
                         if(difference >= 0 && spaceLeft > difference) {
                             spaceLeft = difference;
@@ -79,7 +76,6 @@ CollisionReturnValues CollisionDetector::spaceLeft(int entity, Axis axis, Direct
                         double entityColliderHitwall = entityTransform->xPos - ((entityTransform->xScale * entityRectCollider->xScale) / 2);
                         
                         double difference = opposibleColliderHitwall - entityColliderHitwall;
-                        //std::cout << "LEFT " << difference << std::endl;
 
                         if(difference <= 0 && spaceLeft < difference){
                             spaceLeft = difference;
@@ -118,7 +114,6 @@ CollisionReturnValues CollisionDetector::spaceLeft(int entity, Axis axis, Direct
                         double entityColliderHitwall = entityTransform->yPos - ((entityTransform->yScale * entityRectCollider->yScale) / 2);
 
                         double difference = opposibleColliderHitwall - entityColliderHitwall;
-                        //std::cout << "UP " << difference << std::endl;
 
                         if(difference <= 0 && spaceLeft < difference){
                             spaceLeft = difference;
