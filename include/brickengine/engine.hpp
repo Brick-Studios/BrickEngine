@@ -30,6 +30,8 @@ public:
     int getFps() const;
     double getDeltatime() const;
     EngineTick getTicks() const;
+    int getWindowWidth() const;
+    int getWindowHeight() const;
 private:
     std::vector<int> layers;
     int top_layer;
