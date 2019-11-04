@@ -14,8 +14,9 @@
 RenderableFactory::RenderableFactory(std::shared_ptr<Renderer> r) : renderer(r) {
 }
 
-std::unique_ptr<Texture> RenderableFactory::createImage(std::string path, int layer, std::unique_ptr<Rect> dst) const {
+std::unique_ptr<Texture> RenderableFactory::createImage(std::string path, int layer, std::unique_ptr<Rect> dst, int alpha) const {
     SDL_Texture* texture = this->createBMPTexture(path);
+    SDL_SetTextureAlphaMod(texture, alpha);
 
     return std::make_unique<Texture>(texture, layer, std::move(dst));
 }
