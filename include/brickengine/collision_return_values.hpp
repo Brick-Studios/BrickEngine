@@ -9,7 +9,7 @@ struct CollisionReturnValues{
 };
 
 struct TriggerReturnValues{
-    TriggerReturnValues(bool isInTrigger, int objectId) : isInTrigger(isInTrigger), objectId(objectId) {}
+    TriggerReturnValues(bool isInTrigger, std::optional<int> objectId) : isInTrigger(isInTrigger), objectId(objectId) {}
     bool isInTrigger;
     std::optional<int> objectId;
 };

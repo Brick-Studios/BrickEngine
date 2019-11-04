@@ -134,8 +134,7 @@ TriggerReturnValues CollisionDetector::isInTrigger(int entity){
 
     auto collidableEntities = entityManager->getEntitiesByComponent<RectangleColliderComponent>();
 
-    bool isInTrigger = false;
-    int objectId;
+    auto values = TriggerReturnValues(false, std::nullopt);
 
     for(auto& [id, collider] : *collidableEntities) {
         auto transformComponent = entityManager->getComponent<TransformComponent>(id);
@@ -156,12 +155,12 @@ TriggerReturnValues CollisionDetector::isInTrigger(int entity){
             && entityColliderHitwallRight <= opposibleColliderHitwallRight
             && entityColliderHitwallDown >= opposibleColliderHitwallDown
             && entityColliderHitwallUp <= opposibleColliderHitwallUp){
-                isInTrigger = true;
-                objectId = id;
+                values.isInTrigger = true;
+                values.objectId = id;
             }
         }
     }
-    return TriggerReturnValues(isInTrigger, objectId);
+    return values;
 }
 
 #endif // FILE_COLLISION_DETECTOR_CPP

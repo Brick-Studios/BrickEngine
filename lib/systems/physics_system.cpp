@@ -38,30 +38,38 @@ void PhysicsSystem::update(double deltatime) {
             auto collider = entityManager->getComponent<RectangleColliderComponent>(collision.objectId);
             double toMove = vx;
 
+            if (collision.spaceLeft == 0){
+                physics->vx = 0;
+            }
+
             if (vx >= collision.spaceLeft){
                 if(collider->isTrigger)
                     toMove = vx;
                 else
-                    toMove = collision.spaceLeft;        
+                    toMove = collision.spaceLeft;
             }
             else 
                 toMove = vx;
 
-            transform->xPos = transform->xPos + toMove;      
+            transform->xPos = transform->xPos + toMove;
         }
         if (physics->vx < 0) { // Moving left
             auto collision = collisionDetector->spaceLeft(entityId, Axis::X, Direction::NEGATIVE);
             auto collider = entityManager->getComponent<RectangleColliderComponent>(collision.objectId);
             double toMove;
 
+            if (collision.spaceLeft == 0) {
+                physics->vx = 0;
+            }
+
             if (vx <= collision.spaceLeft) {
                 if(collider->isTrigger)
                     toMove = vx;
                 else
-                    toMove = collision.spaceLeft;            
+                    toMove = collision.spaceLeft;
             }
             else
-                    toMove = vx;
+                toMove = vx;
 
             transform->xPos = transform->xPos + toMove;
         }
@@ -69,6 +77,10 @@ void PhysicsSystem::update(double deltatime) {
             auto collision = collisionDetector->spaceLeft(entityId, Axis::Y, Direction::POSITIVE);
             auto collider = entityManager->getComponent<RectangleColliderComponent>(collision.objectId);
             double toMove;
+
+            if (collision.spaceLeft == 0) {
+                physics->vy = 0;
+            }
 
             if (vy >= collision.spaceLeft)
                 if(collider->isTrigger)
@@ -84,6 +96,10 @@ void PhysicsSystem::update(double deltatime) {
             auto collision = collisionDetector->spaceLeft(entityId, Axis::Y, Direction::NEGATIVE);
             auto collider = entityManager->getComponent<RectangleColliderComponent>(collision.objectId);
             double toMove;
+
+            if (collision.spaceLeft == 0) {
+                physics->vy = 0;
+            }
 
             if (vy <= collision.spaceLeft)
                 if(collider->isTrigger)
