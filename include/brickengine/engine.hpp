@@ -13,6 +13,7 @@
 
 #include "brickengine/rendering/renderer.hpp"
 #include "brickengine/rendering/renderable_factory.hpp"
+#include "brickengine/resource_manager.hpp"
 
 class BrickEngine {
 public:
@@ -43,8 +44,9 @@ private:
     int window_width;
     std::unique_ptr<Renderable> fps_counter;
     std::unique_ptr<SDL_Window, void(*)(SDL_Window*)> window;
-    std::shared_ptr<Renderer> renderer;
     std::unique_ptr<RenderableFactory> renderableFactory;
+    std::shared_ptr<Renderer> renderer;
+    std::shared_ptr<ResourceManager> resource_manager;
 };
 
-#endif /* FILE_BRICKENGINE_HPP */
+#endif // FILE_BRICKENGINE_HPP
