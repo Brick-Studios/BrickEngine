@@ -22,3 +22,8 @@ target_link_libraries(BrickEngine_Test PRIVATE
 target_include_directories(BrickEngine_Test PRIVATE ${BRICKENGINE_INCLUDE_DIRECTORY})
 add_test(NAME BrickEngine_Test COMMAND BrickEngine_Test)
 set_target_properties(BrickEngine_Test PROPERTIES FOLDER tests)
+
+# Custom targets that work on BrickEngine
+add_custom_command(TARGET BrickEngine_Test PRE_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory
+                       ${CMAKE_SOURCE_DIR}/tests/assets/ $<TARGET_FILE_DIR:BrickEngine_Test>/tests/assets)

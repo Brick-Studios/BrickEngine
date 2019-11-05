@@ -1,0 +1,15 @@
+{
+    "string": "This is a string",
+    "integer": 12,
+    "double": 1.3,
+    "boolean": false,
+    "vector": [
+        {
+            "object": 1
+        },
+        {
+            "object": 2
+        }
+    ],
+    "string_vector": ["one", "two"]
+}
