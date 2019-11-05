@@ -26,4 +26,4 @@ set_target_properties(BrickEngine_Test PROPERTIES FOLDER tests)
 # Custom targets that work on BrickEngine
 add_custom_command(TARGET BrickEngine_Test PRE_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy_directory
-                       ${CMAKE_SOURCE_DIR}/tests/assets/ $<TARGET_FILE_DIR:BrickEngine_Test>/tests/assets)
+                       ${CMAKE_CURRENT_LIST_DIR}/assets/ $<TARGET_FILE_DIR:BrickEngine_Test>/tests/assets)
