@@ -14,11 +14,11 @@
 RenderableFactory::RenderableFactory(std::shared_ptr<Renderer> r, std::shared_ptr<ResourceManager> rm)
     : renderer(r), resource_manager(rm) {}
 
-std::unique_ptr<Texture> RenderableFactory::createImage(std::string path, int layer, std::unique_ptr<Rect> dst) const {
+std::unique_ptr<Texture> RenderableFactory::createImage(std::string path, int layer, std::unique_ptr<Rect> dst, int alpha) const {
     auto shared_texture = resource_manager->getTexture(path);
     
-    SDL_SetTextureBlendMode(shared_texture, SDL_BLENDMODE_BLEND);
-    SDL_SetTextureAlphaMod(shared_texture, alpha);
+    SDL_SetTextureBlendMode(shared_texture.get(), SDL_BLENDMODE_BLEND);
+    SDL_SetTextureAlphaMod(shared_texture.get(), alpha);
 
     return std::make_unique<Texture>(std::move(shared_texture), layer, std::move(dst));
 }
