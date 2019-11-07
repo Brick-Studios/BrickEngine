@@ -1,5 +1,5 @@
-#ifndef FILE_NOPATHEXCEPTION_HPP
-#define FILE_NOPATHEXCEPTION_HPP
+#ifndef FILE_NO_PATH_EXCEPTION_HPP
+#define FILE_NO_PATH_EXCEPTION_HPP
 
 #include <iostream>
 #include <exception>
@@ -15,4 +15,4 @@ public:
   }
 };
 
-#endif // FILE_NOPATHEXCEPTION_HPP
+#endif // FILE_NO_PATH_EXCEPTION_HPP

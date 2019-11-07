@@ -4,8 +4,8 @@
 #include <string>
 #include <vector>
 #include "brickengine/json/json.hpp"
-#include "brickengine/json/exceptions/noValidJsonOrPathException.hpp"
-#include "brickengine/json/exceptions/noPathException.hpp"
+#include "brickengine/json/exceptions/no_valid_json_or_path_exception.hpp"
+#include "brickengine/json/exceptions/no_path_exception.hpp"
 
 TEST(JSON_Creation, Create_JSON_object_from_path){
     try {

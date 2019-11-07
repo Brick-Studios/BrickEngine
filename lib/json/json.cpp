@@ -4,9 +4,9 @@
 
 #include "brickengine/json/json.hpp"
 #include "brickengine/extern/nlohmann_json.hpp"
-#include "brickengine/json/exceptions/objectOrTypeException.hpp"
-#include "brickengine/json/exceptions/noPathException.hpp"
-#include "brickengine/json/exceptions/noValidJsonOrPathException.hpp"
+#include "brickengine/json/exceptions/object_or_type_exception.hpp"
+#include "brickengine/json/exceptions/no_path_exception.hpp"
+#include "brickengine/json/exceptions/no_valid_json_or_path_exception.hpp"
 
 Json::Json(std::string source, bool isString) {
     if(isString) {
