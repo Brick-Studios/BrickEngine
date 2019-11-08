@@ -16,11 +16,9 @@ RenderableFactory::RenderableFactory(std::shared_ptr<Renderer> r, std::shared_pt
 
 std::unique_ptr<Texture> RenderableFactory::createImage(std::string path, int layer, std::unique_ptr<Rect> dst, int alpha) const {
     auto shared_texture = resource_manager->getTexture(path);
-    
     SDL_SetTextureBlendMode(shared_texture.get(), SDL_BLENDMODE_BLEND);
-    SDL_SetTextureAlphaMod(shared_texture.get(), alpha);
 
-    return std::make_unique<Texture>(std::move(shared_texture), layer, std::move(dst));
+    return std::make_unique<Texture>(std::move(shared_texture), layer, alpha, std::move(dst));
 }
 
 std::unique_ptr<Texture> RenderableFactory::createText(std::string text, int font_size, Color color, int layer, std::unique_ptr<Rect> dst) const {
