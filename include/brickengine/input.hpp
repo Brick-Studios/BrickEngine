@@ -22,16 +22,23 @@ public:
         return INSTANCE;
     }
 
-    void setInputMapping(std::unordered_map<int, std::unordered_map<InputKeyCode, T>>& gameInput) {
-        inputMapping = gameInput;
-        for(auto [playerId, mapping] : inputMapping) {
-            for(auto [sdl_key, input] : mapping){
+    void setInputMapping(std::unordered_map<int, std::unordered_map<InputKeyCode, T>>& game_input,
+                         std::unordered_map<T, double>& time_to_wait_mapping) {
+        input_mapping = game_input;
+        for (auto& [player_id, mapping] : input_mapping) {
+            for(auto& [sdl_key, input] : mapping){
                 std::ignore = sdl_key;
-                inputs[playerId][input] = false;
+                inputs[player_id][input] = false;
+            }
+        }
+        for (auto& [input, time_to_wait_value] : time_to_wait_mapping) {
+            for (auto& [player_id, mapping] : input_mapping) {
+                // the current time_to_wait is initilized with time_to_wait, so that you can instantly press the button
+                time_to_wait[player_id][input] = std::make_pair(time_to_wait_value, time_to_wait_value);
             }
         }
     }
-    
+
     // This function is intended for the UI so the game loop is not affected.
     void popInput(int playerId, T const input) {
         if(inputs[playerId].count(input))
@@ -46,9 +53,10 @@ public:
 
     bool remapInput(int playerId, T const input) {
         //Search for the old value
-        auto oldInput = std::find_if(inputMapping.at(playerId).begin(),inputMapping.at(playerId).end(),
-                                                    [&input](const std::pair<InputKeyCode, T>& value)
-                                                   { return value.second == input; });
+        auto oldInput = std::find_if(input_mapping.at(playerId).begin(),input_mapping.at(playerId).end(),
+                                     [&input](const std::pair<InputKeyCode, T>& value) {
+                                         return value.second == input;
+                                     });
         SDL_Event e;
         while(true) {
             while(SDL_PollEvent(&e)) {
@@ -60,15 +68,15 @@ public:
                             return true;
                         }
                         //Input is not already used
-                        if(inputMapping.at(playerId).count(inputkeycode.value()) == 0)
+                        if(input_mapping.at(playerId).count(inputkeycode.value()) == 0)
                         {
-                            inputMapping[playerId][inputkeycode.value()] = input;
+                            input_mapping[playerId][inputkeycode.value()] = input;
                             //Removing old key mapping
-                            inputMapping.at(playerId).erase(oldInput->first);
+                            input_mapping.at(playerId).erase(oldInput->first);
                             return true; 
                         }
                         //Key is used
-                        if(inputMapping.at(playerId).count(inputkeycode.value()) == 1)
+                        if(input_mapping.at(playerId).count(inputkeycode.value()) == 1)
                             return false;
                     }
                 }
@@ -76,7 +84,13 @@ public:
         }
     }
 
-    void processInput() {
+    void processInput(double deltatime) {
+        for (auto& [ player_id, to_wait_map ] : time_to_wait) {
+            for (auto& [ input, to_wait ] : to_wait_map) {
+                to_wait.second += deltatime;
+                inputs[player_id][input] = false;
+            }
+        }
         SDL_Event e;
         while (SDL_PollEvent(&e))
         {
@@ -88,13 +102,21 @@ public:
                         std::ignore = mapping;
                         auto input = convertSDLKeycodeInputKeyCode(e.key.keysym.sym);
                         if(input.has_value()) {
-                            if(inputMapping.at(playerId).find(input.value()) != inputMapping.at(playerId).end() && e.key.repeat == 0) {
+                            if(input_mapping.at(playerId).count(*input) && e.key.repeat == 0) {
                                 switch(e.type) {
                                     case SDL_KEYDOWN:
-                                        inputs[playerId][inputMapping[playerId][input.value()]] = true;
+                                        if (time_to_wait[playerId].count(input_mapping[playerId][*input])) {
+                                            auto& time_to_wait_for_key = time_to_wait[playerId][input_mapping[playerId][*input]];
+                                            if (time_to_wait_for_key.second >= time_to_wait_for_key.first) {
+                                                inputs[playerId][input_mapping[playerId][*input]] = true;
+                                                time_to_wait_for_key.second = 0;
+                                            }
+                                        } else {
+                                            inputs[playerId][input_mapping[playerId][*input]] = true;
+                                        }
                                         break;
                                     case SDL_KEYUP:
-                                        inputs[playerId][inputMapping[playerId][input.value()]] = false;
+                                        inputs[playerId][input_mapping[playerId][*input]] = false;
                                     default:
                                         break;
                                 }
@@ -109,20 +131,28 @@ public:
                         std::ignore = mapping;
                         auto input = convertSDLKeycodeInputKeyCode(e.button.button);
                         if(input.has_value()) {
-                            if(inputMapping.at(playerId).find(input.value()) != inputMapping.at(playerId).end()) {
+                            if(input_mapping.at(playerId).count(*input)) {
                                 switch(e.button.state) {
                                     case SDL_PRESSED:
-                                        inputs[playerId][inputMapping[playerId][input.value()]] = true;
+                                       if (time_to_wait[playerId].count(input_mapping[playerId][*input])) {
+                                            auto& time_to_wait_for_key = time_to_wait[playerId][input_mapping[playerId][*input]];
+                                            if (time_to_wait_for_key.second >= time_to_wait_for_key.first) {
+                                                inputs[playerId][input_mapping[playerId][*input]] = true;
+                                                time_to_wait_for_key.second = 0;
+                                            }
+                                        } else {
+                                            inputs[playerId][input_mapping[playerId][*input]] = true;
+                                        }
                                         break;
                                     case SDL_RELEASED:
-                                        inputs[playerId][inputMapping[playerId][input.value()]] = false;
+                                        inputs[playerId][input_mapping[playerId][*input]] = false;
                                     default:
                                         break;
                                 }
                             }
                         }
                     }
-                    break;
+                break;
             }
         }
     }
@@ -134,11 +164,18 @@ public:
     }
 private:
     // List of mapped inputs
+    // The int key is the player id
     std::unordered_map<int, std::unordered_map<T, bool>> inputs;
     // SDL inputs mapped to game input
-    std::unordered_map<int, std::unordered_map<InputKeyCode, T>> inputMapping;
+    // The int key is the player id
+    std::unordered_map<int, std::unordered_map<InputKeyCode, T>> input_mapping;
     std::unordered_map<InputKeyCode, SDL_Keycode> sdl_mapping;
     std::unordered_map<SDL_Keycode, InputKeyCode> keycode_mapping;
+    // The int key is the player id
+    // The first value in the pair is how long a keybinding has to wait.
+    // The second value is how long the keybinding is currently waiting.
+    // These values are in seconds of deltatime
+    std::unordered_map<int, std::unordered_map<T, std::pair<double, double>>> time_to_wait;
 
     std::optional<SDL_Keycode> convertInputKeyCodeToSDLKeycode(InputKeyCode i) {
         auto input = sdl_mapping.find(i);
