@@ -4,6 +4,7 @@
 #include "brickengine/components/component.hpp"
 #include "brickengine/components/component_impl.hpp"
 #include "brickengine/components/transform_component.hpp"
+#include "brickengine/components/physics_component.hpp"
 #include "brickengine/components/data/position.hpp"
 #include "brickengine/components/data/scale.hpp"
 
@@ -83,6 +84,18 @@ public:
     }
 
     void setParent(int childId, int parentId) {
+        auto child_transform = getComponent<TransformComponent>(childId);
+        auto parent_transform = getComponent<TransformComponent>(parentId);
+        auto child_physics = getComponent<PhysicsComponent>(childId);
+        
+        child_transform->xPos -= parent_transform->xPos;
+        child_transform->yPos -= parent_transform->yPos;
+        child_transform->xScale /= parent_transform->xScale;
+        child_transform->yScale /= parent_transform->yScale;
+        
+        if (child_physics && child_physics->kinematic == Kinematic::IS_NOT_KINEMATIC)
+            child_physics->kinematic = Kinematic::SHOULD_NOT_BE_KINEMATIC;
+
         if (family_hierarcy_parents.count(childId)) {
             int oldParent { family_hierarcy_parents[childId] };
             family_hierarcy_children[oldParent].erase(childId);
@@ -98,33 +111,44 @@ public:
         }
     }
 
-    std::optional<int> getParent(int entityId) {
-        if (!family_hierarcy_parents.count(entityId))
+    std::optional<int> getParent(int id) {
+        if (!family_hierarcy_parents.count(id))
             return std::nullopt;
         else
-            return family_hierarcy_parents[entityId];
+            return family_hierarcy_parents[id];
     }
 
-    std::set<int> getChildren(int entityId) {
-        if (!family_hierarcy_children.count(entityId))
+    std::set<int> getChildren(int id) {
+        if (!family_hierarcy_children.count(id))
             return std::set<int>();
         else
-            return family_hierarcy_children[entityId];
+            return family_hierarcy_children[id];
     }
 
-    void moveOutOfParentsHouse(int entityId) {
-        if (!family_hierarcy_parents.count(entityId)) return;
+    void moveOutOfParentsHouse(int entity_id) {
+        if (!family_hierarcy_parents.count(entity_id)) return;
+        int old_parent { family_hierarcy_parents[entity_id] };
+        auto old_parent_transform = getComponent<TransformComponent>(old_parent);
 
-        int oldParent { family_hierarcy_parents[entityId] };
-        family_hierarcy_children[oldParent].erase(entityId);
-        family_hierarcy_parents.erase(entityId);
+        auto child_transform = getComponent<TransformComponent>(entity_id);
+        child_transform->xPos += old_parent_transform->xPos;
+        child_transform->yPos += old_parent_transform->yPos;
+        child_transform->xScale *= old_parent_transform->xScale;
+        child_transform->yScale *= old_parent_transform->yScale;
+
+        auto physics = getComponent<PhysicsComponent>(entity_id);
+        if (physics && physics->kinematic == Kinematic::SHOULD_NOT_BE_KINEMATIC)
+            physics->kinematic = Kinematic::IS_NOT_KINEMATIC;
+
+        family_hierarcy_children[old_parent].erase(entity_id);
+        family_hierarcy_parents.erase(entity_id);
     }
 
-    std::pair<Position, Scale> getAbsoluteTransform(int entityId){
-        auto transform = getComponent<TransformComponent>(entityId);
+    std::pair<Position, Scale> getAbsoluteTransform(int id){
+        auto transform = getComponent<TransformComponent>(id);
         auto position = Position(transform->xPos, transform->yPos);
         auto scale = Scale(transform->xScale, transform->yScale);
-        if (auto parent = getParent(entityId)) {
+        if (auto parent = getParent(id)) {
             auto [ parent_position, parent_scale ] = getAbsoluteTransform(*parent);
 
             position.x += parent_position.x;

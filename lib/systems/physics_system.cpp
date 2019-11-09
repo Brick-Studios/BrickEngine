@@ -10,7 +10,7 @@ void PhysicsSystem::update(double deltatime) {
     auto entitiesWithPhysics = entityManager->getEntitiesByComponent<PhysicsComponent>();
 
     for(auto [entityId, physics] : *entitiesWithPhysics){
-        if (physics->kinematic) {
+        if (physics->kinematic != Kinematic::IS_NOT_KINEMATIC) {
             physics->vx = 0;
             physics->vy = 0;
             continue;
@@ -32,7 +32,7 @@ void PhysicsSystem::update(double deltatime) {
         double vx = physics->vx * deltatime;
         double vy = physics->vy * deltatime;
         if (physics->vx > 0) { // Moving right
-            if (physics->flipXDirection)
+            if (physics->flipX)
                 transform->xDirection = Direction::POSITIVE;
 
             double spaceLeft = getSpaceLeftFromEntity(entityId, Axis::X, Direction::POSITIVE);
@@ -48,7 +48,7 @@ void PhysicsSystem::update(double deltatime) {
             }
         }
         if (physics->vx < 0) { // Moving left
-            if (physics->flipXDirection)
+            if (physics->flipX)
                 transform->xDirection = Direction::NEGATIVE;
 
             double spaceLeft = getSpaceLeftFromEntity(entityId, Axis::X, Direction::NEGATIVE);
@@ -63,7 +63,7 @@ void PhysicsSystem::update(double deltatime) {
             }
         }
         if (physics->vy > 0) { // Moving down
-            if (physics->flipYDirection)
+            if (physics->flipY)
                 transform->yDirection = Direction::POSITIVE;
 
             double spaceLeft = getSpaceLeftFromEntity(entityId, Axis::Y, Direction::POSITIVE);
@@ -79,7 +79,7 @@ void PhysicsSystem::update(double deltatime) {
             }
         }
         if (physics->vy < 0) { // Moving up
-            if (physics->flipYDirection)
+            if (physics->flipY)
                 transform->yDirection = Direction::NEGATIVE;
 
             double spaceLeft = getSpaceLeftFromEntity(entityId, Axis::Y, Direction::NEGATIVE);
@@ -101,17 +101,22 @@ void PhysicsSystem::updateChildren(int parentId) {
     auto transformParent = entityManager->getComponent<TransformComponent>(parentId);
     auto children = entityManager->getChildren(parentId);
     for (const int& child : children) {
+        auto childPhysics = entityManager->getComponent<PhysicsComponent>(child);
+        // If there is no physics in the child, nothing can happen to that child
+        if (!childPhysics) continue;
+
         auto transformChild = entityManager->getComponent<TransformComponent>(child);
 
-        if (transformChild->xDirection != transformParent->xDirection) {
-            transformChild->xPos *= -1;
+        if (childPhysics->flipX) {
+            if (transformChild->xDirection != transformParent->xDirection)
+                transformChild->xPos *= -1;
+            transformChild->xDirection = transformParent->xDirection;
         }
-        if (transformChild->yDirection != transformParent->yDirection) {
-            transformChild->yPos *= -1;
+        if (childPhysics->flipY) {
+            if (transformChild->yDirection != transformParent->yDirection)
+                transformChild->yPos *= -1;
+            transformChild->yDirection = transformParent->yDirection;
         }
-
-        transformChild->xDirection = transformParent->xDirection;
-        transformChild->yDirection = transformParent->yDirection;
 
         updateChildren(child);
     }
@@ -119,7 +124,6 @@ void PhysicsSystem::updateChildren(int parentId) {
 
 double PhysicsSystem::getSpaceLeftFromEntity(int entityId, Axis axis, Direction direction) {
     double leastAmountOfSpace = collisionDetector->spaceLeft(entityId, axis, direction);
-
     auto children = entityManager->getChildren(entityId);
     for (const int& child : children) {
         double spaceLeft = getSpaceLeftFromEntity(child, axis, direction);
@@ -128,6 +132,5 @@ double PhysicsSystem::getSpaceLeftFromEntity(int entityId, Axis axis, Direction 
         else if (direction == Direction::POSITIVE && spaceLeft < leastAmountOfSpace)
             leastAmountOfSpace = spaceLeft;
     }
-
     return leastAmountOfSpace;
 }

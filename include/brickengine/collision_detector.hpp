@@ -48,4 +48,5 @@ public:
 private:
 		std::shared_ptr<EntityManager> entityManager;
 };
+
 #endif // FILE_COLLISION_DETECTOR_HPP
