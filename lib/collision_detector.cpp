@@ -13,7 +13,7 @@
 
 CollisionDetector::CollisionDetector(std::shared_ptr<EntityManager> em) : entityManager(em) {}
 
-double CollisionDetector::spaceLeft(int entity, Axis axis, Direction direction) {
+CollisionReturnValues CollisionDetector::spaceLeft(int entity, Axis axis, Direction direction) {
     // We only support rectangles
     auto entityRectCollider = entityManager->getComponent<RectangleColliderComponent>(entity);
     auto [ entity_position, entity_scale ] = entityManager->getAbsoluteTransform(entity);
@@ -23,6 +23,9 @@ double CollisionDetector::spaceLeft(int entity, Axis axis, Direction direction) 
     auto parent = entityManager->getParent(entity);
 
     double spaceLeft = 0; // Distance to the closed object
+    int objectId;
+    bool isTrigger;
+
     if(direction == Direction::NEGATIVE){
         spaceLeft = std::numeric_limits<double>::lowest();
     } else {
@@ -57,6 +60,8 @@ double CollisionDetector::spaceLeft(int entity, Axis axis, Direction direction) 
 
                     if(difference >= 0 && spaceLeft > difference) {
                         spaceLeft = difference;
+                        objectId = other_id;
+                        isTrigger = collider->isTrigger;
                     }
                 }
             } else if(direction == Direction::NEGATIVE) { // Left
@@ -73,6 +78,8 @@ double CollisionDetector::spaceLeft(int entity, Axis axis, Direction direction) 
 
                     if(difference <= 0 && spaceLeft < difference){
                         spaceLeft = difference;
+                        objectId = other_id;
+                        isTrigger = collider->isTrigger;
                     }
                 }
             }
@@ -95,6 +102,8 @@ double CollisionDetector::spaceLeft(int entity, Axis axis, Direction direction) 
 
                     if(difference >= 0 && spaceLeft > difference){
                         spaceLeft = difference;
+                        objectId = other_id;
+                        isTrigger = collider->isTrigger;
                     }
                 }
             } else if(direction == Direction::NEGATIVE) { // Up
@@ -110,12 +119,50 @@ double CollisionDetector::spaceLeft(int entity, Axis axis, Direction direction) 
 
                     if(difference <= 0 && spaceLeft < difference){
                         spaceLeft = difference;
+                        objectId = other_id;
+                        isTrigger = collider->isTrigger;
                     }
                 } 
             }
         }        
     }    
-    return spaceLeft;
+    return CollisionReturnValues(spaceLeft, objectId, isTrigger);
+}
+
+TriggerReturnValues CollisionDetector::isInTrigger(int entity){
+    // We only support rectangles
+    auto entityRectCollider = entityManager->getComponent<RectangleColliderComponent>(entity);
+    auto entityTransform = entityManager->getComponent<TransformComponent>(entity);
+
+    auto collidableEntities = entityManager->getEntitiesByComponent<RectangleColliderComponent>();
+
+    auto values = TriggerReturnValues(false, std::nullopt);
+
+    for(auto& [id, collider] : *collidableEntities) {
+        auto transformComponent = entityManager->getComponent<TransformComponent>(id);
+
+        if(collider->isTrigger){
+            double opposibleColliderHitwallLeft = transformComponent->xPos - ((transformComponent->xScale * collider->xScale) / 2);
+            double opposibleColliderHitwallRight = transformComponent->xPos + ((transformComponent->xScale * collider->xScale) / 2);
+            double opposibleColliderHitwallDown = transformComponent->yPos - ((transformComponent->yScale * collider->yScale) / 2);
+            double opposibleColliderHitwallUp = transformComponent->yPos + ((transformComponent->yScale * collider->yScale) / 2);
+
+            double entityColliderHitwallLeft = entityTransform->xPos + ((entityTransform->xScale * entityRectCollider->xScale) / 2);
+            double entityColliderHitwallRight = entityTransform->xPos - ((entityTransform->xScale * entityRectCollider->xScale) / 2);
+            double entityColliderHitwallDown = entityTransform->yPos + ((entityTransform->yScale * entityRectCollider->yScale) / 2);
+            double entityColliderHitwallUp = entityTransform->yPos - ((entityTransform->yScale * entityRectCollider->yScale) / 2);
+
+            // Check if you are inside the x and y of the collidable
+            if(entityColliderHitwallLeft >= opposibleColliderHitwallLeft 
+            && entityColliderHitwallRight <= opposibleColliderHitwallRight
+            && entityColliderHitwallDown >= opposibleColliderHitwallDown
+            && entityColliderHitwallUp <= opposibleColliderHitwallUp){
+                values.isInTrigger = true;
+                values.objectId = id;
+            }
+        }
+    }
+    return values;
 }
 
 #endif // FILE_COLLISION_DETECTOR_HPP

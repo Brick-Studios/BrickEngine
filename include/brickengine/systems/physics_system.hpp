@@ -11,7 +11,6 @@ public:
     PhysicsSystem(std::shared_ptr<CollisionDetector> cd, std::shared_ptr<EntityManager> em);
     void update(double deltatime);
     void updateChildren(int parentId);
-    double getSpaceLeftFromEntity(int entityId, Axis axis, Direction direction);
 private:
     static constexpr double GRAVITY = 0.16;
     static constexpr double TERMINAL_VELOCITY = 1000;

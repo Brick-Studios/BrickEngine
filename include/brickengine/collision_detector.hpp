@@ -40,11 +40,25 @@ Inspector Collision Detector
 #include "brickengine/enum/axis.hpp"
 #include "brickengine/enum/direction.hpp"
 
+struct CollisionReturnValues {
+    CollisionReturnValues(double spaceLeft, int objectId, bool isTrigger) : spaceLeft(spaceLeft), objectId(objectId), isTrigger(isTrigger) {}
+    double spaceLeft;
+    int objectId;
+    bool isTrigger;
+};
+
+struct TriggerReturnValues {
+    TriggerReturnValues(bool isInTrigger, std::optional<int> objectId) : isInTrigger(isInTrigger), objectId(objectId) {}
+    bool isInTrigger;
+    std::optional<int> objectId;
+};
+
 class CollisionDetector {
 public:
 		CollisionDetector(std::shared_ptr<EntityManager> em);
-		//Returns amount of pixels that can still be moved to the collidable object.
-		double spaceLeft(int entity, Axis axis, Direction direction);
+		// Returns amount of pixels that can still be moved to the collidable object.
+		CollisionReturnValues spaceLeft(int entity, Axis axis, Direction direction);
+    TriggerReturnValues isInTrigger(int entity);
 private:
 		std::shared_ptr<EntityManager> entityManager;
 };

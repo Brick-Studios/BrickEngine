@@ -25,14 +25,16 @@ public:
     };
     ~EntityManager() = default;
 
-    int createEntity(const std::unique_ptr<std::vector<std::unique_ptr<Component>>> components, std::optional<int> parentIdOpt){
+    // the int in the optional pair is the parent id
+    // the bool in the optional pair is the parent id
+    int createEntity(const std::unique_ptr<std::vector<std::unique_ptr<Component>>> components, std::optional<std::pair<int,bool>> parentOpt){
         int entityId = ++lowest_unassigned_entity_id;
 
         for(auto& c : *components)
             addComponentToEntity(lowest_unassigned_entity_id, std::move(c));
 
-        if(parentIdOpt)
-            setParent(entityId, parentIdOpt.value());
+        if(parentOpt)
+            setParent(entityId, parentOpt.value().first, parentOpt.value().second);
 
         return entityId;
     }
@@ -83,15 +85,17 @@ public:
             component.second.erase(entityId);
     }
 
-    void setParent(int childId, int parentId) {
+    void setParent(int childId, int parentId, bool transformIsRelative) {
         auto child_transform = getComponent<TransformComponent>(childId);
-        auto parent_transform = getComponent<TransformComponent>(parentId);
         auto child_physics = getComponent<PhysicsComponent>(childId);
         
-        child_transform->xPos -= parent_transform->xPos;
-        child_transform->yPos -= parent_transform->yPos;
-        child_transform->xScale /= parent_transform->xScale;
-        child_transform->yScale /= parent_transform->yScale;
+        if (!transformIsRelative) {
+            auto [ parent_absolute_position, parent_absolute_scale ] = getAbsoluteTransform(parentId);
+            child_transform->xPos -= parent_absolute_position.x;
+            child_transform->yPos -= parent_absolute_position.y;
+            child_transform->xScale /= parent_absolute_scale.x;
+            child_transform->yScale /= parent_absolute_scale.y;
+        }
         
         if (child_physics && child_physics->kinematic == Kinematic::IS_NOT_KINEMATIC)
             child_physics->kinematic = Kinematic::SHOULD_NOT_BE_KINEMATIC;
