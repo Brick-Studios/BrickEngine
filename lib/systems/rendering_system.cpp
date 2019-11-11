@@ -22,19 +22,15 @@ void RenderingSystem::update(double){
         texture->getTexture()->setFlip(SDL_FLIP_NONE);
         SDL_RendererFlip flip = SDL_FLIP_NONE;
 
-        if (transform->xDirection == Direction::POSITIVE && transform->yDirection == Direction::POSITIVE) {
+        if (transform->xDirection == Direction::NEGATIVE && transform->yDirection == Direction::NEGATIVE) {
             flip = static_cast<SDL_RendererFlip>(SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL);
-        } else if (transform->xDirection == Direction::POSITIVE) {
+        } else if (transform->xDirection == Direction::NEGATIVE) {
             flip = SDL_FLIP_HORIZONTAL;
-        } else if (transform->yDirection == Direction::POSITIVE) {
+        } else if (transform->yDirection == Direction::NEGATIVE) {
             flip = SDL_FLIP_VERTICAL;
         }
 
-        if (transform->xDirection == Direction::POSITIVE) {
-            texture->getTexture()->setFlip(SDL_FLIP_NONE);
-        } else {
-            texture->getTexture()->setFlip(SDL_FLIP_HORIZONTAL);
-        }
+        texture->getTexture()->setFlip(flip);
 
         renderer.queueRenderable(texture->getTexture());
     }
