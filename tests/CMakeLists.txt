@@ -6,6 +6,12 @@ add_executable(BrickEngine_Test ${TEST_FILES})
 # Make the compiler complain, a lot
 target_compile_options(BrickEngine_Test
     PRIVATE -Wall -Wextra -pedantic -Werror)
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    target_compile_options(BrickEngine_Test
+        PRIVATE -fprofile-instr-generate -fcoverage-mapping)
+    target_link_options(BrickEngine_Test
+        PRIVATE -fprofile-instr-generate -fcoverage-mapping)
+endif()
 # Turn on the address sanitizer for safety checks
 option(BRICKENGINE_TEST_SANITIZER "Turn on the address sanitizer" OFF)
 if(BRICKENGINE_TEST_SANITIZER)

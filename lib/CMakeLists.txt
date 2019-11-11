@@ -12,6 +12,14 @@ add_library(BrickEngine STATIC
 # Make the compiler complain, a lot
 target_compile_options(BrickEngine
     PRIVATE -Wall -Wextra -pedantic -Werror)
+if (BRICKENGINE_TEST)
+    if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+        target_compile_options(BrickEngine
+            PRIVATE -fprofile-instr-generate -fcoverage-mapping)
+        target_link_options(BrickEngine
+            PRIVATE -fprofile-instr-generate -fcoverage-mapping)
+    endif()
+endif()
 target_include_directories(BrickEngine PUBLIC ../include)
 target_link_libraries(BrickEngine
     PRIVATE SDL2::Main

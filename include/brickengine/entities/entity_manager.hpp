@@ -65,9 +65,9 @@ public:
         std::string componentType = component.get()->getName();
 
         if(components_by_class->count(componentType) == 0)
-            components_by_class->insert(std::make_pair(componentType, std::unordered_map<int, std::unique_ptr<Component>>()));
+            components_by_class->insert({ componentType, std::unordered_map<int, std::unique_ptr<Component>>() });
 
-        components_by_class->at(componentType).insert(std::make_pair(entityId, std::move(component)));
+        components_by_class->at(componentType).insert_or_assign(entityId, std::move(component));
     }
 
     void removeEntity(const int entityId){
