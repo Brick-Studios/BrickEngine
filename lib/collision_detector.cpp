@@ -133,12 +133,18 @@ TriggerReturnValues CollisionDetector::isInTrigger(int entity){
     // We only support rectangles
     auto entityRectCollider = entityManager->getComponent<RectangleColliderComponent>(entity);
     auto entityTransform = entityManager->getComponent<TransformComponent>(entity);
+    auto parent = entityManager->getParent(entity);
+    auto children = entityManager->getChildren(entity);
 
     auto collidableEntities = entityManager->getEntitiesByComponent<RectangleColliderComponent>();
 
     auto values = TriggerReturnValues(false, std::nullopt);
 
     for(auto& [id, collider] : *collidableEntities) {
+        // You cannot trigger with family
+        if (parent && *parent == id) continue;
+        if (children.count(id)) continue;
+
         auto transformComponent = entityManager->getComponent<TransformComponent>(id);
 
         if(collider->isTrigger){
