@@ -9,6 +9,7 @@ class Renderer;
 class Texture : public Renderable {
 public:
     Texture(std::shared_ptr<SDL_Texture> texture, int layer, std::unique_ptr<Rect> dst);
+    Texture(std::shared_ptr<SDL_Texture> texture, int layer, int alpha, std::unique_ptr<Rect> dst);
     Texture(std::shared_ptr<SDL_Texture> texture, int layer, std::unique_ptr<Rect> dst, std::unique_ptr<Rect> src);
     void render(Renderer& r);
     virtual Rect* getSrcRect() const;

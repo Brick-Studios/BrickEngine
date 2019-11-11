@@ -1,6 +1,5 @@
 file(GLOB_RECURSE BRICKENGINE_SRC_FILES RELATIVE ${CMAKE_CURRENT_LIST_DIR} *.c[p]*)
 
-
 find_package(SDL2 REQUIRED)
 find_package(SDL2_net REQUIRED)
 find_package(SDL2_gfx REQUIRED)

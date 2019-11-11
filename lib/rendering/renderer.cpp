@@ -39,7 +39,9 @@ void Renderer::queueRenderable(Renderable* r) {
 void Renderer::render(Texture& r) {
     SDL_Rect* src = (struct SDL_Rect*)r.getSrcRect();
     SDL_Rect* dst = (struct SDL_Rect*)r.getDstRect();
+    SDL_SetTextureAlphaMod(r.getTexture(), r.alpha);
     SDL_RenderCopyEx(this->sdl_renderer.get(), r.getTexture(), src, dst, 0, nullptr, r.getFlip());
+    SDL_SetTextureAlphaMod(r.getTexture(), 255);
 }
 void Renderer::render(Circle& r) {
     if (r.getFilled())
