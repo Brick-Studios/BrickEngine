@@ -9,9 +9,9 @@
 TEST(EntityManager, create_entity_and_get_comp) {
     EntityManager em;
     auto comps = std::make_unique<std::vector<std::unique_ptr<Component>>>();
-    comps->push_back(std::make_unique<TransformComponent>(0, 0, 0, 0));
-    comps->push_back(std::make_unique<PhysicsComponent>(0, 0, 0, 0, false, false));
-    int id = em.createEntity(std::move(comps));
+    comps->push_back(std::make_unique<TransformComponent>(0, 0, 0, 0, Direction::NEGATIVE, Direction::NEGATIVE));
+    comps->push_back(std::make_unique<PhysicsComponent>(0, 0, 0, 0, false, Kinematic::IS_NOT_KINEMATIC, false, false));
+    int id = em.createEntity(std::move(comps), std::nullopt);
 
     auto comp = em.getComponent<TransformComponent>(id);
     
@@ -22,13 +22,13 @@ TEST(EntityManager, create_entities_and_get_all_entities_by_comp) {
     EntityManager em;
     {
         auto comps = std::make_unique<std::vector<std::unique_ptr<Component>>>();
-        comps->push_back(std::make_unique<TransformComponent>(0, 0, 0, 0));
-        em.createEntity(std::move(comps));
+        comps->push_back(std::make_unique<TransformComponent>(0, 0, 0, 0, Direction::NEGATIVE, Direction::NEGATIVE));
+        em.createEntity(std::move(comps), std::nullopt);
     }
     {
         auto comps = std::make_unique<std::vector<std::unique_ptr<Component>>>();
-        comps->push_back(std::make_unique<TransformComponent>(0, 0, 0, 0));
-        em.createEntity(std::move(comps));
+        comps->push_back(std::make_unique<TransformComponent>(0, 0, 0, 0, Direction::NEGATIVE, Direction::NEGATIVE));
+        em.createEntity(std::move(comps), std::nullopt);
     }
 
     auto entities = em.getEntitiesByComponent<TransformComponent>();
@@ -39,8 +39,8 @@ TEST(EntityManager, create_entities_and_get_all_entities_by_comp) {
 TEST(EntityManager, create_entity_and_remove_comp) {
     EntityManager em;
     auto comps = std::make_unique<std::vector<std::unique_ptr<Component>>>();
-    comps->push_back(std::make_unique<TransformComponent>(0, 0, 0, 0));
-    int id = em.createEntity(std::move(comps));
+    comps->push_back(std::make_unique<TransformComponent>(0, 0, 0, 0, Direction::NEGATIVE, Direction::NEGATIVE));
+    int id = em.createEntity(std::move(comps), std::nullopt);
 
     em.removeComponentFromEntity<TransformComponent>(id);
     auto comp = em.getComponent<TransformComponent>(id);
@@ -52,13 +52,13 @@ TEST(EntityManager, create_entities_and_remove_one_comp) {
     EntityManager em;
     {
         auto comps = std::make_unique<std::vector<std::unique_ptr<Component>>>();
-        comps->push_back(std::make_unique<TransformComponent>(0, 0, 0, 0));
-        em.createEntity(std::move(comps));
+        comps->push_back(std::make_unique<TransformComponent>(0, 0, 0, 0, Direction::NEGATIVE, Direction::NEGATIVE));
+        em.createEntity(std::move(comps), std::nullopt);
     }
     {
         auto comps = std::make_unique<std::vector<std::unique_ptr<Component>>>();
-        comps->push_back(std::make_unique<TransformComponent>(0, 0, 0, 0));
-        int id = em.createEntity(std::move(comps));
+        comps->push_back(std::make_unique<TransformComponent>(0, 0, 0, 0, Direction::NEGATIVE, Direction::NEGATIVE));
+        int id = em.createEntity(std::move(comps), std::nullopt);
         em.removeComponentFromEntity<TransformComponent>(id);
     }
 
@@ -72,13 +72,13 @@ TEST(EntityManager, create_entities_and_remove_entity) {
     EntityManager em;
     {
         auto comps = std::make_unique<std::vector<std::unique_ptr<Component>>>();
-        comps->push_back(std::make_unique<TransformComponent>(0, 0, 0, 0));
-        em.createEntity(std::move(comps));
+        comps->push_back(std::make_unique<TransformComponent>(0, 0, 0, 0, Direction::NEGATIVE, Direction::NEGATIVE));
+        em.createEntity(std::move(comps), std::nullopt);
     }
     {
         auto comps = std::make_unique<std::vector<std::unique_ptr<Component>>>();
-        comps->push_back(std::make_unique<TransformComponent>(0, 0, 0, 0));
-        int id = em.createEntity(std::move(comps));
+        comps->push_back(std::make_unique<TransformComponent>(0, 0, 0, 0, Direction::NEGATIVE, Direction::NEGATIVE));
+        int id = em.createEntity(std::move(comps), std::nullopt);
         em.removeEntity(id);
     }
 
@@ -93,8 +93,8 @@ TEST(EntityManager, create_entities_and_add_component) {
     int id;
     {
         auto comps = std::make_unique<std::vector<std::unique_ptr<Component>>>();
-        comps->push_back(std::make_unique<TransformComponent>(0, 0, 0, 0));
-        id = em.createEntity(std::move(comps));
+        comps->push_back(std::make_unique<TransformComponent>(0, 0, 0, 0, Direction::NEGATIVE, Direction::NEGATIVE));
+        id = em.createEntity(std::move(comps), std::nullopt);
     }
     {
         em.addComponentToEntity(id, std::make_unique<PlayerComponent>(0));
@@ -108,10 +108,10 @@ TEST(EntityManager, create_entities_and_add_component) {
 TEST(EntityManager, add_component_that_already_exists) {
     EntityManager em;
     auto comps = std::make_unique<std::vector<std::unique_ptr<Component>>>();
-    comps->push_back(std::make_unique<TransformComponent>(0, 0, 0, 0));
-    int id =em.createEntity(std::move(comps));
+    comps->push_back(std::make_unique<TransformComponent>(0, 0, 0, 0, Direction::NEGATIVE, Direction::NEGATIVE));
+    int id =em.createEntity(std::move(comps), std::nullopt);
 
-    em.addComponentToEntity(id, std::make_unique<TransformComponent>(1, 1, 1, 1));
+    em.addComponentToEntity(id, std::make_unique<TransformComponent>(1, 1, 1, 1, Direction::NEGATIVE, Direction::NEGATIVE));
 
     auto x = em.getComponent<TransformComponent>(id);
 

@@ -7,6 +7,7 @@
 #include "brickengine/components/physics_component.hpp"
 #include "brickengine/components/data/position.hpp"
 #include "brickengine/components/data/scale.hpp"
+#include "brickengine/entities/exceptions/grandparents_not_supported.hpp"
 
 #include <iostream>
 #include <string>
@@ -26,7 +27,7 @@ public:
     ~EntityManager() = default;
 
     // the int in the optional pair is the parent id
-    // the bool in the optional pair is the parent id
+    // the bool in the optional pair is whether the transform is already relative
     int createEntity(const std::unique_ptr<std::vector<std::unique_ptr<Component>>> components, std::optional<std::pair<int,bool>> parentOpt){
         int entityId = ++lowest_unassigned_entity_id;
 
@@ -86,9 +87,12 @@ public:
     }
 
     void setParent(int childId, int parentId, bool transformIsRelative) {
+        if (getParent(parentId))
+            throw GrandparentsNotSupportedException();
+
         auto child_transform = getComponent<TransformComponent>(childId);
         auto child_physics = getComponent<PhysicsComponent>(childId);
-        
+
         if (!transformIsRelative) {
             auto [ parent_absolute_position, parent_absolute_scale ] = getAbsoluteTransform(parentId);
             child_transform->xPos -= parent_absolute_position.x;
