@@ -1,3 +1,5 @@
+.vscode
+
 # CMake and Unix Makefiles
 CMakeLists.txt.user
 CMakeCache.txt

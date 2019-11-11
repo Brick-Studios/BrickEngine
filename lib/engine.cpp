@@ -3,6 +3,7 @@
 #include <memory>
 #include <thread>
 #include <chrono>
+#include <vector>
 
 #include "brickengine/engine.hpp"
 #include "brickengine/rendering/renderer.hpp"
@@ -118,7 +119,14 @@ Renderer* BrickEngine::getRenderer() const {
     return this->renderer.get();
 }
 
-
 BrickEngine::EngineTick BrickEngine::getTicks() const {
     return std::chrono::high_resolution_clock::now();
+}
+
+int BrickEngine::getWindowWidth() const {
+    return this->window_width;
+}
+
+int BrickEngine::getWindowHeight() const {
+    return this->window_height;
 }

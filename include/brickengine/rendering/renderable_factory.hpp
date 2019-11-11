@@ -14,7 +14,7 @@ public:
     RenderableFactory(std::shared_ptr<Renderer> r, std::shared_ptr<ResourceManager> rm);
     std::unique_ptr<Texture> createText(std::string text, int font_size, Color color, int layer, std::unique_ptr<Rect> dst) const;
     // dst = where the image should be drawn
-    std::unique_ptr<Texture> createImage(std::string path, int layer, std::unique_ptr<Rect> dst) const;
+    std::unique_ptr<Texture> createImage(std::string path, int layer, std::unique_ptr<Rect> dst, int alpha) const;
     // dst = where the image should be drawn
     // src = what part of the image should be drawn
     std::unique_ptr<Texture> createImage(std::string path, int layer, std::unique_ptr<Rect> dst, std::unique_ptr<Rect> src) const;

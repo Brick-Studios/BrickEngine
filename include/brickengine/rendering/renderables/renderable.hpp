@@ -8,10 +8,12 @@ class Renderer;
 
 class Renderable {
 public:
+    Renderable(int layer, int alpha);
     Renderable(int layer);
     virtual ~Renderable() = default;
     virtual void render(Renderer& r) = 0;
     int getLayer() const;
+    int alpha;
 protected:
     int layer;
 };
