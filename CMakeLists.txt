@@ -15,6 +15,10 @@ endif()
 # Add custom cmake modules
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/sdl2)
 
+if(APPLE) 
+	set(CMAKE_CXX_FLAGS "-I/usr/local/include/SDL2 -D_THREAD_SAFE")
+endif()
+
 add_subdirectory(include/brickengine)
 add_subdirectory(lib)
 

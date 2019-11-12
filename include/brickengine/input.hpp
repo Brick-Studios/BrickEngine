@@ -7,7 +7,7 @@
 #include <tuple>
 #include <utility>
 
-#include "SDL2/SDL.h"
+#include "SDL.h"
 #include "brickengine/input_keycode.hpp"
 
 template<typename T>

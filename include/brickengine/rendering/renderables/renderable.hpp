@@ -2,7 +2,7 @@
 #define FILE_RENDERABLE_HPP
 
 #include <memory>
-#include "SDL2/SDL.h"
+#include "SDL.h"
 
 class Renderer;
 

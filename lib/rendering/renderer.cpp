@@ -4,8 +4,8 @@
 #include <unordered_map>
 #include <vector>
 
-#include "SDL2/SDL.h"
-#include "SDL2/SDL2_gfxPrimitives.h"
+#include "SDL.h"
+#include "SDL2_gfxPrimitives.h"
 
 #include "brickengine/rendering/renderer.hpp"
 #include "brickengine/rendering/renderables/line.hpp"

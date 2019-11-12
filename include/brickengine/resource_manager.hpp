@@ -4,7 +4,7 @@
 #include <memory>
 #include <unordered_map>
 #include <string>
-#include "SDL2/SDL.h"
+#include "SDL.h"
 #include "brickengine/rendering/renderer.hpp"
 
 class ResourceManager {

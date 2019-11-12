@@ -1,5 +1,5 @@
 #include <memory>
-#include "SDL2/SDL.h"
+#include "SDL.h"
 #include "brickengine/rendering/renderables/texture.hpp"
 #include "brickengine/rendering/renderer.hpp"
 
