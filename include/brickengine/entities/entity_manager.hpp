@@ -102,7 +102,7 @@ public:
         }
         
         if (child_physics && child_physics->kinematic == Kinematic::IS_NOT_KINEMATIC)
-            child_physics->kinematic = Kinematic::SHOULD_NOT_BE_KINEMATIC;
+            child_physics->kinematic = Kinematic::WAS_NOT_KINEMATIC;
 
         if (family_hierarcy_parents.count(childId)) {
             int oldParent { family_hierarcy_parents[childId] };
@@ -145,7 +145,7 @@ public:
         child_transform->yScale *= old_parent_transform->yScale;
 
         auto physics = getComponent<PhysicsComponent>(entity_id);
-        if (physics && physics->kinematic == Kinematic::SHOULD_NOT_BE_KINEMATIC)
+        if (physics && physics->kinematic == Kinematic::WAS_NOT_KINEMATIC)
             physics->kinematic = Kinematic::IS_NOT_KINEMATIC;
 
         family_hierarcy_children[old_parent].erase(entity_id);

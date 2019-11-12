@@ -6,8 +6,8 @@
 enum class Kinematic {
     IS_KINEMATIC,
     // This value should act the same as IS_KINEMATIC, however when a child is released
-    // this value will get changed back to the original IS_NOT_KINAMTIC value
-    SHOULD_NOT_BE_KINEMATIC,
+    // this value will get changed back to the original WAS_NOT_KINAMTIC value
+    WAS_NOT_KINEMATIC,
     IS_NOT_KINEMATIC
 };
 
