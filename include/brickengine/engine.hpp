@@ -8,8 +8,8 @@
 #include <string>
 #include <chrono>
 
-#include "SDL.h"
-#include "SDL2_gfxPrimitives.h"
+#include "SDL2/SDL.h"
+#include "SDL2/SDL2_gfxPrimitives.h"
 
 #include "brickengine/rendering/renderer.hpp"
 #include "brickengine/rendering/renderable_factory.hpp"

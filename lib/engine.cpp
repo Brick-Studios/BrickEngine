@@ -9,10 +9,10 @@
 #include "brickengine/rendering/renderer.hpp"
 #include "brickengine/rendering/renderable_factory.hpp"
 
-#include "SDL2_gfxPrimitives.h"
-#include "SDL.h"
-#include "SDL_ttf.h"
-#include "SDL_image.h"
+#include "SDL2/SDL2_gfxPrimitives.h"
+#include "SDL2/SDL.h"
+#include "SDL2/SDL_ttf.h"
+#include "SDL2/SDL_image.h"
 
 BrickEngine::BrickEngine(const std::string window_name, const int window_width, const int window_height, std::vector<int> layers, int fps_cap) : fps_cap(fps_cap), window(nullptr, nullptr) {
     this->fps = 5;
