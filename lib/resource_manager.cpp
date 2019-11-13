@@ -1,5 +1,5 @@
 #include "brickengine/resource_manager.hpp"
-#include "SDL2/SDL_image.h"
+#include "SDL_image.h"
 #include <iostream>
 
 ResourceManager::ResourceManager(std::shared_ptr<Renderer> renderer){

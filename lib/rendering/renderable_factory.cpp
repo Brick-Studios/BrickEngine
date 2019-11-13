@@ -1,8 +1,8 @@
 #include <memory>
 #include <string>
 #include <iostream>
-#include "SDL2/SDL_ttf.h"
-#include "SDL2/SDL_image.h"
+#include "SDL_ttf.h"
+#include "SDL_image.h"
 
 #include "brickengine/rendering/renderable_factory.hpp"
 #include "brickengine/rendering/renderer.hpp"
