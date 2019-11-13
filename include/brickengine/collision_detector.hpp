@@ -41,16 +41,16 @@ Inspector Collision Detector
 #include "brickengine/enum/direction.hpp"
 
 struct CollisionReturnValues {
-    CollisionReturnValues(double spaceLeft, int objectId, bool isTrigger) : spaceLeft(spaceLeft), objectId(objectId), isTrigger(isTrigger) {}
-    double spaceLeft;
-    int objectId;
-    bool isTrigger;
+    CollisionReturnValues(double space_left, std::optional<int> object_id, bool is_trigger) : space_left(space_left), object_id(object_id), is_trigger(is_trigger) {}
+    double space_left;
+    std::optional<int> object_id;
+    bool is_trigger;
 };
 
 struct TriggerReturnValues {
-    TriggerReturnValues(bool isInTrigger, std::optional<int> objectId) : isInTrigger(isInTrigger), objectId(objectId) {}
-    bool isInTrigger;
-    std::optional<int> objectId;
+    TriggerReturnValues(bool is_in_trigger, std::optional<int> object_id) : is_in_trigger(is_in_trigger), object_id(object_id) {}
+    bool is_in_trigger;
+    std::optional<int> object_id;
 };
 
 class CollisionDetector {
@@ -60,7 +60,7 @@ public:
 		CollisionReturnValues spaceLeft(int entity, Axis axis, Direction direction);
     TriggerReturnValues isInTrigger(int entity);
 private:
-		std::shared_ptr<EntityManager> entityManager;
+		std::shared_ptr<EntityManager> entity_manager;
 };
 
 #endif // FILE_COLLISION_DETECTOR_HPP

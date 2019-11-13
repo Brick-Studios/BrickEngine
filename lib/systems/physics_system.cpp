@@ -39,13 +39,13 @@ void PhysicsSystem::update(double deltatime) {
 
             auto collision = collisionDetector->spaceLeft(entityId, Axis::X, Direction::POSITIVE);
             
-            if (collision.spaceLeft == 0){
+            if (collision.space_left == 0){
                 physics->vx = 0;
             } else {
                 double toMove = vx;
-                if (toMove >= collision.spaceLeft){
-                    if(!collision.isTrigger)
-                        toMove = collision.spaceLeft;
+                if (toMove >= collision.space_left){
+                    if(!collision.is_trigger)
+                        toMove = collision.space_left;
                 }
                 else 
                     toMove = vx;
@@ -59,13 +59,13 @@ void PhysicsSystem::update(double deltatime) {
 
             auto collision = collisionDetector->spaceLeft(entityId, Axis::X, Direction::NEGATIVE);
             
-            if (collision.spaceLeft == 0){
+            if (collision.space_left == 0){
                 physics->vx = 0;
             } else {
                 double toMove = vx;
-                if (toMove <= collision.spaceLeft){
-                    if(!collision.isTrigger)
-                        toMove = collision.spaceLeft;
+                if (toMove <= collision.space_left){
+                    if(!collision.is_trigger)
+                        toMove = collision.space_left;
                 }
                 else 
                     toMove = vx;
@@ -79,13 +79,13 @@ void PhysicsSystem::update(double deltatime) {
 
             auto collision = collisionDetector->spaceLeft(entityId, Axis::Y, Direction::POSITIVE);
             
-            if (collision.spaceLeft == 0){
+            if (collision.space_left == 0){
                 physics->vy = 0;
             } else {
                 double toMove = vy;
-                if (toMove >= collision.spaceLeft){
-                    if(!collision.isTrigger)
-                        toMove = collision.spaceLeft;
+                if (toMove >= collision.space_left){
+                    if(!collision.is_trigger)
+                        toMove = collision.space_left;
                 }
                 else 
                     toMove = vy;
@@ -99,13 +99,13 @@ void PhysicsSystem::update(double deltatime) {
 
             auto collision = collisionDetector->spaceLeft(entityId, Axis::Y, Direction::NEGATIVE);
             
-            if (collision.spaceLeft == 0){
+            if (collision.space_left == 0){
                 physics->vy = 0;
             } else {
                 double toMove = vy;
-                if (toMove <= collision.spaceLeft){
-                    if(!collision.isTrigger)
-                        toMove = collision.spaceLeft;
+                if (toMove <= collision.space_left){
+                    if(!collision.is_trigger)
+                        toMove = collision.space_left;
                 }
                 else 
                     toMove = vy;
