@@ -99,7 +99,7 @@ void BrickEngine::delay(std::chrono::time_point<std::chrono::high_resolution_clo
 
 void BrickEngine::drawFpsCounter() {
     auto dst = std::unique_ptr<Rect>(new Rect { 0, 0, 75, 75});
-    this->fps_counter = this->getRenderableFactory()->createText(std::to_string(this->fps), 24, { 255, 255, 255, 0}, this->top_layer, std::move(dst));
+    this->fps_counter = this->getRenderableFactory()->createText(std::to_string(this->fps), 24, { 0, 255, 0, 0}, this->top_layer, std::move(dst));
     this->getRenderer()->queueRenderable(fps_counter.get());
 }
 
