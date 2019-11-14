@@ -8,6 +8,8 @@
 #include "brickengine/components/data/position.hpp"
 #include "brickengine/components/data/scale.hpp"
 #include "brickengine/entities/exceptions/grandparents_not_supported.hpp"
+#include "brickengine/entities/exceptions/entity_not_found.hpp"
+#include "brickengine/entities/exceptions/component_not_found.hpp"
 
 #include <iostream>
 #include <string>
@@ -28,7 +30,7 @@ public:
 
     // the int in the optional pair is the parent id
     // the bool in the optional pair is whether the transform is already relative
-    int createEntity(const std::unique_ptr<std::vector<std::unique_ptr<Component>>> components, std::optional<std::pair<int,bool>> parentOpt){
+    int createEntity(const std::unique_ptr<std::vector<std::unique_ptr<Component>>> components, std::optional<std::pair<int,bool>> parentOpt = std::nullopt){
         int entity_id = ++lowest_unassigned_entity_id;
 
         for(auto& c : *components)
@@ -48,8 +50,8 @@ public:
         auto list = std::make_unique<std::vector<std::pair<int, T*>>>(components_by_class->at(component_type).size());
         list->clear();
         if(components_by_class->count(component_type) > 0){
-            for(auto const& [entityId, component] : components_by_class->at(component_type)){
-                list->push_back(std::make_pair(entityId, dynamic_cast<T*>(component.get())));
+            for(auto const& [entity_id, component] : components_by_class->at(component_type)){
+                list->push_back(std::make_pair(entity_id, dynamic_cast<T*>(component.get())));
             }
         }
         return list;
@@ -57,33 +59,61 @@ public:
 
     template <typename T, typename = std::enable_if_t<std::is_base_of_v<Component, T>>>
     void removeComponentFromEntity(const int entity_id){
-        std::string componentType = T::getNameStatic();
+        std::string component_type = T::getNameStatic();
 
-        components_by_class->at(componentType).erase(entity_id);
+        components_by_class->at(component_type).erase(entity_id);
     }
 
     template <typename T, typename = std::enable_if_t<std::is_base_of_v<Component, T>>>
     T* getComponent(const int entity_id) const {
-        std::string componentType = T::getNameStatic();
-        if(components_by_class->count(componentType) > 0) {
-            if (components_by_class->at(componentType).count(entity_id) > 0)
-                return (T*) components_by_class->at(componentType).at(entity_id).get();
+        std::string component_type = T::getNameStatic();
+        if(components_by_class->count(component_type) > 0) {
+            if (components_by_class->at(component_type).count(entity_id) > 0)
+                return (T*) components_by_class->at(component_type).at(entity_id).get();
         }
         return (T*) nullptr;
     }
 
+    template <typename T, typename = std::enable_if_t<std::is_base_of_v<Component, T>>>
+    std::vector<std::pair<int, T*>> getChildrenWithComponent(const int parent_id) const {
+        std::vector<std::pair<int, T*>> results;
+
+        if (!family_hierarcy_children.count(parent_id))
+            return results;
+
+        std::string component_type = T::getNameStatic();
+        for (auto child_id : family_hierarcy_children.at(parent_id)) {
+            if (components_by_class->count(component_type)) {
+                if (components_by_class->at(component_type).count(child_id))
+                    results.push_back(std::make_pair(
+                        child_id, 
+                        static_cast<T*>(components_by_class->at(component_type).at(child_id).get())));
+            }
+        }
+        return results;
+    }
+
     void addComponentToEntity(const int entity_id, std::unique_ptr<Component> component){
-        std::string componentType = component.get()->getName();
+        std::string component_type = component.get()->getName();
 
-        if(components_by_class->count(componentType) == 0)
-            components_by_class->insert({ componentType, std::unordered_map<int, std::unique_ptr<Component>>() });
+        if(components_by_class->count(component_type) == 0)
+            components_by_class->insert({ component_type, std::unordered_map<int, std::unique_ptr<Component>>() });
 
-        components_by_class->at(componentType).insert_or_assign(entity_id, std::move(component));
+        components_by_class->at(component_type).insert_or_assign(entity_id, std::move(component));
     }
 
     void removeEntity(const int entity_id) {
         for(auto& component : *components_by_class)
             component.second.erase(entity_id);
+        // If this entity has family
+        if (family_hierarcy_parents.count(entity_id)) {
+            // Forget that you have children
+            for (auto child_id : family_hierarcy_children.at(entity_id)) {
+                family_hierarcy_parents.erase(child_id);
+            }
+            // Disown children
+            family_hierarcy_children.erase(entity_id);
+        }
     }
 
     void setParent(int child_id, int parent_id, bool transform_is_relative) {

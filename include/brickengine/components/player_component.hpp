@@ -5,11 +5,12 @@
 
 class PlayerComponent : public ComponentImpl<PlayerComponent> {
 public:
-    PlayerComponent(int playerId);
+    PlayerComponent(int player_id, bool disabled = false);
     static std::string getNameStatic();
 
     // Data
-    int playerId;
+    int player_id;
+    bool disabled;
 };
 
 #endif // FILE_PLAYER_COMPONENT_HPP

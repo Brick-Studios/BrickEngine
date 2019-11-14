@@ -9,6 +9,12 @@
 class TextureComponent : public ComponentImpl<TextureComponent>{
 public:
     TextureComponent(std::unique_ptr<Texture> t);
+    TextureComponent(const TextureComponent& other);
+    TextureComponent(TextureComponent&& other) noexcept = default;
+    TextureComponent& operator=(TextureComponent&& other) = default;
+    TextureComponent& operator=(const TextureComponent& other);
+    // This can stay default because we don't own any pointers here
+    ~TextureComponent() = default;
     static std::string getNameStatic();
 
     Texture* getTexture() const;

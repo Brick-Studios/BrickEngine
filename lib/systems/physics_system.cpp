@@ -18,6 +18,7 @@ void PhysicsSystem::update(double deltatime) {
         }
 
         auto transform = entityManager->getComponent<TransformComponent>(entityId);
+        // TODO make it so trigger goes through everything instead of only checking if player can move through trigger
         double mass = physics->mass;
 
         if (physics->gravity) {
@@ -38,7 +39,7 @@ void PhysicsSystem::update(double deltatime) {
                 transform->xDirection = Direction::POSITIVE;
 
             auto collision = collisionDetector->spaceLeft(entityId, Axis::X, Direction::POSITIVE);
-            
+
             if (collision.space_left == 0){
                 physics->vx = 0;
             } else {
