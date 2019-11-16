@@ -22,18 +22,17 @@ void PhysicsSystem::update(double deltatime) {
         double mass = physics->mass;
 
         if (physics->gravity) {
-            // Also do collisions
-            double vy = physics->vy + (GRAVITY * mass);
+            double slow_down_amount = ((GRAVITY * mass) * deltatime);
+            double vy_gravity = physics->vy + slow_down_amount;
 
-            if (vy > TERMINAL_VELOCITY)
-                vy = TERMINAL_VELOCITY;
-            
-            physics->vy = vy;
+            if (vy_gravity > TERMINAL_VELOCITY)
+                vy_gravity = TERMINAL_VELOCITY;
+            physics->vy = vy_gravity;
         }
 
         double vx = physics->vx * deltatime;
         double vy = physics->vy * deltatime;
-        
+
         if (physics->vx > 0) { // Moving right
             if (physics->flipX)
                 transform->xDirection = Direction::POSITIVE;
@@ -79,7 +78,7 @@ void PhysicsSystem::update(double deltatime) {
                 transform->yDirection = Direction::POSITIVE;
 
             auto collision = collisionDetector->spaceLeft(entityId, Axis::Y, Direction::POSITIVE);
-            
+
             if (collision.space_left == 0){
                 physics->vy = 0;
             } else {
@@ -99,7 +98,7 @@ void PhysicsSystem::update(double deltatime) {
                 transform->yDirection = Direction::NEGATIVE;
 
             auto collision = collisionDetector->spaceLeft(entityId, Axis::Y, Direction::NEGATIVE);
-            
+
             if (collision.space_left == 0){
                 physics->vy = 0;
             } else {

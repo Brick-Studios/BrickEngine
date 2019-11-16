@@ -12,7 +12,7 @@ public:
     void update(double deltatime);
     void updateChildren(int parentId);
 private:
-    static constexpr double GRAVITY = 0.16;
+    static constexpr double GRAVITY = 23.04;
     static constexpr double TERMINAL_VELOCITY = 1000;
 
     std::shared_ptr<CollisionDetector> collisionDetector;
