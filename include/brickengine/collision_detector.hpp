@@ -55,12 +55,19 @@ struct TriggerReturnValues {
 
 class CollisionDetector {
 public:
-		CollisionDetector(std::shared_ptr<EntityManager> em);
-		// Returns amount of pixels that can still be moved to the collidable object.
-		CollisionReturnValues spaceLeft(int entity, Axis axis, Direction direction);
+    CollisionDetector(std::shared_ptr<EntityManager> em);
+    // Returns amount of pixels that can still be moved to the collidable object.
+    CollisionReturnValues spaceLeft(int entity, Axis axis, Direction direction);
     TriggerReturnValues isInTrigger(int entity);
+    void clearCache();
+    int space_left_calculated_counter;
+    int trigger_calculated_counter;
+    int space_left_cache_hits;
+    int trigger_cache_hits;
 private:
-		std::shared_ptr<EntityManager> entity_manager;
+    std::shared_ptr<EntityManager> entity_manager;
+    std::unordered_map<int, std::unordered_map<Axis, std::unordered_map<Direction, CollisionReturnValues>>> space_left_cache;
+    std::unordered_map<int, TriggerReturnValues> trigger_cache;
 };
 
 #endif // FILE_COLLISION_DETECTOR_HPP
