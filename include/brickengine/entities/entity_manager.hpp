@@ -103,17 +103,30 @@ public:
     }
 
     void removeEntity(const int entity_id) {
-        for(auto& component : *components_by_class)
-            component.second.erase(entity_id);
-        // If this entity has family
-        if (family_hierarcy_parents.count(entity_id)) {
+        auto children = getChildren(entity_id);
+        // If this entity has children
+        if (!children.empty()) {
             // Forget that you have children
-            for (auto child_id : family_hierarcy_children.at(entity_id)) {
+            for (auto& child_id : children) {
                 family_hierarcy_parents.erase(child_id);
             }
             // Disown children
             family_hierarcy_children.erase(entity_id);
         }
+
+        // Move out of a parents house(if it has one)
+        moveOutOfParentsHouse(entity_id);
+            
+        // if this entity has tags
+        if (tagging_entities.count(entity_id)) {
+            for (auto& tag : tagging_entities.at(entity_id)) {
+                tagging_tags.erase(tag);
+            }
+            tagging_entities.erase(entity_id);
+        }
+
+        for(auto& component : *components_by_class)
+            component.second.erase(entity_id);
     }
 
     void setParent(int child_id, int parent_id, bool transform_is_relative) {

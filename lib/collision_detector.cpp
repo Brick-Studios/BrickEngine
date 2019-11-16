@@ -21,7 +21,7 @@ void CollisionDetector::clearCache() {
 CollisionReturnValues CollisionDetector::spaceLeft(int entity, Axis axis, Direction direction) {
     if (space_left_cache.count(entity) && space_left_cache.at(entity).count(axis)
         && space_left_cache.at(entity).at(axis).count(direction)) {
-        space_left_cache_hits++;
+        ++space_left_cache_hits;
         return space_left_cache.at(entity).at(axis).at(direction);
     }
 
@@ -49,7 +49,7 @@ CollisionReturnValues CollisionDetector::spaceLeft(int entity, Axis axis, Direct
         if (children.count(other_id)) continue;
         if (other_id == entity) continue;
 
-        space_left_calculated_counter++;
+        ++space_left_calculated_counter;
 
         auto [ other_position, other_scale ] = entity_manager->getAbsoluteTransform(other_id);
 
@@ -148,7 +148,7 @@ CollisionReturnValues CollisionDetector::spaceLeft(int entity, Axis axis, Direct
 
 TriggerReturnValues CollisionDetector::isInTrigger(int entity){
     if (trigger_cache.count(entity)) {
-        trigger_cache_hits++;
+        ++trigger_cache_hits;
         return trigger_cache.at(entity);
     }
     // We only support rectangles
@@ -166,7 +166,7 @@ TriggerReturnValues CollisionDetector::isInTrigger(int entity){
         if (parent && *parent == id) continue;
         if (children.count(id)) continue;
 
-        trigger_calculated_counter++;
+        ++trigger_calculated_counter;
         auto transform_component = entity_manager->getComponent<TransformComponent>(id);
 
         if(collider->is_trigger){

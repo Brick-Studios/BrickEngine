@@ -58,7 +58,7 @@ SDL_Texture* Renderer::createTextureFromSurface(SDL_Surface* surface) const {
 }
 
 void Renderer::drawScreen() {
-    for(size_t i = 0; i < layers.size(); i++) {
+    for(size_t i = 0; i < layers.size(); ++i) {
         for (auto r : this->renderQueue.get()->at(layers[i])) {
             SDL_Color prev;
             SDL_BlendMode mode;
