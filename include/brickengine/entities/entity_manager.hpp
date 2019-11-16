@@ -43,7 +43,7 @@ public:
     }
 
     template <typename T, typename = std::enable_if_t<std::is_base_of_v<Component, T>>>
-    std::unique_ptr<std::vector<std::pair<int, T*>>> getEntitiesByComponent(){
+    std::unique_ptr<std::vector<std::pair<int, T*>>> getEntitiesByComponent() {
         std::string component_type = T::getNameStatic();
         if (components_by_class->count(component_type) < 1)
             return std::make_unique<std::vector<std::pair<int, T*>>>();
@@ -197,11 +197,40 @@ public:
 
         return std::make_pair(position, scale);
     }
+
+    std::optional<std::set<std::string>> getTags(int entity) {
+        if (tagging_entities.count(entity))
+            return tagging_entities.at(entity);
+        else
+            return std::nullopt;
+    }
+    void setTag(int entity, std::string tag) {
+        if (!tagging_entities.count(entity))
+            tagging_entities.insert({ entity, std::set<std::string>() });
+        tagging_entities.at(entity).insert(tag);
+        if (!tagging_tags.count(tag))
+            tagging_tags.insert({ tag, std::set<int>() });
+        tagging_tags.at(tag).insert(entity);
+    }
+    void removeTag(int entity, std::string tag) {
+        if (!tagging_entities.count(entity)) return;
+        tagging_entities.erase(entity);
+        tagging_tags.erase(tag);
+    }
+    std::set<int> getEntitiesWithTag(std::string tag) {
+        if (!tagging_tags.count(tag))
+            return std::set<int>();
+        return tagging_tags.at(tag);
+    }
 private:
     int lowest_unassigned_entity_id;
     std::unique_ptr<std::unordered_map<std::string, std::unordered_map<int, std::unique_ptr<Component>>>> components_by_class;
+    // Families, Parent-Child
     std::unordered_map<int, int> family_hierarcy_parents;
     std::unordered_map<int, std::set<int>> family_hierarcy_children;
+    // Tagging, tags
+    std::unordered_map<int, std::set<std::string>> tagging_entities;
+    std::unordered_map<std::string, std::set<int>> tagging_tags;
 };
 
 #endif // FILE_ENTITY_MANAGER_HPP

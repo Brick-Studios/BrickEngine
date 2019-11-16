@@ -241,6 +241,8 @@ private:
         // Special
         sdl_mapping.insert({InputKeyCode::EKey_lshift, SDLK_LSHIFT});
         sdl_mapping.insert({InputKeyCode::EKey_lctrl, SDLK_LCTRL});
+        sdl_mapping.insert({InputKeyCode::EKey_rshift, SDLK_RSHIFT});
+        sdl_mapping.insert({InputKeyCode::EKey_rctrl, SDLK_RCTRL});
         sdl_mapping.insert({InputKeyCode::EKey_space, SDLK_SPACE});
         sdl_mapping.insert({InputKeyCode::Ekey_enter, SDLK_KP_ENTER});
         sdl_mapping.insert({InputKeyCode::EKey_backspace, SDLK_BACKSPACE});
@@ -299,6 +301,8 @@ private:
         // Special
         keycode_mapping.insert({SDLK_LSHIFT, InputKeyCode::EKey_lshift});
         keycode_mapping.insert({SDLK_LCTRL, InputKeyCode::EKey_lctrl});
+        keycode_mapping.insert({SDLK_RSHIFT, InputKeyCode::EKey_rshift});
+        keycode_mapping.insert({SDLK_RCTRL, InputKeyCode::EKey_rctrl});
         keycode_mapping.insert({SDLK_SPACE, InputKeyCode::EKey_space});
         keycode_mapping.insert({SDLK_KP_ENTER, InputKeyCode::Ekey_enter});
         keycode_mapping.insert({SDLK_BACKSPACE, InputKeyCode::EKey_backspace});

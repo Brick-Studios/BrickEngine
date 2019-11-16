@@ -42,7 +42,7 @@ CollisionReturnValues CollisionDetector::spaceLeft(int entity, Axis axis, Direct
     } else {
         space_left = std::numeric_limits<double>::infinity();
     }
-    
+
     for(auto& [ other_id, collider ] : *collidable_entities) {
         // You cannot collide with family
         if (parent && *parent == other_id) continue;
@@ -110,7 +110,7 @@ CollisionReturnValues CollisionDetector::spaceLeft(int entity, Axis axis, Direct
                     // Entities align on x-axis
                     double opposibleColliderHitwall = other_position.y - ((other_scale.y * collider->y_scale) / 2);
                     double entityColliderHitwall = entity_position.y + ((entity_scale.y * entity_rect_collider->y_scale) / 2);
-                    
+
                     double difference = opposibleColliderHitwall - entityColliderHitwall;
 
                     if(difference >= 0 && space_left > difference){
@@ -182,9 +182,9 @@ TriggerReturnValues CollisionDetector::isInTrigger(int entity){
 
             // Check if you are inside the x and y of the collidable
             if(entity_left >= opposible_left 
-            && entity_right <= opposible_right
-            && entity_down >= opposible_down
-            && entity_up <= opposible_up){
+                && entity_right <= opposible_right
+                && entity_down >= opposible_down
+                && entity_up <= opposible_up) {
                 values.is_in_trigger = true;
                 values.object_id = id;
             }

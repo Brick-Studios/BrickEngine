@@ -39,7 +39,7 @@ void PhysicsSystem::update(double deltatime) {
 
             auto collision = collisionDetector->spaceLeft(entityId, Axis::X, Direction::POSITIVE);
 
-            if (collision.space_left == 0){
+            if (collision.space_left == 0 && !collision.is_trigger) {
                 physics->vx = 0;
             } else {
                 double toMove = vx;
@@ -59,7 +59,7 @@ void PhysicsSystem::update(double deltatime) {
 
             auto collision = collisionDetector->spaceLeft(entityId, Axis::X, Direction::NEGATIVE);
             
-            if (collision.space_left == 0){
+            if (collision.space_left == 0 && !collision.is_trigger) {
                 physics->vx = 0;
             } else {
                 double toMove = vx;
@@ -79,7 +79,7 @@ void PhysicsSystem::update(double deltatime) {
 
             auto collision = collisionDetector->spaceLeft(entityId, Axis::Y, Direction::POSITIVE);
 
-            if (collision.space_left == 0){
+            if (collision.space_left == 0 && !collision.is_trigger) {
                 physics->vy = 0;
             } else {
                 double toMove = vy;
@@ -99,7 +99,7 @@ void PhysicsSystem::update(double deltatime) {
 
             auto collision = collisionDetector->spaceLeft(entityId, Axis::Y, Direction::NEGATIVE);
 
-            if (collision.space_left == 0){
+            if (collision.space_left == 0 && !collision.is_trigger) {
                 physics->vy = 0;
             } else {
                 double toMove = vy;
