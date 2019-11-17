@@ -78,11 +78,11 @@ public:
     std::vector<std::pair<int, T*>> getChildrenWithComponent(const int parent_id) const {
         std::vector<std::pair<int, T*>> results;
 
-        if (!family_hierarcy_children.count(parent_id))
+        if (!family_hierarchy_children.count(parent_id))
             return results;
 
         std::string component_type = T::getNameStatic();
-        for (auto child_id : family_hierarcy_children.at(parent_id)) {
+        for (auto child_id : family_hierarchy_children.at(parent_id)) {
             if (components_by_class->count(component_type)) {
                 if (components_by_class->at(component_type).count(child_id))
                     results.push_back(std::make_pair(
@@ -108,10 +108,10 @@ public:
         if (!children.empty()) {
             // Forget that you have children
             for (auto& child_id : children) {
-                family_hierarcy_parents.erase(child_id);
+                family_hierarchy_parents.erase(child_id);
             }
             // Disown children
-            family_hierarcy_children.erase(entity_id);
+            family_hierarchy_children.erase(entity_id);
         }
 
         // Move out of a parents house(if it has one)
@@ -147,38 +147,38 @@ public:
         if (child_physics && child_physics->kinematic == Kinematic::IS_NOT_KINEMATIC)
             child_physics->kinematic = Kinematic::WAS_NOT_KINEMATIC;
 
-        if (family_hierarcy_parents.count(child_id)) {
-            int oldParent { family_hierarcy_parents[child_id] };
-            family_hierarcy_children[oldParent].erase(child_id);
+        if (family_hierarchy_parents.count(child_id)) {
+            int oldParent { family_hierarchy_parents[child_id] };
+            family_hierarchy_children[oldParent].erase(child_id);
         }
 
-        family_hierarcy_parents.insert_or_assign(child_id, parent_id);
-        if (!family_hierarcy_children.count(parent_id)) {
-            family_hierarcy_children[parent_id].insert(child_id);
+        family_hierarchy_parents.insert_or_assign(child_id, parent_id);
+        if (!family_hierarchy_children.count(parent_id)) {
+            family_hierarchy_children[parent_id].insert(child_id);
         }
         else {
-            family_hierarcy_children.insert({parent_id, std::set<int>()});
-            family_hierarcy_children[parent_id].insert(child_id);
+            family_hierarchy_children.insert({parent_id, std::set<int>()});
+            family_hierarchy_children[parent_id].insert(child_id);
         }
     }
 
     std::optional<int> getParent(int id) {
-        if (!family_hierarcy_parents.count(id))
+        if (!family_hierarchy_parents.count(id))
             return std::nullopt;
         else
-            return family_hierarcy_parents[id];
+            return family_hierarchy_parents[id];
     }
 
     std::set<int> getChildren(int id) {
-        if (!family_hierarcy_children.count(id))
+        if (!family_hierarchy_children.count(id))
             return std::set<int>();
         else
-            return family_hierarcy_children[id];
+            return family_hierarchy_children[id];
     }
 
     void moveOutOfParentsHouse(int entity_id) {
-        if (!family_hierarcy_parents.count(entity_id)) return;
-        int old_parent { family_hierarcy_parents[entity_id] };
+        if (!family_hierarchy_parents.count(entity_id)) return;
+        int old_parent { family_hierarchy_parents[entity_id] };
         auto old_parent_transform = getComponent<TransformComponent>(old_parent);
 
         auto child_transform = getComponent<TransformComponent>(entity_id);
@@ -191,8 +191,8 @@ public:
         if (physics && physics->kinematic == Kinematic::WAS_NOT_KINEMATIC)
             physics->kinematic = Kinematic::IS_NOT_KINEMATIC;
 
-        family_hierarcy_children[old_parent].erase(entity_id);
-        family_hierarcy_parents.erase(entity_id);
+        family_hierarchy_children[old_parent].erase(entity_id);
+        family_hierarchy_parents.erase(entity_id);
     }
 
     std::pair<Position, Scale> getAbsoluteTransform(int id){
@@ -239,8 +239,8 @@ private:
     int lowest_unassigned_entity_id;
     std::unique_ptr<std::unordered_map<std::string, std::unordered_map<int, std::unique_ptr<Component>>>> components_by_class;
     // Families, Parent-Child
-    std::unordered_map<int, int> family_hierarcy_parents;
-    std::unordered_map<int, std::set<int>> family_hierarcy_children;
+    std::unordered_map<int, int> family_hierarchy_parents;
+    std::unordered_map<int, std::set<int>> family_hierarchy_children;
     // Tagging, tags
     std::unordered_map<int, std::set<std::string>> tagging_entities;
     std::unordered_map<std::string, std::set<int>> tagging_tags;

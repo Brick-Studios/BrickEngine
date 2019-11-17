@@ -22,7 +22,7 @@ void PhysicsSystem::update(double deltatime) {
         double mass = physics->mass;
 
         if (physics->gravity) {
-            double slow_down_amount = ((GRAVITY * mass) * deltatime);
+            double slow_down_amount = (GRAVITY * mass) * deltatime;
             double vy_gravity = physics->vy + slow_down_amount;
 
             if (vy_gravity > TERMINAL_VELOCITY)

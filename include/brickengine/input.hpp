@@ -53,7 +53,7 @@ public:
 
     bool remapInput(int player_id, T const input) {
         //Search for the old value
-        auto oldInput = std::find_if(input_mapping.at(player_id).begin(),input_mapping.at(player_id).end(),
+        auto old_input = std::find_if(input_mapping.at(player_id).begin(),input_mapping.at(player_id).end(),
                                      [&input](const std::pair<InputKeyCode, T>& value) {
                                          return value.second == input;
                                      });
@@ -61,22 +61,22 @@ public:
         while(true) {
             while(SDL_PollEvent(&e)) {
                 if(e.type == SDL_KEYDOWN) {
-                    auto inputkeycode = convertSDLKeycodeInputKeyCode(e.key.keysym.sym);
-                    if(inputkeycode.has_value()) {
+                    auto key_code = convertSDLKeycodeInputKeyCode(e.key.keysym.sym);
+                    if(key_code.has_value()) {
                         //Current key matches old key
-                        if(inputkeycode.value() == oldInput->first) {
+                        if(key_code.value() == old_input->first) {
                             return true;
                         }
                         //Input is not already used
-                        if(input_mapping.at(player_id).count(inputkeycode.value()) == 0)
+                        if(input_mapping.at(player_id).count(key_code.value()) == 0)
                         {
-                            input_mapping[player_id][inputkeycode.value()] = input;
+                            input_mapping[player_id][key_code.value()] = input;
                             //Removing old key mapping
-                            input_mapping.at(player_id).erase(oldInput->first);
+                            input_mapping.at(player_id).erase(old_input->first);
                             return true; 
                         }
                         //Key is used
-                        if(input_mapping.at(player_id).count(inputkeycode.value()) == 1)
+                        if(input_mapping.at(player_id).count(key_code.value()) == 1)
                             return false;
                     }
                 }
