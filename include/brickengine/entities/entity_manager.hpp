@@ -24,7 +24,6 @@ class EntityManager{
 public:
     EntityManager() {
         lowest_unassigned_entity_id = -1;
-        components_by_class = std::unique_ptr<std::unordered_map<std::string, std::unordered_map<int, std::unique_ptr<Component>>>>(new std::unordered_map<std::string, std::unordered_map<int, std::unique_ptr<Component>>>());
     };
     ~EntityManager() = default;
 
@@ -45,12 +44,12 @@ public:
     template <typename T, typename = std::enable_if_t<std::is_base_of_v<Component, T>>>
     std::unique_ptr<std::vector<std::pair<int, T*>>> getEntitiesByComponent() {
         std::string component_type = T::getNameStatic();
-        if (components_by_class->count(component_type) < 1)
+        if (components_by_class.count(component_type) < 1)
             return std::make_unique<std::vector<std::pair<int, T*>>>();
-        auto list = std::make_unique<std::vector<std::pair<int, T*>>>(components_by_class->at(component_type).size());
+        auto list = std::make_unique<std::vector<std::pair<int, T*>>>(components_by_class.at(component_type).size());
         list->clear();
-        if(components_by_class->count(component_type) > 0){
-            for(auto const& [entity_id, component] : components_by_class->at(component_type)){
+        if(components_by_class.count(component_type) > 0){
+            for(auto const& [entity_id, component] : components_by_class.at(component_type)){
                 list->push_back(std::make_pair(entity_id, dynamic_cast<T*>(component.get())));
             }
         }
@@ -61,15 +60,15 @@ public:
     void removeComponentFromEntity(const int entity_id){
         std::string component_type = T::getNameStatic();
 
-        components_by_class->at(component_type).erase(entity_id);
+        components_by_class.at(component_type).erase(entity_id);
     }
 
     template <typename T, typename = std::enable_if_t<std::is_base_of_v<Component, T>>>
     T* getComponent(const int entity_id) const {
         std::string component_type = T::getNameStatic();
-        if(components_by_class->count(component_type) > 0) {
-            if (components_by_class->at(component_type).count(entity_id) > 0)
-                return (T*) components_by_class->at(component_type).at(entity_id).get();
+        if(components_by_class.count(component_type) > 0) {
+            if (components_by_class.at(component_type).count(entity_id) > 0)
+                return (T*) components_by_class.at(component_type).at(entity_id).get();
         }
         return (T*) nullptr;
     }
@@ -83,11 +82,11 @@ public:
 
         std::string component_type = T::getNameStatic();
         for (auto child_id : family_hierarchy_children.at(parent_id)) {
-            if (components_by_class->count(component_type)) {
-                if (components_by_class->at(component_type).count(child_id))
+            if (components_by_class.count(component_type)) {
+                if (components_by_class.at(component_type).count(child_id))
                     results.push_back(std::make_pair(
                         child_id, 
-                        static_cast<T*>(components_by_class->at(component_type).at(child_id).get())));
+                        static_cast<T*>(components_by_class.at(component_type).at(child_id).get())));
             }
         }
         return results;
@@ -96,10 +95,10 @@ public:
     void addComponentToEntity(const int entity_id, std::unique_ptr<Component> component){
         std::string component_type = component.get()->getName();
 
-        if(components_by_class->count(component_type) == 0)
-            components_by_class->insert({ component_type, std::unordered_map<int, std::unique_ptr<Component>>() });
+        if(components_by_class.count(component_type) == 0)
+            components_by_class.insert({ component_type, std::unordered_map<int, std::unique_ptr<Component>>() });
 
-        components_by_class->at(component_type).insert_or_assign(entity_id, std::move(component));
+        components_by_class.at(component_type).insert_or_assign(entity_id, std::move(component));
     }
 
     void removeEntity(const int entity_id) {
@@ -125,7 +124,7 @@ public:
             tagging_entities.erase(entity_id);
         }
 
-        for(auto& component : *components_by_class)
+        for(auto& component : components_by_class)
             component.second.erase(entity_id);
     }
 
@@ -237,7 +236,7 @@ public:
     }
 private:
     int lowest_unassigned_entity_id;
-    std::unique_ptr<std::unordered_map<std::string, std::unordered_map<int, std::unique_ptr<Component>>>> components_by_class;
+    std::unordered_map<std::string, std::unordered_map<int, std::unique_ptr<Component>>> components_by_class;
     // Families, Parent-Child
     std::unordered_map<int, int> family_hierarchy_parents;
     std::unordered_map<int, std::set<int>> family_hierarchy_children;
