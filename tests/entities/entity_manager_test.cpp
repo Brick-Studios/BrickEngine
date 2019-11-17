@@ -115,7 +115,7 @@ TEST(EntityManager, add_component_that_already_exists) {
 
     auto x = em.getComponent<TransformComponent>(id);
 
-    EXPECT_EQ(1, x->xPos);
+    EXPECT_EQ(1, x->x_pos);
 }
 TEST(EntityManager, get_entities_when_component_is_not_used) {
     EntityManager em;

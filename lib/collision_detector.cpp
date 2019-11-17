@@ -170,15 +170,15 @@ TriggerReturnValues CollisionDetector::isInTrigger(int entity){
         auto transform_component = entity_manager->getComponent<TransformComponent>(id);
 
         if(collider->is_trigger){
-            double opposible_left = transform_component->xPos - ((transform_component->xScale * collider->x_scale) / 2);
-            double opposible_right = transform_component->xPos + ((transform_component->xScale * collider->x_scale) / 2);
-            double opposible_down = transform_component->yPos - ((transform_component->yScale * collider->y_scale) / 2);
-            double opposible_up = transform_component->yPos + ((transform_component->yScale * collider->y_scale) / 2);
+            double opposible_left = transform_component->x_pos - ((transform_component->x_scale * collider->x_scale) / 2);
+            double opposible_right = transform_component->x_pos + ((transform_component->x_scale * collider->x_scale) / 2);
+            double opposible_down = transform_component->y_pos - ((transform_component->y_scale * collider->y_scale) / 2);
+            double opposible_up = transform_component->y_pos + ((transform_component->y_scale * collider->y_scale) / 2);
 
-            double entity_left = entity_transform->xPos + ((entity_transform->xScale * entity_rect_collider->x_scale) / 2);
-            double entity_right = entity_transform->xPos - ((entity_transform->xScale * entity_rect_collider->x_scale) / 2);
-            double entity_down = entity_transform->yPos + ((entity_transform->yScale * entity_rect_collider->y_scale) / 2);
-            double entity_up = entity_transform->yPos - ((entity_transform->yScale * entity_rect_collider->y_scale) / 2);
+            double entity_left = entity_transform->x_pos + ((entity_transform->x_scale * entity_rect_collider->x_scale) / 2);
+            double entity_right = entity_transform->x_pos - ((entity_transform->x_scale * entity_rect_collider->x_scale) / 2);
+            double entity_down = entity_transform->y_pos + ((entity_transform->y_scale * entity_rect_collider->y_scale) / 2);
+            double entity_up = entity_transform->y_pos - ((entity_transform->y_scale * entity_rect_collider->y_scale) / 2);
 
             // Check if you are inside the x and y of the collidable
             if(entity_left >= opposible_left 

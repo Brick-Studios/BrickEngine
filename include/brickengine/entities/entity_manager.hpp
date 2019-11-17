@@ -137,10 +137,10 @@ public:
 
         if (!transform_is_relative) {
             auto [ parent_absolute_position, parent_absolute_scale ] = getAbsoluteTransform(parent_id);
-            child_transform->xPos -= parent_absolute_position.x;
-            child_transform->yPos -= parent_absolute_position.y;
-            child_transform->xScale /= parent_absolute_scale.x;
-            child_transform->yScale /= parent_absolute_scale.y;
+            child_transform->x_pos -= parent_absolute_position.x;
+            child_transform->y_pos -= parent_absolute_position.y;
+            child_transform->x_scale /= parent_absolute_scale.x;
+            child_transform->y_scale /= parent_absolute_scale.y;
         }
         
         if (child_physics && child_physics->kinematic == Kinematic::IS_NOT_KINEMATIC)
@@ -181,10 +181,10 @@ public:
         auto old_parent_transform = getComponent<TransformComponent>(old_parent);
 
         auto child_transform = getComponent<TransformComponent>(entity_id);
-        child_transform->xPos += old_parent_transform->xPos;
-        child_transform->yPos += old_parent_transform->yPos;
-        child_transform->xScale *= old_parent_transform->xScale;
-        child_transform->yScale *= old_parent_transform->yScale;
+        child_transform->x_pos += old_parent_transform->x_pos;
+        child_transform->y_pos += old_parent_transform->y_pos;
+        child_transform->x_scale *= old_parent_transform->x_scale;
+        child_transform->y_scale *= old_parent_transform->y_scale;
 
         auto physics = getComponent<PhysicsComponent>(entity_id);
         if (physics && physics->kinematic == Kinematic::WAS_NOT_KINEMATIC)
@@ -196,8 +196,8 @@ public:
 
     std::pair<Position, Scale> getAbsoluteTransform(int id){
         auto transform = getComponent<TransformComponent>(id);
-        auto position = Position(transform->xPos, transform->yPos);
-        auto scale = Scale(transform->xScale, transform->yScale);
+        auto position = Position(transform->x_pos, transform->y_pos);
+        auto scale = Scale(transform->x_scale, transform->y_scale);
         if (auto parent = getParent(id)) {
             auto [ parent_position, parent_scale ] = getAbsoluteTransform(*parent);
 
