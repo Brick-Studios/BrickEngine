@@ -9,7 +9,7 @@ RenderingSystem::RenderingSystem(std::shared_ptr<EntityManager> entityManager, R
 void RenderingSystem::update(double){
     auto entitiesWithTexture = entityManager->getEntitiesByComponent<TextureComponent>();
 
-    for(auto& [entityId, texture] : *entitiesWithTexture) {
+    for(auto& [entityId, texture] : entitiesWithTexture) {
         auto transform = entityManager->getComponent<TransformComponent>(entityId);
 
         auto dst = texture->getTexture()->getDstRect();

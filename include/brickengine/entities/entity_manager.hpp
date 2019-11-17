@@ -42,15 +42,15 @@ public:
     }
 
     template <typename T, typename = std::enable_if_t<std::is_base_of_v<Component, T>>>
-    std::unique_ptr<std::vector<std::pair<int, T*>>> getEntitiesByComponent() {
+    std::vector<std::pair<int, T*>> getEntitiesByComponent() {
         std::string component_type = T::getNameStatic();
         if (components_by_class.count(component_type) < 1)
-            return std::make_unique<std::vector<std::pair<int, T*>>>();
-        auto list = std::make_unique<std::vector<std::pair<int, T*>>>(components_by_class.at(component_type).size());
-        list->clear();
+            return std::vector<std::pair<int, T*>>();
+        std::vector<std::pair<int, T*>> list { components_by_class.at(component_type).size() };
+        list.clear();
         if(components_by_class.count(component_type) > 0){
             for(auto const& [entity_id, component] : components_by_class.at(component_type)){
-                list->push_back(std::make_pair(entity_id, dynamic_cast<T*>(component.get())));
+                list.push_back(std::make_pair(entity_id, dynamic_cast<T*>(component.get())));
             }
         }
         return list;

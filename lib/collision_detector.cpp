@@ -43,7 +43,7 @@ CollisionReturnValues CollisionDetector::spaceLeft(int entity, Axis axis, Direct
         space_left = std::numeric_limits<double>::infinity();
     }
 
-    for(auto& [ other_id, collider ] : *collidable_entities) {
+    for(auto& [ other_id, collider ] : collidable_entities) {
         // You cannot collide with family
         if (parent && *parent == other_id) continue;
         if (children.count(other_id)) continue;
@@ -161,7 +161,7 @@ TriggerReturnValues CollisionDetector::isInTrigger(int entity){
 
     auto values = TriggerReturnValues(false, std::nullopt);
 
-    for(auto& [id, collider] : *collidable_entities) {
+    for(auto& [id, collider] : collidable_entities) {
         // You cannot trigger with family
         if (parent && *parent == id) continue;
         if (children.count(id)) continue;

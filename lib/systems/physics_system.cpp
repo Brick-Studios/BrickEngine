@@ -10,7 +10,7 @@ PhysicsSystem::PhysicsSystem(std::shared_ptr<CollisionDetector> cd, std::shared_
 void PhysicsSystem::update(double deltatime) {
     auto entitiesWithPhysics = entityManager->getEntitiesByComponent<PhysicsComponent>();
 
-    for(auto [entityId, physics] : *entitiesWithPhysics){
+    for(auto [entityId, physics] : entitiesWithPhysics){
         if (physics->kinematic != Kinematic::IS_NOT_KINEMATIC) {
             physics->vx = 0;
             physics->vy = 0;

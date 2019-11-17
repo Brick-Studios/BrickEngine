@@ -33,7 +33,7 @@ TEST(EntityManager, create_entities_and_get_all_entities_by_comp) {
 
     auto entities = em.getEntitiesByComponent<TransformComponent>();
     
-    EXPECT_EQ(2, entities->size());
+    EXPECT_EQ(2, entities.size());
 }
 
 TEST(EntityManager, create_entity_and_remove_comp) {
@@ -65,7 +65,7 @@ TEST(EntityManager, create_entities_and_remove_one_comp) {
     auto entities = em.getEntitiesByComponent<TransformComponent>();
 
     
-    EXPECT_EQ(1, entities->size());
+    EXPECT_EQ(1, entities.size());
 }
 
 TEST(EntityManager, create_entities_and_remove_entity) {
@@ -85,7 +85,7 @@ TEST(EntityManager, create_entities_and_remove_entity) {
     auto entities = em.getEntitiesByComponent<TransformComponent>();
 
     
-    EXPECT_EQ(1, entities->size());
+    EXPECT_EQ(1, entities.size());
 }
 
 TEST(EntityManager, create_entities_and_add_component) {
@@ -102,7 +102,7 @@ TEST(EntityManager, create_entities_and_add_component) {
 
     auto entities = em.getEntitiesByComponent<PlayerComponent>();
     
-    EXPECT_EQ(1, entities->size());
+    EXPECT_EQ(1, entities.size());
 }
 
 TEST(EntityManager, add_component_that_already_exists) {
@@ -122,5 +122,5 @@ TEST(EntityManager, get_entities_when_component_is_not_used) {
 
     auto entites = em.getEntitiesByComponent<TransformComponent>();
 
-    EXPECT_EQ(0, entites->size());
+    EXPECT_EQ(0, entites.size());
 }
