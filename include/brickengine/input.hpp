@@ -40,20 +40,20 @@ public:
     }
 
     // This function is intended for the UI so the game loop is not affected.
-    void popInput(int playerId, T const input) {
-        if(inputs[playerId].count(input))
-            inputs[playerId][input] = false;
+    void popInput(int player_id, T const input) {
+        if(inputs[player_id].count(input))
+            inputs[player_id][input] = false;
     }
 
-    bool checkInput(int playerId, T const input) {
-        if(inputs[playerId].count(input))
-            return inputs[playerId].at(input);
+    bool checkInput(int player_id, T const input) {
+        if(inputs[player_id].count(input))
+            return inputs[player_id].at(input);
         return false;
     }
 
-    bool remapInput(int playerId, T const input) {
+    bool remapInput(int player_id, T const input) {
         //Search for the old value
-        auto oldInput = std::find_if(input_mapping.at(playerId).begin(),input_mapping.at(playerId).end(),
+        auto old_input = std::find_if(input_mapping.at(player_id).begin(),input_mapping.at(player_id).end(),
                                      [&input](const std::pair<InputKeyCode, T>& value) {
                                          return value.second == input;
                                      });
@@ -61,22 +61,22 @@ public:
         while(true) {
             while(SDL_PollEvent(&e)) {
                 if(e.type == SDL_KEYDOWN) {
-                    auto inputkeycode = convertSDLKeycodeInputKeyCode(e.key.keysym.sym);
-                    if(inputkeycode.has_value()) {
+                    auto key_code = convertSDLKeycodeInputKeyCode(e.key.keysym.sym);
+                    if(key_code.has_value()) {
                         //Current key matches old key
-                        if(inputkeycode.value() == oldInput->first) {
+                        if(key_code.value() == old_input->first) {
                             return true;
                         }
                         //Input is not already used
-                        if(input_mapping.at(playerId).count(inputkeycode.value()) == 0)
+                        if(input_mapping.at(player_id).count(key_code.value()) == 0)
                         {
-                            input_mapping[playerId][inputkeycode.value()] = input;
+                            input_mapping[player_id][key_code.value()] = input;
                             //Removing old key mapping
-                            input_mapping.at(playerId).erase(oldInput->first);
+                            input_mapping.at(player_id).erase(old_input->first);
                             return true; 
                         }
                         //Key is used
-                        if(input_mapping.at(playerId).count(inputkeycode.value()) == 1)
+                        if(input_mapping.at(player_id).count(key_code.value()) == 1)
                             return false;
                     }
                 }
@@ -98,25 +98,25 @@ public:
                 case SDL_KEYDOWN:
                 case SDL_KEYUP:
                     // Checking if input is mapped.
-                    for(auto [playerId, mapping] : inputs){
+                    for(auto [player_id, mapping] : inputs){
                         std::ignore = mapping;
                         auto input = convertSDLKeycodeInputKeyCode(e.key.keysym.sym);
                         if(input.has_value()) {
-                            if(input_mapping.at(playerId).count(*input) && e.key.repeat == 0) {
+                            if(input_mapping.at(player_id).count(*input) && e.key.repeat == 0) {
                                 switch(e.type) {
                                     case SDL_KEYDOWN:
-                                        if (time_to_wait[playerId].count(input_mapping[playerId][*input])) {
-                                            auto& time_to_wait_for_key = time_to_wait[playerId][input_mapping[playerId][*input]];
+                                        if (time_to_wait[player_id].count(input_mapping[player_id][*input])) {
+                                            auto& time_to_wait_for_key = time_to_wait[player_id][input_mapping[player_id][*input]];
                                             if (time_to_wait_for_key.second >= time_to_wait_for_key.first) {
-                                                inputs[playerId][input_mapping[playerId][*input]] = true;
+                                                inputs[player_id][input_mapping[player_id][*input]] = true;
                                                 time_to_wait_for_key.second = 0;
                                             }
                                         } else {
-                                            inputs[playerId][input_mapping[playerId][*input]] = true;
+                                            inputs[player_id][input_mapping[player_id][*input]] = true;
                                         }
                                         break;
                                     case SDL_KEYUP:
-                                        inputs[playerId][input_mapping[playerId][*input]] = false;
+                                        inputs[player_id][input_mapping[player_id][*input]] = false;
                                     default:
                                         break;
                                 }
@@ -127,25 +127,25 @@ public:
                 case SDL_MOUSEBUTTONDOWN:
                 case SDL_MOUSEBUTTONUP:
                     // Checking if input is mapped.
-                    for(auto [playerId, mapping] : inputs){
+                    for(auto [player_id, mapping] : inputs){
                         std::ignore = mapping;
                         auto input = convertSDLKeycodeInputKeyCode(e.button.button);
                         if(input.has_value()) {
-                            if(input_mapping.at(playerId).count(*input)) {
+                            if(input_mapping.at(player_id).count(*input)) {
                                 switch(e.button.state) {
                                     case SDL_PRESSED:
-                                       if (time_to_wait[playerId].count(input_mapping[playerId][*input])) {
-                                            auto& time_to_wait_for_key = time_to_wait[playerId][input_mapping[playerId][*input]];
+                                       if (time_to_wait[player_id].count(input_mapping[player_id][*input])) {
+                                            auto& time_to_wait_for_key = time_to_wait[player_id][input_mapping[player_id][*input]];
                                             if (time_to_wait_for_key.second >= time_to_wait_for_key.first) {
-                                                inputs[playerId][input_mapping[playerId][*input]] = true;
+                                                inputs[player_id][input_mapping[player_id][*input]] = true;
                                                 time_to_wait_for_key.second = 0;
                                             }
                                         } else {
-                                            inputs[playerId][input_mapping[playerId][*input]] = true;
+                                            inputs[player_id][input_mapping[player_id][*input]] = true;
                                         }
                                         break;
                                     case SDL_RELEASED:
-                                        inputs[playerId][input_mapping[playerId][*input]] = false;
+                                        inputs[player_id][input_mapping[player_id][*input]] = false;
                                     default:
                                         break;
                                 }
@@ -241,6 +241,8 @@ private:
         // Special
         sdl_mapping.insert({InputKeyCode::EKey_lshift, SDLK_LSHIFT});
         sdl_mapping.insert({InputKeyCode::EKey_lctrl, SDLK_LCTRL});
+        sdl_mapping.insert({InputKeyCode::EKey_rshift, SDLK_RSHIFT});
+        sdl_mapping.insert({InputKeyCode::EKey_rctrl, SDLK_RCTRL});
         sdl_mapping.insert({InputKeyCode::EKey_space, SDLK_SPACE});
         sdl_mapping.insert({InputKeyCode::Ekey_enter, SDLK_KP_ENTER});
         sdl_mapping.insert({InputKeyCode::EKey_backspace, SDLK_BACKSPACE});
@@ -299,6 +301,8 @@ private:
         // Special
         keycode_mapping.insert({SDLK_LSHIFT, InputKeyCode::EKey_lshift});
         keycode_mapping.insert({SDLK_LCTRL, InputKeyCode::EKey_lctrl});
+        keycode_mapping.insert({SDLK_RSHIFT, InputKeyCode::EKey_rshift});
+        keycode_mapping.insert({SDLK_RCTRL, InputKeyCode::EKey_rctrl});
         keycode_mapping.insert({SDLK_SPACE, InputKeyCode::EKey_space});
         keycode_mapping.insert({SDLK_KP_ENTER, InputKeyCode::Ekey_enter});
         keycode_mapping.insert({SDLK_BACKSPACE, InputKeyCode::EKey_backspace});

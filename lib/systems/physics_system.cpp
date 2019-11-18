@@ -10,7 +10,7 @@ PhysicsSystem::PhysicsSystem(std::shared_ptr<CollisionDetector> cd, std::shared_
 void PhysicsSystem::update(double deltatime) {
     auto entitiesWithPhysics = entityManager->getEntitiesByComponent<PhysicsComponent>();
 
-    for(auto [entityId, physics] : *entitiesWithPhysics){
+    for(auto [entityId, physics] : entitiesWithPhysics){
         if (physics->kinematic != Kinematic::IS_NOT_KINEMATIC) {
             physics->vx = 0;
             physics->vy = 0;
@@ -18,28 +18,28 @@ void PhysicsSystem::update(double deltatime) {
         }
 
         auto transform = entityManager->getComponent<TransformComponent>(entityId);
+        // TODO make it so trigger goes through everything instead of only checking if player can move through trigger
         double mass = physics->mass;
 
         if (physics->gravity) {
-            // Also do collisions
-            double vy = physics->vy + (GRAVITY * mass);
+            double slow_down_amount = (GRAVITY * mass) * deltatime;
+            double vy_gravity = physics->vy + slow_down_amount;
 
-            if (vy > TERMINAL_VELOCITY)
-                vy = TERMINAL_VELOCITY;
-            
-            physics->vy = vy;
+            if (vy_gravity > TERMINAL_VELOCITY)
+                vy_gravity = TERMINAL_VELOCITY;
+            physics->vy = vy_gravity;
         }
 
         double vx = physics->vx * deltatime;
         double vy = physics->vy * deltatime;
-        
+
         if (physics->vx > 0) { // Moving right
             if (physics->flipX)
-                transform->xDirection = Direction::POSITIVE;
+                transform->x_direction = Direction::POSITIVE;
 
             auto collision = collisionDetector->spaceLeft(entityId, Axis::X, Direction::POSITIVE);
-            
-            if (collision.space_left == 0){
+
+            if (collision.space_left == 0 && !collision.is_trigger) {
                 physics->vx = 0;
             } else {
                 double toMove = vx;
@@ -50,16 +50,16 @@ void PhysicsSystem::update(double deltatime) {
                 else 
                     toMove = vx;
 
-                transform->xPos = transform->xPos + toMove;
+                transform->x_pos = transform->x_pos + toMove;
             }
         }
         if (physics->vx < 0) { // Moving left
             if (physics->flipX)
-                transform->xDirection = Direction::NEGATIVE;
+                transform->x_direction = Direction::NEGATIVE;
 
             auto collision = collisionDetector->spaceLeft(entityId, Axis::X, Direction::NEGATIVE);
             
-            if (collision.space_left == 0){
+            if (collision.space_left == 0 && !collision.is_trigger) {
                 physics->vx = 0;
             } else {
                 double toMove = vx;
@@ -70,16 +70,16 @@ void PhysicsSystem::update(double deltatime) {
                 else 
                     toMove = vx;
 
-                transform->xPos = transform->xPos + toMove;
+                transform->x_pos = transform->x_pos + toMove;
             }
         }
         if (physics->vy > 0) { // Moving down
             if (physics->flipY)
-                transform->yDirection = Direction::POSITIVE;
+                transform->y_direction = Direction::POSITIVE;
 
             auto collision = collisionDetector->spaceLeft(entityId, Axis::Y, Direction::POSITIVE);
-            
-            if (collision.space_left == 0){
+
+            if (collision.space_left == 0 && !collision.is_trigger) {
                 physics->vy = 0;
             } else {
                 double toMove = vy;
@@ -90,16 +90,16 @@ void PhysicsSystem::update(double deltatime) {
                 else 
                     toMove = vy;
 
-                transform->yPos = transform->yPos + toMove;
+                transform->y_pos = transform->y_pos + toMove;
             }
         }
         if (physics->vy < 0) { // Moving up
             if (physics->flipY)
-                transform->yDirection = Direction::NEGATIVE;
+                transform->y_direction = Direction::NEGATIVE;
 
             auto collision = collisionDetector->spaceLeft(entityId, Axis::Y, Direction::NEGATIVE);
-            
-            if (collision.space_left == 0){
+
+            if (collision.space_left == 0 && !collision.is_trigger) {
                 physics->vy = 0;
             } else {
                 double toMove = vy;
@@ -110,7 +110,7 @@ void PhysicsSystem::update(double deltatime) {
                 else 
                     toMove = vy;
 
-                transform->yPos = transform->yPos + toMove;
+                transform->y_pos = transform->y_pos + toMove;
             }
         }
         updateChildren(entityId);
@@ -128,14 +128,14 @@ void PhysicsSystem::updateChildren(int parentId) {
         auto transformChild = entityManager->getComponent<TransformComponent>(child);
 
         if (childPhysics->flipX) {
-            if (transformChild->xDirection != transformParent->xDirection)
-                transformChild->xPos *= -1;
-            transformChild->xDirection = transformParent->xDirection;
+            if (transformChild->x_direction != transformParent->x_direction)
+                transformChild->x_pos *= -1;
+            transformChild->x_direction = transformParent->x_direction;
         }
         if (childPhysics->flipY) {
-            if (transformChild->yDirection != transformParent->yDirection)
-                transformChild->yPos *= -1;
-            transformChild->yDirection = transformParent->yDirection;
+            if (transformChild->y_direction != transformParent->y_direction)
+                transformChild->y_pos *= -1;
+            transformChild->y_direction = transformParent->y_direction;
         }
 
         updateChildren(child);

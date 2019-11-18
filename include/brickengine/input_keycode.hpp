@@ -51,6 +51,8 @@ enum class InputKeyCode {
     // Special
     EKey_lshift,
     EKey_lctrl,
+    EKey_rshift,
+    EKey_rctrl,
     EKey_space,
     Ekey_enter,
     EKey_backspace,

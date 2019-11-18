@@ -17,10 +17,10 @@ TEST(EntityManager_Family, create_entity_with_parent_already_relative) {
     int child = em.createEntity(std::move(child_comps), std::make_pair(parent, true));
 
     EXPECT_EQ(parent, em.getParent(child));
-    EXPECT_EQ(10, em.getComponent<TransformComponent>(child)->xPos);
-    EXPECT_EQ(5, em.getComponent<TransformComponent>(child)->yPos);
-    EXPECT_EQ(3, em.getComponent<TransformComponent>(child)->xScale);
-    EXPECT_EQ(2, em.getComponent<TransformComponent>(child)->yScale);
+    EXPECT_EQ(10, em.getComponent<TransformComponent>(child)->x_pos);
+    EXPECT_EQ(5, em.getComponent<TransformComponent>(child)->y_pos);
+    EXPECT_EQ(3, em.getComponent<TransformComponent>(child)->x_scale);
+    EXPECT_EQ(2, em.getComponent<TransformComponent>(child)->y_scale);
 }
 TEST(EntityManager_Family, create_entity_with_parent_not_yet_relative) {
     EntityManager em;
@@ -33,10 +33,10 @@ TEST(EntityManager_Family, create_entity_with_parent_not_yet_relative) {
     int child = em.createEntity(std::move(child_comps), std::make_pair(parent, false));
 
     EXPECT_EQ(parent, em.getParent(child));
-    EXPECT_EQ(-40, em.getComponent<TransformComponent>(child)->xPos);
-    EXPECT_EQ(-45, em.getComponent<TransformComponent>(child)->yPos);
-    EXPECT_EQ(1.5, em.getComponent<TransformComponent>(child)->xScale);
-    EXPECT_EQ(1, em.getComponent<TransformComponent>(child)->yScale);
+    EXPECT_EQ(-40, em.getComponent<TransformComponent>(child)->x_pos);
+    EXPECT_EQ(-45, em.getComponent<TransformComponent>(child)->y_pos);
+    EXPECT_EQ(1.5, em.getComponent<TransformComponent>(child)->x_scale);
+    EXPECT_EQ(1, em.getComponent<TransformComponent>(child)->y_scale);
 }
 TEST(EntityManager_Family, getAbsoluteTransform) {
     EntityManager em;

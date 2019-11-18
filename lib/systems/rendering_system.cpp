@@ -9,7 +9,7 @@ RenderingSystem::RenderingSystem(std::shared_ptr<EntityManager> entityManager, R
 void RenderingSystem::update(double){
     auto entitiesWithTexture = entityManager->getEntitiesByComponent<TextureComponent>();
 
-    for(auto& [entityId, texture] : *entitiesWithTexture) {
+    for(auto& [entityId, texture] : entitiesWithTexture) {
         auto transform = entityManager->getComponent<TransformComponent>(entityId);
 
         auto dst = texture->getTexture()->getDstRect();
@@ -22,11 +22,11 @@ void RenderingSystem::update(double){
         texture->getTexture()->setFlip(SDL_FLIP_NONE);
         SDL_RendererFlip flip = SDL_FLIP_NONE;
 
-        if (transform->xDirection == Direction::NEGATIVE && transform->yDirection == Direction::NEGATIVE) {
+        if (transform->x_direction == Direction::NEGATIVE && transform->y_direction == Direction::NEGATIVE) {
             flip = static_cast<SDL_RendererFlip>(SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL);
-        } else if (transform->xDirection == Direction::NEGATIVE) {
+        } else if (transform->x_direction == Direction::NEGATIVE) {
             flip = SDL_FLIP_HORIZONTAL;
-        } else if (transform->yDirection == Direction::NEGATIVE) {
+        } else if (transform->y_direction == Direction::NEGATIVE) {
             flip = SDL_FLIP_VERTICAL;
         }
 
