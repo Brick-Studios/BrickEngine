@@ -14,4 +14,4 @@ private:
     std::default_random_engine dre;
 };
 
-#endif
+#endif // FILE_RANDOM_HPP
