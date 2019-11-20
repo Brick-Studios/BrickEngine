@@ -6,13 +6,13 @@
 
 class PhysicsComponent : public ComponentImpl<PhysicsComponent> {
 public:
-    PhysicsComponent(double mass, double drag, double vx, double vy, bool gravity,
+    PhysicsComponent(double mass, bool drag, double vx, double vy, bool gravity,
                      Kinematic kinematic, bool flipX, bool flipY);
     static std::string getNameStatic();
 
     // Data
     double mass;
-    double drag;
+    bool drag;
     double vx;
     double vy;
     bool gravity;

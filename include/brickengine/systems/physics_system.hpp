@@ -12,6 +12,7 @@ public:
     void update(double deltatime);
     void updateChildren(int parentId);
 private:
+    static constexpr double HORIZONTAL_DRAG = 200;
     static constexpr double GRAVITY = 21.04;
     static constexpr double TERMINAL_VELOCITY = 1000;
 

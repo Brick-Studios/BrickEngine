@@ -33,6 +33,7 @@ public:
     EngineTick getTicks() const;
     int getWindowWidth() const;
     int getWindowHeight() const;
+    void toggleCursor(bool value) const;
 private:
     std::vector<int> layers;
     int top_layer;
