@@ -130,3 +130,11 @@ int BrickEngine::getWindowWidth() const {
 int BrickEngine::getWindowHeight() const {
     return this->window_height;
 }
+
+void BrickEngine::toggleCursor(bool value) const {
+    if(value) {
+        SDL_ShowCursor(SDL_ENABLE);
+    } else {
+        SDL_ShowCursor(SDL_DISABLE);
+    }
+}
