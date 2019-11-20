@@ -22,12 +22,29 @@ void PhysicsSystem::update(double deltatime) {
         double mass = physics->mass;
 
         if (physics->gravity) {
-            double slow_down_amount = (GRAVITY * mass) * deltatime;
+            double slow_down_amount = (Y_GRAVITY * mass) * deltatime;
             double vy_gravity = physics->vy + slow_down_amount;
 
             if (vy_gravity > TERMINAL_VELOCITY)
                 vy_gravity = TERMINAL_VELOCITY;
             physics->vy = vy_gravity;
+        }
+
+        if ((physics->vy > Y_GRAVITY || physics->vy < Y_GRAVITY * -1) && physics->vx != 0) {
+            double slow_down_amount = (X_GRAVITY * mass) * deltatime;
+            double vx_gravity;
+
+            if (physics->vx < 0) {
+                vx_gravity = physics->vx + slow_down_amount;
+                if(vx_gravity < TERMINAL_VELOCITY * -1)
+                    vx_gravity = TERMINAL_VELOCITY * -1;
+            } else {
+                vx_gravity = physics->vx - slow_down_amount;
+                if(vx_gravity > TERMINAL_VELOCITY)
+                    vx_gravity = TERMINAL_VELOCITY;
+            }
+
+            physics->vx = vx_gravity;
         }
 
         double vx = physics->vx * deltatime;
