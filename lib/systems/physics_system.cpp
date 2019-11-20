@@ -30,7 +30,7 @@ void PhysicsSystem::update(double deltatime) {
             physics->vy = vy_gravity;
         }
 
-        if ((physics->vy > GRAVITY || physics->vy < GRAVITY * -1) && physics->vx != 0) {
+        if (physics->drag && (physics->vy > GRAVITY || physics->vy < GRAVITY * -1) && physics->vx != 0) {
             double slow_down_amount = (HORIZONTAL_DRAG * mass) * deltatime;
             double vx_gravity;
 
