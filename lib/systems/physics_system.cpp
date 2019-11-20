@@ -30,6 +30,8 @@ void PhysicsSystem::update(double deltatime) {
             physics->vy = vy_gravity;
         }
 
+        // This first part of the expresion basicly checks wether we are on the ground right now.
+        // It is not 100% correct, but it does increase performance by a ton
         if (physics->drag && (physics->vy > GRAVITY || physics->vy < GRAVITY * -1) && physics->vx != 0) {
             double slow_down_amount = (HORIZONTAL_DRAG * mass) * deltatime;
             double vx_gravity;
