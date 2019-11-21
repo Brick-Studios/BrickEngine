@@ -59,7 +59,11 @@ enum class InputKeyCode {
 
     // Mouse
     EKey_mouse_left,
-    EKey_mouse_right
+    EKey_mouse_right,
+
+    // Controller
+    EController_x_axis,
+    EController_y_axis
 };
 
  #endif // FILE_INPUT_KEYCODE_HPP 

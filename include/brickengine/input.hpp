@@ -15,17 +15,21 @@ class BrickInput {
 public:
     BrickInput(){
         generateInputs();
-
-        //// Checking for joysticks
-        //for (int i = 0; i < SDL_NumJoysticks(); ++i) {
-        //    auto joy = SDL_JoystickOpen(i);
-        //    if(joy) {
-        //        std::cout << "Opened Joystick: " << i << std::endl;
-        //        std::cout << "Name: " << SDL_JoystickNameForIndex(i) << std::endl;
-        //    } else {
-        //        std::cout << "Couldn't open joystick: " << i << ", skipping...";
-        //    }
-        //}
+        if(SDL_GameControllerAddMappingsFromFile("assets/controller/gamecontrollerdb.txt") == -1) {
+            std::cout << "error" << std::endl;
+        }
+        // Checking for joysticks
+        for (int i = 0; i < SDL_NumJoysticks(); ++i) {
+            auto joy = SDL_JoystickOpen(i);
+            if(joy) {
+                std::cout << "Opened Joystick: " << i << std::endl;
+                std::cout << "Name: " << SDL_JoystickNameForIndex(i) << std::endl;
+                std::cout << "ID:" << SDL_JoystickInstanceID(joy) << std::endl;
+                joysticks.push_back(joy);
+            } else {
+                std::cout << "Couldn't open joystick: " << i << ", skipping...";
+            }
+        }
     }
 
     static BrickInput<T>& getInstance() {
@@ -36,13 +40,15 @@ public:
     void setInputMapping(std::unordered_map<int, std::unordered_map<InputKeyCode, T>>& game_input,
                          std::unordered_map<T, double>& time_to_wait_mapping,
                          std::unordered_map<InputKeyCode, signed int> value_map) {
-        value_mapping = value_map;
+        axis_map = value_map;
         input_mapping = game_input;
         int count = 0;
         for (auto& [player_id, mapping] : input_mapping) {
             // Bind players to controllers
             if(count < joysticks.size())
                 player_controller_mapping[player_id] = SDL_JoystickInstanceID(joysticks.at(count));
+
+            std::cout << player_controller_mapping.size() << std::endl;
 
             for(auto& [sdl_key, input] : mapping){
                 std::ignore = sdl_key;
@@ -127,15 +133,24 @@ public:
                                         if (time_to_wait[player_id].count(input_mapping[player_id][*input])) {
                                             auto& time_to_wait_for_key = time_to_wait[player_id][input_mapping[player_id][*input]];
                                             if (time_to_wait_for_key.second >= time_to_wait_for_key.first) {
-                                                inputs[player_id][input_mapping[player_id][*input]] += value_mapping[*input];
+                                                if(axis_map.count(*input))
+                                                    inputs[player_id][input_mapping[player_id][*input]] += axis_map[*input];
+                                                else
+                                                    inputs[player_id][input_mapping[player_id][*input]] = true;
                                                 time_to_wait_for_key.second = 0;
                                             }
                                         } else {
-                                            inputs[player_id][input_mapping[player_id][*input]] += value_mapping[*input];
+                                            if(axis_map.count(*input))
+                                                inputs[player_id][input_mapping[player_id][*input]] += axis_map[*input];
+                                            else
+                                                   inputs[player_id][input_mapping[player_id][*input]] = true;
                                         }
                                         break;
                                     case SDL_KEYUP:
-                                        inputs[player_id][input_mapping[player_id][*input]] -= value_mapping[*input];
+                                        if(axis_map.count(*input))
+                                            inputs[player_id][input_mapping[player_id][*input]] -= axis_map[*input];
+                                        else
+                                            inputs[player_id][input_mapping[player_id][*input]] = false;
                                         break;
                                     default:
                                         break;
@@ -144,10 +159,33 @@ public:
                         }
                     }
                     break;
-                //case SDL_JOYAXISMOTION:
-                //    auto controller_id = e.jaxis.which;
-                //    std::cout << "Controller: " << controller_id << " pressed a button" << std::endl;
-                //    break;
+                case SDL_JOYAXISMOTION: {
+                    for(auto [player_id, controller] : player_controller_mapping) {
+                        std::cout << controller << std::endl;
+                        if(e.jaxis.which == controller) {
+                            // Scale the value
+                            std::cout << e.jaxis.value << std::endl;
+                            double old_range = 32767 + 32768;
+                            double new_range = 1 + 1;
+                            double new_value = (((e.jaxis.value + 32768) * new_range) / old_range) - 1;
+                            if(new_value < JOYSTICK_DEADZONE && new_value > -JOYSTICK_DEADZONE)
+                                new_value = 0;
+
+
+                            // Apply on X axis
+                            if(e.jaxis.axis == 0) {
+                            std::cout << new_value << std::endl;
+                                inputs[player_id][input_mapping[player_id][InputKeyCode::EController_x_axis]] = new_value;
+                            }
+                            // Apply on Y axis
+                            if(e.jaxis.axis == 1) {
+                                inputs[player_id][input_mapping[player_id][InputKeyCode::EController_y_axis]] = new_value;
+                            }
+                            break;
+                        }
+                    }
+                    break;
+                }
                 case SDL_MOUSEBUTTONDOWN:
                 case SDL_MOUSEBUTTONUP:
                     // Checking if input is mapped.
@@ -187,6 +225,8 @@ public:
         return { x, y };
     }
 private:
+    inline static const int JOYSTICK_DEADZONE = 0.06;
+
     // List of mapped inputs
     // The int key is the player id
     std::unordered_map<int, std::unordered_map<T, int>> inputs;
@@ -195,7 +235,7 @@ private:
     std::unordered_map<int, std::unordered_map<InputKeyCode, T>> input_mapping;
     std::unordered_map<InputKeyCode, SDL_Keycode> sdl_mapping;
     std::unordered_map<SDL_Keycode, InputKeyCode> keycode_mapping;
-    std::unordered_map<InputKeyCode, signed int> value_mapping;
+    std::unordered_map<InputKeyCode, signed int> axis_map;
     // The int key is the player id
     // The first value in the pair is how long a keybinding has to wait.
     // The second value is how long the keybinding is currently waiting.
