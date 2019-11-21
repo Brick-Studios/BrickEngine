@@ -16,16 +16,16 @@ public:
     BrickInput(){
         generateInputs();
 
-        // Checking for joysticks
-        for (int i = 0; i < SDL_NumJoysticks(); ++i) {
-            auto joy = SDL_JoystickOpen(i);
-            if(joy) {
-                std::cout << "Opened Joystick: " << i << std::endl;
-                std::cout << "Name: " << SDL_JoystickNameForIndex(i) << std::endl;
-            } else {
-                std::cout << "Couldn't open joystick: " << i << ", skipping...";
-            }
-        }
+        //// Checking for joysticks
+        //for (int i = 0; i < SDL_NumJoysticks(); ++i) {
+        //    auto joy = SDL_JoystickOpen(i);
+        //    if(joy) {
+        //        std::cout << "Opened Joystick: " << i << std::endl;
+        //        std::cout << "Name: " << SDL_JoystickNameForIndex(i) << std::endl;
+        //    } else {
+        //        std::cout << "Couldn't open joystick: " << i << ", skipping...";
+        //    }
+        //}
     }
 
     static BrickInput<T>& getInstance() {
@@ -34,17 +34,21 @@ public:
     }
 
     void setInputMapping(std::unordered_map<int, std::unordered_map<InputKeyCode, T>>& game_input,
-                         std::unordered_map<T, double>& time_to_wait_mapping) {
+                         std::unordered_map<T, double>& time_to_wait_mapping,
+                         std::unordered_map<InputKeyCode, signed int> value_map) {
+        value_mapping = value_map;
         input_mapping = game_input;
         int count = 0;
         for (auto& [player_id, mapping] : input_mapping) {
             // Bind players to controllers
-            player_controller_mapping[player_id] = SDL_JoystickInstanceID(joysticks.at(count));
+            if(count < joysticks.size())
+                player_controller_mapping[player_id] = SDL_JoystickInstanceID(joysticks.at(count));
 
             for(auto& [sdl_key, input] : mapping){
                 std::ignore = sdl_key;
                 inputs[player_id][input] = false;
             }
+            ++count;
         }
         for (auto& [input, time_to_wait_value] : time_to_wait_mapping) {
             for (auto& [player_id, mapping] : input_mapping) {
@@ -60,10 +64,10 @@ public:
             inputs[player_id][input] = false;
     }
 
-    bool checkInput(int player_id, T const input) {
+    signed int checkInput(int player_id, T const input) {
         if(inputs[player_id].count(input))
             return inputs[player_id].at(input);
-        return false;
+        return 0;
     }
 
     bool remapInput(int player_id, T const input) {
@@ -123,11 +127,11 @@ public:
                                         if (time_to_wait[player_id].count(input_mapping[player_id][*input])) {
                                             auto& time_to_wait_for_key = time_to_wait[player_id][input_mapping[player_id][*input]];
                                             if (time_to_wait_for_key.second >= time_to_wait_for_key.first) {
-                                                inputs[player_id][input_mapping[player_id][*input]] = true;
+                                                inputs[player_id][input_mapping[player_id][*input]] = value_mapping[*input];
                                                 time_to_wait_for_key.second = 0;
                                             }
                                         } else {
-                                            inputs[player_id][input_mapping[player_id][*input]] = true;
+                                            inputs[player_id][input_mapping[player_id][*input]] = value_mapping[*input];
                                         }
                                         break;
                                     case SDL_KEYUP:
@@ -184,12 +188,13 @@ public:
 private:
     // List of mapped inputs
     // The int key is the player id
-    std::unordered_map<int, std::unordered_map<T, bool>> inputs;
+    std::unordered_map<int, std::unordered_map<T, int>> inputs;
     // SDL inputs mapped to game input
     // The int key is the player id
     std::unordered_map<int, std::unordered_map<InputKeyCode, T>> input_mapping;
     std::unordered_map<InputKeyCode, SDL_Keycode> sdl_mapping;
     std::unordered_map<SDL_Keycode, InputKeyCode> keycode_mapping;
+    std::unordered_map<InputKeyCode, signed int> value_mapping;
     // The int key is the player id
     // The first value in the pair is how long a keybinding has to wait.
     // The second value is how long the keybinding is currently waiting.
