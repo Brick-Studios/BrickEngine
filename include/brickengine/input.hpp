@@ -127,15 +127,16 @@ public:
                                         if (time_to_wait[player_id].count(input_mapping[player_id][*input])) {
                                             auto& time_to_wait_for_key = time_to_wait[player_id][input_mapping[player_id][*input]];
                                             if (time_to_wait_for_key.second >= time_to_wait_for_key.first) {
-                                                inputs[player_id][input_mapping[player_id][*input]] = value_mapping[*input];
+                                                inputs[player_id][input_mapping[player_id][*input]] += value_mapping[*input];
                                                 time_to_wait_for_key.second = 0;
                                             }
                                         } else {
-                                            inputs[player_id][input_mapping[player_id][*input]] = value_mapping[*input];
+                                            inputs[player_id][input_mapping[player_id][*input]] += value_mapping[*input];
                                         }
                                         break;
                                     case SDL_KEYUP:
-                                        inputs[player_id][input_mapping[player_id][*input]] = false;
+                                        inputs[player_id][input_mapping[player_id][*input]] -= value_mapping[*input];
+                                        break;
                                     default:
                                         break;
                                 }
