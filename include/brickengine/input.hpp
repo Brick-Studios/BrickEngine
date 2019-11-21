@@ -15,6 +15,17 @@ class BrickInput {
 public:
     BrickInput(){
         generateInputs();
+
+        // Checking for joysticks
+        for (int i = 0; i < SDL_NumJoysticks(); ++i) {
+            auto joy = SDL_JoystickOpen(i);
+            if(joy) {
+                std::cout << "Opened Joystick: " << i << std::endl;
+                std::cout << "Name: " << SDL_JoystickNameForIndex(i) << std::endl;
+            } else {
+                std::cout << "Couldn't open joystick: " << i << ", skipping...";
+            }
+        }
     }
 
     static BrickInput<T>& getInstance() {
@@ -25,7 +36,11 @@ public:
     void setInputMapping(std::unordered_map<int, std::unordered_map<InputKeyCode, T>>& game_input,
                          std::unordered_map<T, double>& time_to_wait_mapping) {
         input_mapping = game_input;
+        int count = 0;
         for (auto& [player_id, mapping] : input_mapping) {
+            // Bind players to controllers
+            player_controller_mapping[player_id] = SDL_JoystickInstanceID(joysticks.at(count));
+
             for(auto& [sdl_key, input] : mapping){
                 std::ignore = sdl_key;
                 inputs[player_id][input] = false;
@@ -124,6 +139,10 @@ public:
                         }
                     }
                     break;
+                //case SDL_JOYAXISMOTION:
+                //    auto controller_id = e.jaxis.which;
+                //    std::cout << "Controller: " << controller_id << " pressed a button" << std::endl;
+                //    break;
                 case SDL_MOUSEBUTTONDOWN:
                 case SDL_MOUSEBUTTONUP:
                     // Checking if input is mapped.
@@ -176,6 +195,9 @@ private:
     // The second value is how long the keybinding is currently waiting.
     // These values are in seconds of deltatime
     std::unordered_map<int, std::unordered_map<T, std::pair<double, double>>> time_to_wait;
+    // Controller list
+    std::vector<SDL_Joystick*> joysticks;
+    std::unordered_map<int, SDL_JoystickID> player_controller_mapping;
 
     std::optional<SDL_Keycode> convertInputKeyCodeToSDLKeycode(InputKeyCode i) {
         auto input = sdl_mapping.find(i);
@@ -310,6 +332,9 @@ private:
         // Mouse input
         keycode_mapping.insert({SDL_BUTTON_LEFT, InputKeyCode::EKey_mouse_left});
         keycode_mapping.insert({SDL_BUTTON_RIGHT, InputKeyCode::EKey_mouse_right});
+
+        // Controllers
+
     }
 };
 #endif // FILE_INPUT_HPP
