@@ -10,11 +10,11 @@
 #include "brickengine/systems/system.hpp"
 #include "brickengine/scenes/scene.hpp"
 
-template<typename State, typename Factory>
+template<typename State>
 class SceneManager {
 public:
     SceneManager(EntityManager& em) : entity_manager(em) {}
-    void loadScene(Scene<State, Factory>& scene) {
+    void loadScene(Scene<State>& scene) {
         if (!scene.prepared())
             scene.prepare();
         for (auto& entity_comps : scene.getEntityComponents()) {

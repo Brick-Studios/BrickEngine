@@ -7,7 +7,7 @@
 
 #include "brickengine/components/component.hpp"
 
-template<typename State, typename Factory>
+template<typename State>
 class Scene {
 public:
     Scene() = default;
@@ -29,8 +29,6 @@ public:
     }
     virtual ~Scene() = default;
 private:
-    Factory& factory;
-
     // If entity_components are nullopt then the Scene has already been loaded or it has not been prepared yet.
     std::optional<std::unique_ptr<std::vector<std::vector<std::unique_ptr<Component>>>>> entity_components;
 };

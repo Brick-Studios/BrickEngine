@@ -3,11 +3,11 @@
 
 #include "brickengine/scenes/scene.hpp"
 
-template<typename SceneType, typename State, typename Factory>
-class SceneImpl : Scene<State, Factory> {
+template<typename SceneType, typename State>
+class SceneImpl : Scene<State> {
 public:
     virtual std::string getTag() {
-        SceneType::getTagStatic();
+        return SceneType::getTagStatic();
     }
 };
 
