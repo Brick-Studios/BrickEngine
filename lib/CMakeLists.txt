@@ -5,6 +5,7 @@ find_package(SDL2_net REQUIRED)
 find_package(SDL2_gfx REQUIRED)
 find_package(SDL2_ttf REQUIRED)
 find_package(SDL2_image REQUIRED)
+find_package(SDL2_mixer REQUIRED)
 
 add_library(BrickEngine STATIC
     ${BRICKENGINE_SRC_FILES}
@@ -27,6 +28,7 @@ target_link_libraries(BrickEngine
     PRIVATE SDL2::GFX
     PRIVATE SDL2::TTF
     PRIVATE SDL2::Image
+    PRIVATE SDL2::Mixer
 )
 target_compile_features(BrickEngine PUBLIC cxx_std_17)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
