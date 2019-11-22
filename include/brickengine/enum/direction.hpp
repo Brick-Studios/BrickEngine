@@ -3,7 +3,7 @@
 
 enum class Direction { 
     POSITIVE, 
-    NEGATIVE 
+    NEGATIVE
 };
 
 #endif //FILE_DIRECTION_HPP

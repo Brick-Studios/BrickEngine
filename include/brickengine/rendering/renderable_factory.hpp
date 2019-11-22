@@ -9,7 +9,7 @@
 
 #include <memory>
 
-class RenderableFactory{
+class RenderableFactory {
 public:
     RenderableFactory(std::shared_ptr<Renderer> r, std::shared_ptr<ResourceManager> rm);
     std::unique_ptr<Texture> createText(std::string text, int font_size, Color color, int layer, std::unique_ptr<Rect> dst) const;

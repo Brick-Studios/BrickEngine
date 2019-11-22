@@ -234,6 +234,13 @@ public:
             return std::set<int>();
         return tagging_tags.at(tag);
     }
+    void removeEntitiesWithTag(std::string tag) {
+        if (!tagging_tags.count(tag)) return;
+
+        for (auto& entity : tagging_tags.at(tag)) {
+            removeEntity(entity);
+        }
+    }
 private:
     int lowest_unassigned_entity_id;
     std::unordered_map<std::string, std::unordered_map<int, std::unique_ptr<Component>>> components_by_class;
