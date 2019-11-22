@@ -63,7 +63,11 @@ enum class InputKeyCode {
 
     // Controller
     EController_x_axis,
-    EController_y_axis
+    EController_y_axis,
+    EController_a,
+    EController_b,
+    EController_x,
+    EController_y
 };
 
  #endif // FILE_INPUT_KEYCODE_HPP 
