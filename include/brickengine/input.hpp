@@ -31,13 +31,7 @@ public:
             }
         }
     }
-
-    //~BrickInput() {
-    //    for(auto [id, controller] : controllers) {
-    //        SDL_GameControllerClose(controller);
-    //    }
-    //}
-
+    
     static BrickInput<T>& getInstance() {
         static BrickInput<T> INSTANCE;
         return INSTANCE;
@@ -125,7 +119,6 @@ public:
         SDL_Event e;
         while (SDL_PollEvent(&e))
         {
-            //std::cout << e.type << std::endl;
             switch (e.type) {
                 case SDL_KEYDOWN:
                 case SDL_KEYUP:
@@ -134,7 +127,7 @@ public:
                         std::ignore = mapping;
                         auto input = convertSDLKeycodeInputKeyCode(e.key.keysym.sym);
                         if(input.has_value()) {
-                            if(input_mapping.at(player_id).count(*input) && e.key.repeat == 0) {
+                            if(input_mapping.at(player_id).count(*input) && e.key.repeat == 0 && !player_controller_mapping.count(player_id)) {
                                 switch(e.type) {
                                     case SDL_KEYDOWN:
                                         if (time_to_wait[player_id].count(input_mapping[player_id][*input])) {
@@ -169,10 +162,13 @@ public:
                 case SDL_JOYAXISMOTION: {
                     for(auto [player_id, controller] : player_controller_mapping) {
                         if(e.jaxis.which == controller) {
+                            // For some reason you cannot get the axis of the current joyaxis motion. So we need to calculate both.
+
+                            // Y and X are reversed in a controller
                             auto y_value = SDL_GameControllerGetAxis(controllers.at(controller), SDL_CONTROLLER_AXIS_LEFTX);
                             auto x_value = SDL_GameControllerGetAxis(controllers.at(controller), SDL_CONTROLLER_AXIS_LEFTY);
 
-                            // Scale the value
+                            // Scale the value from the controller range to -1 and 1
                             double old_range = 32767 + 32768;
                             double new_range = 1 + 1;
                             double new_value_x = (((x_value + 32768) * new_range) / old_range) - 1;
@@ -196,8 +192,8 @@ public:
                     for(auto [player_id, controller] : player_controller_mapping) {
                         if(e.jbutton.which == controller) {
                             for(auto [input, button]: controller_button_mapping) {
-                                if(SDL_GameControllerGetButton(controllers.at(controller), button) == 1) {
-                                    if(input_mapping[player_id].count(input)) {
+                                if(input_mapping[player_id].count(input)) {
+                                    if(SDL_GameControllerGetButton(controllers.at(controller), button) == 1) {
                                         inputs[player_id][input_mapping[player_id][input]] = 1;
                                     }
                                 }
@@ -235,7 +231,7 @@ public:
                 case SDL_JOYDEVICEADDED: {
                     // Add joystick to the first player that does not have a controller
                     for(auto [player_id, mapping] : input_mapping) {
-                        if(!player_controller_mapping.count(player_id)) {
+                        if(player_controller_mapping.count(player_id) == 0) {
                             SDL_GameController* controller = SDL_GameControllerOpen(e.jdevice.which);
                             SDL_JoystickID instance_id =  SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(controller));
                             controllers[instance_id] = controller; 
@@ -284,6 +280,7 @@ public:
         return { x, y };
     }
 private:
+    // Add deadzone to prevent controller flick issues
     inline static const int JOYSTICK_DEADZONE = 10000;
 
     // List of mapped inputs
@@ -294,6 +291,7 @@ private:
     std::map<int, std::unordered_map<InputKeyCode, T>> input_mapping;
     std::unordered_map<InputKeyCode, SDL_Keycode> sdl_mapping;
     std::unordered_map<SDL_Keycode, InputKeyCode> keycode_mapping;
+    // Buttons are not an axis so this is the value they should have when pressed.
     std::unordered_map<InputKeyCode, signed int> axis_map;
     // The int key is the player id
     // The first value in the pair is how long a keybinding has to wait.
@@ -302,7 +300,9 @@ private:
     std::unordered_map<int, std::unordered_map<T, std::pair<double, double>>> time_to_wait;
     // Controller list
     std::unordered_map<SDL_JoystickID, SDL_GameController*> controllers;
+    // Player id to controller id mapping
     std::unordered_map<int, SDL_JoystickID> player_controller_mapping;
+    // Input to controller button mapping
     std::unordered_map<InputKeyCode, SDL_GameControllerButton> controller_button_mapping;
 
     std::optional<SDL_Keycode> convertInputKeyCodeToSDLKeycode(InputKeyCode i) {
