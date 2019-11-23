@@ -6,11 +6,12 @@
 #include <memory>
 
 #include "brickengine/components/component.hpp"
+#include "enums/scene_layer.hpp"
 
 template<typename State>
 class Scene {
 public:
-    Scene() = default;
+    Scene(SceneLayer layer) : layer(layer) {}
     // Fils the entities
     virtual void prepare() = 0;
     virtual void start() = 0;
@@ -27,8 +28,12 @@ public:
     bool prepared() const {
         return entity_components.has_value();
     }
+    SceneLayer getLayer() const {
+        return layer;
+    }
     virtual ~Scene() = default;
 private:
+    SceneLayer layer;
     // If entity_components are nullopt then the Scene has already been loaded or it has not been prepared yet.
     std::optional<std::unique_ptr<std::vector<std::vector<std::unique_ptr<Component>>>>> entity_components;
 };

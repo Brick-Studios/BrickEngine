@@ -6,6 +6,7 @@
 template<typename SceneType, typename State>
 class SceneImpl : Scene<State> {
 public:
+    SceneImpl(SceneLayer layer) : Scene<State>(layer) {}
     virtual std::string getTag() {
         return SceneType::getTagStatic();
     }
