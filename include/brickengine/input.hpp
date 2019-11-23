@@ -306,6 +306,8 @@ private:
         keycode_mapping.insert({SDLK_SPACE, InputKeyCode::EKey_space});
         keycode_mapping.insert({SDLK_KP_ENTER, InputKeyCode::Ekey_enter});
         keycode_mapping.insert({SDLK_BACKSPACE, InputKeyCode::EKey_backspace});
+        keycode_mapping.insert({SDLK_PAGEDOWN, InputKeyCode::EKey_pagedown});
+        keycode_mapping.insert({SDLK_PAGEUP, InputKeyCode::EKey_pageup});
 
         // Mouse input
         keycode_mapping.insert({SDL_BUTTON_LEFT, InputKeyCode::EKey_mouse_left});
