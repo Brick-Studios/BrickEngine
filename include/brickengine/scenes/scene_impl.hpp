@@ -4,11 +4,13 @@
 #include "brickengine/scenes/scene.hpp"
 
 template<typename SceneType, typename State>
-class SceneImpl : Scene<State> {
+class SceneImpl : public Scene<State> {
 public:
-    SceneImpl(SceneLayer layer) : Scene<State>(layer) {}
-    virtual std::string getTag() {
+    virtual std::string getTag() const {
         return SceneType::getTagStatic();
+    }
+    virtual SceneLayer getLayer() const {
+        return SceneType::getLayerStatic();
     }
 };
 

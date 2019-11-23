@@ -6,27 +6,36 @@
 #include <memory>
 
 #include "brickengine/systems/system.hpp"
+#include "brickengine/exceptions/reset_on_set_state_not_set.hpp"
+#include "brickengine/exceptions/state_systems_not_set.hpp"
 
 template<typename State>
 class GameStateManager {
 public:
-    GameStateManager(std::unordered_map<State, std::unique_ptr<std::vector<System>>> state_systems,
-                     std::unordered_map<State, bool> reset_on_set_state, State begin_state)
-        : state_systems(state_systems), reset_on_set_state(reset_on_set_state), current_state(begin_state) {}
+    using Systems = std::vector<std::unique_ptr<System>>;
+    using StateSystems = std::unordered_map<State, std::unique_ptr<Systems>>;
+
+    GameStateManager(std::unique_ptr<StateSystems> state_systems, std::unordered_map<State, bool> reset_on_set_state, State begin_state)
+        : state_systems(std::move(state_systems)), reset_on_set_state(reset_on_set_state), current_state(begin_state) {}
 
     void setState(State state) {
-        if (reset_on_set_state.at(state)) {
-            for (auto& system : *state_systems.at(state)) {
-                system.reset();
-            }
-        }
+        if (!reset_on_set_state.count(state))
+            throw ResetOnSetStateNotSetException<State>(state);
+        if (!state_systems->count(current_state))
+            throw StateSystemsNotSet<State>(state);
+        //if (reset_on_set_state.at(state)) {
+        //    std::vector<std::unique_ptr<System>>* s = state_systems->at(state).get();
+        //    for (auto& system : *s) {
+        //        system.reset();
+        //    }
+        //}
         current_state = state;
     }
-    std::vector<System>& getSystems() {
-        return *state_systems.at(current_state);
+    std::vector<std::unique_ptr<System>>& getSystems() {
+        return *state_systems->at(current_state);
     }
 private:
-    std::unordered_map<State, std::unique_ptr<std::vector<System>>> state_systems;
+    std::unique_ptr<StateSystems> state_systems;
     std::unordered_map<State, bool> reset_on_set_state;
     State current_state;
 };
