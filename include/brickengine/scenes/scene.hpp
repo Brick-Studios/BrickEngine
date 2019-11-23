@@ -23,6 +23,7 @@ public:
     virtual std::string getTag() const = 0;
     virtual SceneLayer getLayer() const = 0;
     std::unique_ptr<std::vector<std::unique_ptr<std::vector<std::unique_ptr<Component>>>>> getEntityComponents() {
+        prepared = false;
         return std::move(entity_components);
     }
     bool isPrepared() const {
