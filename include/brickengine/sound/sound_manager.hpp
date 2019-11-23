@@ -11,10 +11,10 @@ public:
     ~SoundManager();
 
     void playMusic(std::string path);
-    void pauseMusic(const bool pause) const;
+    void toggleMusic(const bool pause) const;
     void stopMusic();
 private:
-    Mix_Music *current_music = nullptr;
+    Mix_Music* current_music = nullptr;
 };
 
 #endif // FILE_SOUND_MANAGER_HPP

@@ -27,7 +27,7 @@ void SoundManager::playMusic(std::string path) {
     Mix_PlayMusic(current_music, -1); // The -1 is for infinite repeat
 }
 
-void SoundManager::pauseMusic(const bool pause) const {
+void SoundManager::toggleMusic(const bool pause) const {
     if(current_music != nullptr) {
         if(pause) {
             Mix_PauseMusic();
