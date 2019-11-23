@@ -131,9 +131,11 @@ public:
         moveOutOfParentsHouse(entity_id);
 
         // Remove all those tags
-        for (auto& tag : tagging_entities.at(entity_id)) {
-            tagging_tags.at(tag).erase(entity_id);
-            tagging_entities.at(entity_id).erase(tag);
+        if(tagging_entities.count(entity_id)){
+            for (auto& tag : tagging_entities.at(entity_id)) {
+                tagging_tags.at(tag).erase(entity_id);
+                tagging_entities.at(entity_id).erase(tag);
+            }
         }
 
         for(auto& component : components_by_class)
