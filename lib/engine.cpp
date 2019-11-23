@@ -75,6 +75,8 @@ void BrickEngine::start() {
     this->resource_manager = std::make_shared<ResourceManager>(renderer);
     this->renderableFactory = std::unique_ptr<RenderableFactory>(new RenderableFactory(renderer, resource_manager));
 
+    this->sound_manager = std::unique_ptr<SoundManager>(new SoundManager()); 
+
     std::cout << "Window openend finished" << std::endl;
 }
 
@@ -121,6 +123,10 @@ RenderableFactory* BrickEngine::getRenderableFactory() const {
 
 Renderer* BrickEngine::getRenderer() const {
     return this->renderer.get();
+}
+
+SoundManager& BrickEngine::getSoundManager() const {
+    return *this->sound_manager.get();
 }
 
 BrickEngine::EngineTick BrickEngine::getTicks() const {
