@@ -44,12 +44,6 @@ public:
         input_mapping = game_input;
         int count = 0;
         for (auto& [player_id, mapping] : input_mapping) {
-            // Bind players to controllers
-            //if(count < controllers.size()) {
-            //    std::cout << "Binding controller to player: " << player_id << std::endl;
-            //    player_controller_mapping[player_id] = SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(controllers.at(count)));
-            //}
-
             for(auto& [sdl_key, input] : mapping){
                 std::ignore = sdl_key;
                 inputs[player_id][input] = false;
@@ -319,11 +313,11 @@ private:
     }
 
     void generateInputs() {
+        // Controllers
         controller_button_mapping.insert({InputKeyCode::EController_a, SDL_CONTROLLER_BUTTON_A});
         controller_button_mapping.insert({InputKeyCode::EController_b, SDL_CONTROLLER_BUTTON_B});
         controller_button_mapping.insert({InputKeyCode::EController_x, SDL_CONTROLLER_BUTTON_X});
         controller_button_mapping.insert({InputKeyCode::EController_y, SDL_CONTROLLER_BUTTON_Y});
-
 
         // Mapping for the SDL_mapping unordered_map
         // Numbers
@@ -444,9 +438,6 @@ private:
         // Mouse input
         keycode_mapping.insert({SDL_BUTTON_LEFT, InputKeyCode::EKey_mouse_left});
         keycode_mapping.insert({SDL_BUTTON_RIGHT, InputKeyCode::EKey_mouse_right});
-
-        // Controllers
-
     }
 };
 #endif // FILE_INPUT_HPP
