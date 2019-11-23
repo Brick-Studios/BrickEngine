@@ -23,12 +23,11 @@ public:
             throw ResetOnSetStateNotSetException<State>(state);
         if (!state_systems->count(current_state))
             throw StateSystemsNotSet<State>(state);
-        //if (reset_on_set_state.at(state)) {
-        //    std::vector<std::unique_ptr<System>>* s = state_systems->at(state).get();
-        //    for (auto& system : *s) {
-        //        system.reset();
-        //    }
-        //}
+        if (reset_on_set_state.at(state)) {
+            for (auto& system : *state_systems->at(state)) {
+                system->reset();
+            }
+        }
         current_state = state;
     }
     std::vector<std::unique_ptr<System>>& getSystems() {

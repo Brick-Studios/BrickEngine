@@ -13,7 +13,10 @@ class Scene {
 public:
     Scene() = default;
     // Fils the entities
-    virtual void prepare() = 0;
+    void prepare() {
+        performPrepare();
+        prepared = true;
+    }
     virtual void start() = 0;
     virtual void leave() = 0;
     virtual State getSystemState() const = 0;
@@ -22,13 +25,15 @@ public:
     std::unique_ptr<std::vector<std::unique_ptr<std::vector<std::unique_ptr<Component>>>>> getEntityComponents() {
         return std::move(entity_components);
     }
-    bool prepared() const {
-        return entity_components != nullptr;
+    bool isPrepared() const {
+        return prepared;
     }
     virtual ~Scene() = default;
 protected:
-    // If entity_components is nullptr then the Scene has already been loaded or it has not been prepared yet.
+    virtual void performPrepare() = 0;
+    // This can be nullptr as not all scenes actually use entity_components
     std::unique_ptr<std::vector<std::unique_ptr<std::vector<std::unique_ptr<Component>>>>> entity_components;
+    bool prepared;
 };
 
 #endif // FILE_SCENE_HPP

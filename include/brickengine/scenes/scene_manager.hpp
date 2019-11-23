@@ -26,11 +26,8 @@ public:
         // We need to insert the scene asap, because the entity manager will try to fetch the current scene tag when creating new entities
         scenes.insert({scene->getLayer(), std::move(scene)});
 
-        if (!scene_ref.prepared()) {
-            std::cout << "I am preparing 🧒" << std::endl;
+        if (!scene_ref.isPrepared())
             scene_ref.prepare();
-            
-        }
         auto entity_comps = scene_ref.getEntityComponents();
         if (entity_comps) {
             for (auto& entity_comps : *entity_comps) {
