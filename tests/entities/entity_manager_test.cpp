@@ -84,7 +84,7 @@ TEST(EntityManager, create_entities_and_remove_entity) {
 
     auto entities = em.getEntitiesByComponent<TransformComponent>();
 
-    EXPECT_EQ(1, 1);
+    EXPECT_EQ(1, entities.size());
 }
 
 TEST(EntityManager, create_entities_and_add_component) {
