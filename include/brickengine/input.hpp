@@ -19,17 +19,6 @@ public:
         if(SDL_GameControllerAddMappingsFromFile("assets/controller/gamecontrollerdb.txt") == -1) {
             std::cout << "error" << std::endl;
         }
-        // Checking for joysticks
-        for (int i = 0; i < SDL_NumJoysticks(); ++i) {
-            auto controller = SDL_GameControllerOpen(i);
-            auto id = SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(controller));
-            if(controller) {
-                std::cout << "Found controller: " << SDL_GameControllerNameForIndex(i) << std::endl;
-                controllers[id] = controller;
-            } else {
-                std::cout << "Couldn't open joystick: " << i << ", skipping...";
-            }
-        }
     }
     
     static BrickInput<T>& getInstance() {
@@ -42,13 +31,11 @@ public:
                          std::unordered_map<InputKeyCode, signed int> value_map) {
         axis_map = value_map;
         input_mapping = game_input;
-        int count = 0;
         for (auto& [player_id, mapping] : input_mapping) {
             for(auto& [sdl_key, input] : mapping){
                 std::ignore = sdl_key;
                 inputs[player_id][input] = false;
             }
-            ++count;
         }
         for (auto& [input, time_to_wait_value] : time_to_wait_mapping) {
             for (auto& [player_id, mapping] : input_mapping) {
@@ -137,7 +124,7 @@ public:
                                             if(axis_map.count(*input))
                                                 inputs[player_id][input_mapping[player_id][*input]] += axis_map[*input];
                                             else
-                                                   inputs[player_id][input_mapping[player_id][*input]] = true;
+                                                inputs[player_id][input_mapping[player_id][*input]] = true;
                                         }
                                         break;
                                     case SDL_KEYUP:
@@ -168,10 +155,8 @@ public:
                             double new_value_x = (((x_value + 32768) * new_range) / old_range) - 1;
                             double new_value_y = (((y_value + 32768) * new_range) / old_range) - 1;
                              
-
                             if(x_value < JOYSTICK_DEADZONE && x_value > -JOYSTICK_DEADZONE)
                                 new_value_x = 0;
-
                             if(y_value < JOYSTICK_DEADZONE && y_value > -JOYSTICK_DEADZONE)
                                 new_value_y = 0; 
                     
@@ -214,9 +199,13 @@ public:
                     // Remove Joystick from the player.
                     for(auto device : player_controller_mapping) {
                         if(device.second == e.jdevice.which) {
-                            SDL_GameControllerClose(SDL_GameControllerFromInstanceID(e.jdevice.which));
+                            SDL_GameController* controller = SDL_GameControllerFromInstanceID(e.jdevice.which);
                             controllers.erase(e.jdevice.which); 
                             player_controller_mapping.erase(device.first);
+
+                            std::cout << "Controller: " << SDL_GameControllerName(controller) << " was removed!" << std::endl;
+                            std::cout << "Removed controller from player: " << device.first << std::endl;
+                            SDL_GameControllerClose(controller);
                             break;
                         }
                     }
@@ -230,6 +219,9 @@ public:
                             SDL_JoystickID instance_id =  SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(controller));
                             controllers[instance_id] = controller; 
                             player_controller_mapping[player_id] = instance_id;
+
+                            std::cout << "Found controller: " << SDL_GameControllerName(controller) << std::endl;
+                            std::cout << "Assigned controller to player: " << player_id << std::endl;
                             break;
                         }
                     }
