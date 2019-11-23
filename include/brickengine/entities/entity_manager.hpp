@@ -131,15 +131,17 @@ public:
         moveOutOfParentsHouse(entity_id);
 
         // Remove all those tags
-        if(tagging_entities.count(entity_id)){
-            for (auto& tag : tagging_entities.at(entity_id)) {
+        if(tagging_entities.count(entity_id)) {
+            std::set<std::string> tags_to_delete = tagging_entities.at(entity_id);
+            for (auto& tag : tags_to_delete) {
                 tagging_tags.at(tag).erase(entity_id);
                 tagging_entities.at(entity_id).erase(tag);
             }
         }
 
-        for(auto& component : components_by_class)
+        for(auto& component : components_by_class) {
             component.second.erase(entity_id);
+        }
     }
 
     void setParent(int child_id, int parent_id, bool transform_is_relative) {
@@ -251,9 +253,9 @@ public:
     void removeEntitiesWithTag(std::string tag) {
         if (!tagging_tags.count(tag)) return;
         
-        for (auto& entity : tagging_tags.at(tag)) {
+        std::set<int> entities_to_delete = tagging_tags.at(tag);
+        for (auto& entity : entities_to_delete)
             removeEntity(entity);
-        }
     }
 private:
     int lowest_unassigned_entity_id;
