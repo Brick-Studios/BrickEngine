@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <tuple>
 #include <utility>
+#include <map>
 
 #include "SDL2/SDL.h"
 #include "brickengine/input_keycode.hpp"
@@ -13,17 +14,22 @@
 template<typename T>
 class BrickInput {
 public:
-    BrickInput(){
+    BrickInput() {
         generateInputs();
+        if(SDL_GameControllerAddMappingsFromFile("assets/controller/gamecontrollerdb.txt") == -1) {
+            std::cout << "error" << std::endl;
+        }
     }
-
+    
     static BrickInput<T>& getInstance() {
         static BrickInput<T> INSTANCE;
         return INSTANCE;
     }
 
-    void setInputMapping(std::unordered_map<int, std::unordered_map<InputKeyCode, T>>& game_input,
-                         std::unordered_map<T, double>& time_to_wait_mapping) {
+    void setInputMapping(std::map<int, std::unordered_map<InputKeyCode, T>>& game_input,
+                         std::unordered_map<T, double>& time_to_wait_mapping,
+                         std::unordered_map<InputKeyCode, signed int> value_map) {
+        axis_map = value_map;
         input_mapping = game_input;
         for (auto& [player_id, mapping] : input_mapping) {
             for(auto& [sdl_key, input] : mapping){
@@ -45,10 +51,10 @@ public:
             inputs[player_id][input] = false;
     }
 
-    bool checkInput(int player_id, T const input) {
+    double checkInput(int player_id, T const input) {
         if(inputs[player_id].count(input))
             return inputs[player_id].at(input);
-        return false;
+        return 0;
     }
 
     bool remapInput(int player_id, T const input) {
@@ -102,21 +108,31 @@ public:
                         std::ignore = mapping;
                         auto input = convertSDLKeycodeInputKeyCode(e.key.keysym.sym);
                         if(input.has_value()) {
-                            if(input_mapping.at(player_id).count(*input) && e.key.repeat == 0) {
+                            if(input_mapping.at(player_id).count(*input) && e.key.repeat == 0 && !player_controller_mapping.count(player_id)) {
                                 switch(e.type) {
                                     case SDL_KEYDOWN:
                                         if (time_to_wait[player_id].count(input_mapping[player_id][*input])) {
                                             auto& time_to_wait_for_key = time_to_wait[player_id][input_mapping[player_id][*input]];
                                             if (time_to_wait_for_key.second >= time_to_wait_for_key.first) {
-                                                inputs[player_id][input_mapping[player_id][*input]] = true;
+                                                if(axis_map.count(*input))
+                                                    inputs[player_id][input_mapping[player_id][*input]] += axis_map[*input];
+                                                else
+                                                    inputs[player_id][input_mapping[player_id][*input]] = true;
                                                 time_to_wait_for_key.second = 0;
                                             }
                                         } else {
-                                            inputs[player_id][input_mapping[player_id][*input]] = true;
+                                            if(axis_map.count(*input))
+                                                inputs[player_id][input_mapping[player_id][*input]] += axis_map[*input];
+                                            else
+                                                inputs[player_id][input_mapping[player_id][*input]] = true;
                                         }
                                         break;
                                     case SDL_KEYUP:
-                                        inputs[player_id][input_mapping[player_id][*input]] = false;
+                                        if(axis_map.count(*input))
+                                            inputs[player_id][input_mapping[player_id][*input]] -= axis_map[*input];
+                                        else
+                                            inputs[player_id][input_mapping[player_id][*input]] = false;
+                                        break;
                                     default:
                                         break;
                                 }
@@ -124,6 +140,93 @@ public:
                         }
                     }
                     break;
+                case SDL_JOYAXISMOTION: {
+                    for(auto [player_id, controller] : player_controller_mapping) {
+                        if(e.jaxis.which == controller) {
+                            // For some reason you cannot get the axis of the current joyaxis motion. So we need to calculate both.
+
+                            // Y and X are reversed in a controller
+                            auto y_value = SDL_GameControllerGetAxis(controllers.at(controller), SDL_CONTROLLER_AXIS_LEFTX);
+                            auto x_value = SDL_GameControllerGetAxis(controllers.at(controller), SDL_CONTROLLER_AXIS_LEFTY);
+
+                            // Scale the value from the controller range to -1 and 1
+                            double old_range = 32767 + 32768;
+                            double new_range = 1 + 1;
+                            double new_value_x = (((x_value + 32768) * new_range) / old_range) - 1;
+                            double new_value_y = (((y_value + 32768) * new_range) / old_range) - 1;
+                             
+                            if(x_value < JOYSTICK_DEADZONE && x_value > -JOYSTICK_DEADZONE)
+                                new_value_x = 0;
+                            if(y_value < JOYSTICK_DEADZONE && y_value > -JOYSTICK_DEADZONE)
+                                new_value_y = 0; 
+                    
+                            inputs[player_id][input_mapping[player_id][InputKeyCode::EController_x_axis]] = new_value_x;
+                            inputs[player_id][input_mapping[player_id][InputKeyCode::EController_y_axis]] = new_value_y;
+                            break;
+                        }
+                    }
+                    break;
+                }
+                case SDL_JOYBUTTONDOWN: {
+                    for(auto [player_id, controller] : player_controller_mapping) {
+                        if(e.jbutton.which == controller) {
+                            for(auto [input, button]: controller_button_mapping) {
+                                if(input_mapping[player_id].count(input)) {
+                                    if(SDL_GameControllerGetButton(controllers.at(controller), button) == 1) {
+                                        inputs[player_id][input_mapping[player_id][input]] = 1;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    break;
+                }
+                case SDL_JOYBUTTONUP: {
+                    for(auto [player_id, controller] : player_controller_mapping) {
+                        if(e.jbutton.which == controller) {
+                            for(auto [input, button]: controller_button_mapping) {
+                                if(input_mapping[player_id].count(input)) {
+                                    if(SDL_GameControllerGetButton(controllers.at(controller), button) == 0) {
+                                        inputs[player_id][input_mapping[player_id][input]] = 0;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    break;
+                }
+                case SDL_JOYDEVICEREMOVED: {
+                    // Remove Joystick from the player.
+                    for(auto device : player_controller_mapping) {
+                        if(device.second == e.jdevice.which) {
+                            SDL_GameController* controller = SDL_GameControllerFromInstanceID(e.jdevice.which);
+                            controllers.erase(e.jdevice.which); 
+                            player_controller_mapping.erase(device.first);
+
+                            std::cout << "Controller: " << SDL_GameControllerName(controller) << " was removed!" << std::endl;
+                            std::cout << "Removed controller from player: " << device.first << std::endl;
+                            SDL_GameControllerClose(controller);
+                            break;
+                        }
+                    }
+                   break;
+                }
+                case SDL_JOYDEVICEADDED: {
+                    // Add joystick to the first player that does not have a controller
+                    for(auto [player_id, mapping] : input_mapping) {
+                        if(player_controller_mapping.count(player_id) == 0) {
+                            SDL_GameController* controller = SDL_GameControllerOpen(e.jdevice.which);
+                            SDL_JoystickID instance_id =  SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(controller));
+                            controllers[instance_id] = controller; 
+                            player_controller_mapping[player_id] = instance_id;
+
+                            std::cout << "Found controller: " << SDL_GameControllerName(controller) << std::endl;
+                            std::cout << "Assigned controller to player: " << player_id << std::endl;
+                            break;
+                        }
+                    }
+                    break;
+                }
                 case SDL_MOUSEBUTTONDOWN:
                 case SDL_MOUSEBUTTONUP:
                     // Checking if input is mapped.
@@ -163,19 +266,30 @@ public:
         return { x, y };
     }
 private:
+    // Add deadzone to prevent controller flick issues
+    inline static const int JOYSTICK_DEADZONE = 10000;
+
     // List of mapped inputs
     // The int key is the player id
-    std::unordered_map<int, std::unordered_map<T, bool>> inputs;
+    std::unordered_map<int, std::unordered_map<T, double>> inputs;
     // SDL inputs mapped to game input
     // The int key is the player id
-    std::unordered_map<int, std::unordered_map<InputKeyCode, T>> input_mapping;
+    std::map<int, std::unordered_map<InputKeyCode, T>> input_mapping;
     std::unordered_map<InputKeyCode, SDL_Keycode> sdl_mapping;
     std::unordered_map<SDL_Keycode, InputKeyCode> keycode_mapping;
+    // Buttons are not an axis so this is the value they should have when pressed.
+    std::unordered_map<InputKeyCode, signed int> axis_map;
     // The int key is the player id
     // The first value in the pair is how long a keybinding has to wait.
     // The second value is how long the keybinding is currently waiting.
     // These values are in seconds of deltatime
     std::unordered_map<int, std::unordered_map<T, std::pair<double, double>>> time_to_wait;
+    // Controller list
+    std::unordered_map<SDL_JoystickID, SDL_GameController*> controllers;
+    // Player id to controller id mapping
+    std::unordered_map<int, SDL_JoystickID> player_controller_mapping;
+    // Input to controller button mapping
+    std::unordered_map<InputKeyCode, SDL_GameControllerButton> controller_button_mapping;
 
     std::optional<SDL_Keycode> convertInputKeyCodeToSDLKeycode(InputKeyCode i) {
         auto input = sdl_mapping.find(i);
@@ -191,6 +305,12 @@ private:
     }
 
     void generateInputs() {
+        // Controllers
+        controller_button_mapping.insert({InputKeyCode::EController_a, SDL_CONTROLLER_BUTTON_A});
+        controller_button_mapping.insert({InputKeyCode::EController_b, SDL_CONTROLLER_BUTTON_B});
+        controller_button_mapping.insert({InputKeyCode::EController_x, SDL_CONTROLLER_BUTTON_X});
+        controller_button_mapping.insert({InputKeyCode::EController_y, SDL_CONTROLLER_BUTTON_Y});
+
         // Mapping for the SDL_mapping unordered_map
         // Numbers
         sdl_mapping.insert({InputKeyCode::EKey_0, SDLK_0});

@@ -24,19 +24,17 @@ BrickEngine::BrickEngine(const std::string window_name, const int window_width, 
 }
 
 void BrickEngine::start() {
-    //Initialize SDL
-    if(SDL_Init( SDL_INIT_VIDEO ) != 0)
-    {
+    // Initialize SDL
+    if(SDL_Init( SDL_INIT_VIDEO ) != 0) {
         std::cout << "SDL failed to init! SDL_Error: " << SDL_GetError() << std::endl;
         exit(1);
     }
-     //Initialize SDL_ttf
-    if(TTF_Init() == -1 )
-    {
+    // Initialize SDL_ttf
+    if(TTF_Init() == -1) {
         std::cout << "SDL_ttf failed to init! SDL_Error: " << SDL_GetError() << std::endl;
         exit(1);
     }
-     //Initialize SDL_image
+    // Initialize SDL_image
     // load support for the JPG and PNG image formats
     int img_flags = IMG_INIT_JPG | IMG_INIT_PNG;
     int img_initted_flags = IMG_Init(img_flags);
@@ -44,6 +42,12 @@ void BrickEngine::start() {
         std::cout << "SDL_image failed to init with JPG and PNG support! SDL_Error: " << TTF_GetError() << std::endl;
         exit(1);
     }
+
+    // Initialize SDL Joystick
+    if(SDL_InitSubSystem(SDL_INIT_JOYSTICK) < 0) {
+        std::cout << "SDL failed to initialize joysticks. SDL_Error: " << SDL_GetError() << std::endl;
+        exit(1);
+    };
 
     SDL_Window* window_ptr(SDL_CreateWindow(
       this->window_name.c_str(),
@@ -70,6 +74,8 @@ void BrickEngine::start() {
 
     this->resource_manager = std::make_shared<ResourceManager>(renderer);
     this->renderableFactory = std::unique_ptr<RenderableFactory>(new RenderableFactory(renderer, resource_manager));
+
+    this->sound_manager = std::unique_ptr<SoundManager>(new SoundManager()); 
 
     std::cout << "Window openend finished" << std::endl;
 }
@@ -117,6 +123,10 @@ RenderableFactory* BrickEngine::getRenderableFactory() const {
 
 Renderer* BrickEngine::getRenderer() const {
     return this->renderer.get();
+}
+
+SoundManager& BrickEngine::getSoundManager() const {
+    return *this->sound_manager.get();
 }
 
 BrickEngine::EngineTick BrickEngine::getTicks() const {
