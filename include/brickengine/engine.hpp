@@ -14,6 +14,7 @@
 #include "brickengine/rendering/renderer.hpp"
 #include "brickengine/rendering/renderable_factory.hpp"
 #include "brickengine/resource_manager.hpp"
+#include "brickengine/sound/sound_manager.hpp"
 
 class BrickEngine {
 public:
@@ -28,6 +29,7 @@ public:
     void drawFpsCounter();
     RenderableFactory* getRenderableFactory() const;
     Renderer* getRenderer() const;
+    SoundManager& getSoundManager() const;
     int getFps() const;
     double getDeltatime() const;
     EngineTick getTicks() const;
@@ -48,6 +50,7 @@ private:
     std::unique_ptr<RenderableFactory> renderableFactory;
     std::shared_ptr<Renderer> renderer;
     std::shared_ptr<ResourceManager> resource_manager;
+    std::unique_ptr<SoundManager> sound_manager;
 };
 
 #endif // FILE_BRICKENGINE_HPP
