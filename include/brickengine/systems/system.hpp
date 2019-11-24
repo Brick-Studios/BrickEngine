@@ -3,11 +3,12 @@
 
 #include "brickengine/entities/entity_manager.hpp"
 
-class System{
+class System {
 public:
     System(std::shared_ptr<EntityManager> _entityManager) : entityManager(_entityManager) {}
     virtual ~System() = default;
     virtual void update(double deltatime) = 0;
+    virtual void reset() {};
 protected:
     std::shared_ptr<EntityManager> entityManager;
 };
