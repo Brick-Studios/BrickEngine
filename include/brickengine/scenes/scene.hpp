@@ -12,7 +12,7 @@ template<typename State>
 class Scene {
 public:
     Scene() = default;
-    // Fils the entities
+    // Fills the entities
     void prepare() {
         performPrepare();
         prepared = true;

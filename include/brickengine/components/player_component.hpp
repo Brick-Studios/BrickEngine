@@ -2,7 +2,7 @@
 #define FILE_PLAYER_COMPONENT_HPP
 
 #include "brickengine/components/component_impl.hpp"
-#include  <string>
+#include <string>
 
 class PlayerComponent : public ComponentImpl<PlayerComponent> {
 public:
