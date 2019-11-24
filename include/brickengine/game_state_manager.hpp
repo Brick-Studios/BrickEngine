@@ -21,7 +21,7 @@ public:
     void setState(State state) {
         if (!reset_on_set_state.count(state))
             throw ResetOnSetStateNotSetException<State>(state);
-        if (!state_systems->count(current_state))
+        if (!state_systems->count(state))
             throw StateSystemsNotSet<State>(state);
         if (reset_on_set_state.at(state)) {
             for (auto& system : *state_systems->at(state)) {
