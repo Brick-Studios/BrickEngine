@@ -258,7 +258,7 @@ public:
             removeEntity(entity);
     }
     bool hasTag(int entity, std::string tag) {
-        if (!tagging_tags.count(tag)) return false
+        if (!tagging_tags.count(tag)) return false;
         return tagging_tags.at(tag).count(entity) > 0;
     }
 private:
