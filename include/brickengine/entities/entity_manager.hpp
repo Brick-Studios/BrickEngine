@@ -257,6 +257,9 @@ public:
         for (auto& entity : entities_to_delete)
             removeEntity(entity);
     }
+    bool hasTag(int entity, std::string tag) {
+        return tagging_tags.at(tag).count(entity) > 0;
+    }
 private:
     int lowest_unassigned_entity_id;
     std::optional<std::function<std::optional<std::string>()>> get_current_scene_tag_function;

@@ -169,7 +169,7 @@ TriggerReturnValues CollisionDetector::isInTrigger(int entity){
         ++trigger_calculated_counter;
         auto transform_component = entity_manager->getComponent<TransformComponent>(id);
 
-        if(collider->is_trigger){
+        if (collider->is_trigger) {
             double opposible_left = transform_component->x_pos - ((transform_component->x_scale * collider->x_scale) / 2);
             double opposible_right = transform_component->x_pos + ((transform_component->x_scale * collider->x_scale) / 2);
             double opposible_down = transform_component->y_pos - ((transform_component->y_scale * collider->y_scale) / 2);
@@ -181,7 +181,7 @@ TriggerReturnValues CollisionDetector::isInTrigger(int entity){
             double entity_up = entity_transform->y_pos - ((entity_transform->y_scale * entity_rect_collider->y_scale) / 2);
 
             // Check if you are inside the x and y of the collidable
-            if(entity_left >= opposible_left 
+            if (entity_left >= opposible_left 
                 && entity_right <= opposible_right
                 && entity_down >= opposible_down
                 && entity_up <= opposible_up) {
