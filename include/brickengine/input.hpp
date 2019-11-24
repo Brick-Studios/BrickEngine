@@ -216,12 +216,20 @@ public:
                     for(auto [player_id, mapping] : input_mapping) {
                         if(player_controller_mapping.count(player_id) == 0) {
                             SDL_GameController* controller = SDL_GameControllerOpen(e.jdevice.which);
-                            SDL_JoystickID instance_id =  SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(controller));
-                            controllers[instance_id] = controller; 
-                            player_controller_mapping[player_id] = instance_id;
+                            SDL_Joystick* joystick = SDL_GameControllerGetJoystick(controller);
 
-                            std::cout << "Found controller: " << SDL_GameControllerName(controller) << std::endl;
-                            std::cout << "Assigned controller to player: " << player_id << std::endl;
+                            // Checking if the controller has all the required inputs.
+                            if(SDL_JoystickNumButtons(joystick) >= 4 && SDL_JoystickNumAxes(joystick) >= 2){
+                                SDL_JoystickID instance_id =  SDL_JoystickInstanceID(joystick);
+                                controllers[instance_id] = controller;
+                                player_controller_mapping[player_id] = instance_id;
+                                std::cout << "Found controller: " << SDL_GameControllerName(controller) << std::endl;
+                                std::cout << "Assigned controller to player: " << player_id << std::endl;
+                            } else {
+                                std::cout << "Invalid controller added, disconnecting unknown controller..." << std::endl;
+                                SDL_GameControllerClose(controller);
+                            }
+                            
                             break;
                         }
                     }
