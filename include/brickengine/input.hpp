@@ -45,6 +45,14 @@ public:
         }
     }
 
+    void setTimeToWait(int player_id, T input, double time_to_wait_value) {
+        time_to_wait[player_id][input] = std::make_pair(time_to_wait_value, time_to_wait_value);
+    }
+
+    void removeTimeToWait(int player_id, T input) {
+        time_to_wait.at(player_id).erase(input);
+    }
+
     // This function is intended for the UI so the game loop is not affected.
     void popInput(int player_id, T const input) {
         if(inputs[player_id].count(input))

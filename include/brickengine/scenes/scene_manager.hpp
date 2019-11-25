@@ -46,7 +46,6 @@ public:
         if (!scenes.count(layer)) return;
 
         scenes.at(layer)->leave();
-        scenes.at(layer)->leave();
         entity_manager.removeEntitiesWithTag(scenes.at(layer)->getTag());
         scenes.erase(layer);
     }
