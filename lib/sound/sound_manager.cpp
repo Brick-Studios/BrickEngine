@@ -45,6 +45,15 @@ void SoundManager::stopMusic() {
     }
 }
 
+const bool SoundManager::isPlaying() const {
+    if(current_music != nullptr) {
+        if(Mix_PlayingMusic() == 1) {
+            return true;
+        }
+    }
+    return false;
+}
+
 SoundManager::~SoundManager() {
     Mix_CloseAudio();
 }
