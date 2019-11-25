@@ -13,7 +13,7 @@ public:
     void playMusic(std::string path);
     void toggleMusic(const bool pause) const;
     void stopMusic();
-    const bool isPlaying() const;
+    bool isPlaying() const;
 private:
     Mix_Music* current_music = nullptr;
 };
