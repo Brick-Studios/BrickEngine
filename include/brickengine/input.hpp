@@ -102,7 +102,7 @@ public:
         for (auto& [ player_id, to_wait_map ] : time_to_wait) {
             for (auto& [ input, to_wait ] : to_wait_map) {
                 to_wait.second += deltatime;
-                inputs[player_id][input] = false;
+                    inputs[player_id][input] = false;
             }
         }
         SDL_Event e;
@@ -136,12 +136,13 @@ public:
                                         }
                                         break;
                                     case SDL_KEYUP:
-                                        if(axis_map.count(*input))
-                                            inputs[player_id][input_mapping[player_id][*input]] -= axis_map[*input];
-                                        else
-                                            inputs[player_id][input_mapping[player_id][*input]] = false;
-                                        break;
-                                    default:
+                                            if(axis_map.count(*input))
+                                                if(!time_to_wait[player_id].count(input_mapping[player_id][*input]))
+                                                    inputs[player_id][input_mapping[player_id][*input]] -= axis_map[*input];
+                                            else
+                                                inputs[player_id][input_mapping[player_id][*input]] = false;
+                                            break;
+                                   default:
                                         break;
                                 }
                             }
@@ -153,23 +154,45 @@ public:
                         if(e.jaxis.which == controller) {
                             // For some reason you cannot get the axis of the current joyaxis motion. So we need to calculate both.
 
-                            // Y and X are reversed in a controller
-                            auto y_value = SDL_GameControllerGetAxis(controllers.at(controller), SDL_CONTROLLER_AXIS_LEFTX);
-                            auto x_value = SDL_GameControllerGetAxis(controllers.at(controller), SDL_CONTROLLER_AXIS_LEFTY);
+                            auto y_value = SDL_GameControllerGetAxis(controllers.at(controller), SDL_CONTROLLER_AXIS_LEFTY);
+                            auto x_value = SDL_GameControllerGetAxis(controllers.at(controller), SDL_CONTROLLER_AXIS_LEFTX);
 
                             // Scale the value from the controller range to -1 and 1
                             double old_range = 32767 + 32768;
                             double new_range = 1 + 1;
                             double new_value_x = (((x_value + 32768) * new_range) / old_range) - 1;
                             double new_value_y = (((y_value + 32768) * new_range) / old_range) - 1;
-                             
-                            if(x_value < JOYSTICK_DEADZONE && x_value > -JOYSTICK_DEADZONE)
+
+                            if(x_value < JOYSTICK_DEADZONE && x_value > -JOYSTICK_DEADZONE) {
                                 new_value_x = 0;
-                            if(y_value < JOYSTICK_DEADZONE && y_value > -JOYSTICK_DEADZONE)
+                            }
+                             
+                            if(y_value < JOYSTICK_DEADZONE && y_value > -JOYSTICK_DEADZONE) {
                                 new_value_y = 0; 
-                    
-                            inputs[player_id][input_mapping[player_id][InputKeyCode::EController_x_axis]] = new_value_x;
-                            inputs[player_id][input_mapping[player_id][InputKeyCode::EController_y_axis]] = new_value_y;
+                            }
+                            
+                            if (time_to_wait[player_id].count(input_mapping[player_id][InputKeyCode::EController_x_axis])) {
+                                auto& time_to_wait_for_key = time_to_wait[player_id][input_mapping[player_id][InputKeyCode::EController_x_axis]];
+                                if (time_to_wait_for_key.second >= time_to_wait_for_key.first) {
+                                    auto current_value = inputs[player_id][input_mapping[player_id][InputKeyCode::EController_x_axis]];
+                                    inputs[player_id][input_mapping[player_id][InputKeyCode::EController_x_axis]] = new_value_x;
+                                    time_to_wait_for_key.second = 0;
+                                }
+                            } else {
+                                inputs[player_id][input_mapping[player_id][InputKeyCode::EController_x_axis]] = new_value_x;
+                            }
+
+                            //if (time_to_wait[player_id].count(input_mapping[player_id][InputKeyCode::EController_y_axis])) {
+                            //    auto& time_to_wait_for_key = time_to_wait[player_id][input_mapping[player_id][InputKeyCode::EController_y_axis]];
+                            //    if (time_to_wait_for_key.second >= time_to_wait_for_key.first) {
+                            //        inputs[player_id][input_mapping[player_id][InputKeyCode::EController_y_axis]] = new_value_y;
+                            //        time_to_wait_for_key.second = 0;
+                            //    }
+                            //}
+                            //else {
+                            //    
+                            //    inputs[player_id][input_mapping[player_id][InputKeyCode::EController_y_axis]] = new_value_y;
+                            //}
                             break;
                         }
                     }
@@ -284,6 +307,8 @@ public:
 private:
     // Add deadzone to prevent controller flick issues
     inline static const int JOYSTICK_DEADZONE = 10000;
+    // Deadzone if the axis are handled as buttons (Time To Wait)
+    inline static const int JOYSTICK_DEADZONE_TTW = 5000;
 
     // List of mapped inputs
     // The int key is the player id
