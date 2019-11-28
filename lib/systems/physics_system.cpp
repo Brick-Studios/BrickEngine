@@ -35,19 +35,19 @@ void PhysicsSystem::update(double deltatime) {
         if (physics->drag && (physics->vy > GRAVITY || physics->vy < GRAVITY * -1) && physics->vx != 0) {
             double horizontal_drag_with_modifier = HORIZONTAL_DRAG / delta_time_modifier;
             double slow_down_amount = (horizontal_drag_with_modifier * mass) * deltatime;
-            double vx_gravity;
+            double vx_drag;
 
             if (physics->vx < 0) {
-                vx_gravity = physics->vx + slow_down_amount;
-                if(vx_gravity < TERMINAL_VELOCITY * -1)
-                    vx_gravity = TERMINAL_VELOCITY * -1;
+                vx_drag = physics->vx + slow_down_amount;
+                if(vx_drag < TERMINAL_VELOCITY * -1)
+                    vx_drag = TERMINAL_VELOCITY * -1;
             } else {
-                vx_gravity = physics->vx - slow_down_amount;
-                if(vx_gravity > TERMINAL_VELOCITY)
-                    vx_gravity = TERMINAL_VELOCITY;
+                vx_drag = physics->vx - slow_down_amount;
+                if(vx_drag > TERMINAL_VELOCITY)
+                    vx_drag = TERMINAL_VELOCITY;
             }
 
-            physics->vx = vx_gravity;
+            physics->vx = vx_drag;
         }
 
         double vx = physics->vx * deltatime;
