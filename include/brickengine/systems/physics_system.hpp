@@ -8,7 +8,7 @@
 
 class PhysicsSystem : public System {
 public:
-    PhysicsSystem(std::shared_ptr<CollisionDetector> cd, std::shared_ptr<EntityManager> em);
+    PhysicsSystem(std::shared_ptr<CollisionDetector> cd, std::shared_ptr<EntityManager> em, double &delta_time_modifier);
     void update(double deltatime);
     void updateChildren(int parentId);
 private:
@@ -17,6 +17,8 @@ private:
     static constexpr double TERMINAL_VELOCITY = 1000;
 
     std::shared_ptr<CollisionDetector> collisionDetector;
+
+    double &delta_time_modifier;
 };
 
 #endif // FILE_PHYSICS_SYSTEM_HPP

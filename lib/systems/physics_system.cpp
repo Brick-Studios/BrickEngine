@@ -4,8 +4,8 @@
 #include "brickengine/components/colliders/rectangle_collider_component.hpp"
 #include <iostream>
 
-PhysicsSystem::PhysicsSystem(std::shared_ptr<CollisionDetector> cd, std::shared_ptr<EntityManager> em)
-                : System(em), collisionDetector(cd) {}
+PhysicsSystem::PhysicsSystem(std::shared_ptr<CollisionDetector> cd, std::shared_ptr<EntityManager> em, double &delta_time_modifier)
+                : System(em), collisionDetector(cd), delta_time_modifier(delta_time_modifier) {}
 
 void PhysicsSystem::update(double deltatime) {
     auto entitiesWithPhysics = entityManager->getEntitiesByComponent<PhysicsComponent>();
@@ -33,7 +33,8 @@ void PhysicsSystem::update(double deltatime) {
         // This first part of the expresion basicly checks wether we are on the ground right now.
         // It is not 100% correct, but it does increase performance by a ton
         if (physics->drag && (physics->vy > GRAVITY || physics->vy < GRAVITY * -1) && physics->vx != 0) {
-            double slow_down_amount = (HORIZONTAL_DRAG * mass) * deltatime;
+            double horizontal_drag_with_modifier = HORIZONTAL_DRAG / delta_time_modifier;
+            double slow_down_amount = (horizontal_drag_with_modifier * mass) * deltatime;
             double vx_gravity;
 
             if (physics->vx < 0) {
