@@ -136,12 +136,16 @@ public:
                                         }
                                         break;
                                     case SDL_KEYUP:
-                                            if(axis_map.count(*input))
-                                                if(!time_to_wait[player_id].count(input_mapping[player_id][*input]))
-                                                    inputs[player_id][input_mapping[player_id][*input]] -= axis_map[*input];
+                                        if(axis_map.count(*input)) {
+                                            if(time_to_wait[player_id].count(input_mapping[player_id][*input])) 
+                                                inputs[player_id][input_mapping[player_id][*input]] = 0;
                                             else
-                                                inputs[player_id][input_mapping[player_id][*input]] = false;
-                                            break;
+                                                inputs[player_id][input_mapping[player_id][*input]] -= axis_map[*input];
+                                        }
+                                        else {
+                                            inputs[player_id][input_mapping[player_id][*input]] = false;
+                                        }
+                                        break;
                                    default:
                                         break;
                                 }
