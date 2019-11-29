@@ -12,7 +12,7 @@ public:
     double x_scale;
     double y_scale;
     double z_scale;
-    bool is_trigger; // If the component is able to be moved through and only be used as a "trigger"
+    bool is_trigger; // If the component is able to be moved through and phonly be used as a "trigger"
 };
 
 #endif // FILE_RECTANGLE_COLLISION_COMPONENT_HPP
