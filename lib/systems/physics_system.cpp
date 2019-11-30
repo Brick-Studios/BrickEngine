@@ -23,7 +23,6 @@ void PhysicsSystem::update(double deltatime) {
 
         // Gravity
         double space_left = collision_detector.detectContinuousCollision(entity_id, Axis::Y, Direction::POSITIVE).space_left;
-        std::cout << space_left << std::endl;
         if (space_left != 0) {
             if (physics->gravity) {
                 double slow_down_amount = (GRAVITY * mass) * deltatime;
@@ -58,34 +57,46 @@ void PhysicsSystem::update(double deltatime) {
         double vx = physics->vx * deltatime;
         double vy = physics->vy * deltatime;
         if (physics->collision_detection == CollisionDetectionType::Discrete) {
-            updateDiscrete(entity_id, *transform, vx, vy);
+            updateDiscrete(*transform, vx, vy);
         } else if (physics->collision_detection == CollisionDetectionType::Continuous) {
-            updateContinuous(entity_id, *physics, *transform, vx, vy);
-        } else {
-            throw std::exception();
+            updateContinuous(entity_id, *transform, *physics, vx, vy);
         }
+        updateDirection(entity_id, *transform, *physics);
     }
 }
 
-void PhysicsSystem::updateDiscrete(int entity_id, TransformComponent& transform, double vx, double vy) {
-    transform.x_pos += vx;
-    transform.y_pos += vy;
+void PhysicsSystem::updateDirection(int entity_id, TransformComponent& transform, PhysicsComponent& physics) {
+    if (physics.flipX) {
+        if (physics.vx > 0) // Moving right
+            transform.x_direction = Direction::POSITIVE;
+        if (physics.vx < 0) // Moving left
+            transform.x_direction = Direction::NEGATIVE;
+    }
+    if (physics.flipY) {
+        if (physics.vy > 0) // Moving down
+            transform.y_direction = Direction::POSITIVE;
+        if (physics.vy < 0) // Moving up
+            transform.y_direction = Direction::NEGATIVE;
+    }
+
     updateChildren(entity_id);
 }
 
-void PhysicsSystem::updateContinuous(int entity_id, PhysicsComponent& physics, TransformComponent& transform,
+void PhysicsSystem::updateDiscrete(TransformComponent& transform, double vx, double vy) {
+    transform.x_pos += vx;
+    transform.y_pos += vy;
+}
+
+void PhysicsSystem::updateContinuous(int entity_id, TransformComponent& transform, PhysicsComponent& physics,
                                      double vx, double vy) {
     if (physics.vx > 0) { // Moving right
-        if (physics.flipX)
-            transform.x_direction = Direction::POSITIVE;
-
         auto collision = collision_detector.detectContinuousCollision(entity_id, Axis::X, Direction::POSITIVE);
 
         if (collision.space_left == 0 && !collision.opposite->is_trigger) {
             physics.vx = 0;
         } else {
             double to_move = vx;
-            if (to_move >= collision.space_left){
+            if (to_move >= collision.space_left) {
                 if (!collision.opposite->is_trigger)
                     to_move = collision.space_left;
             }
@@ -96,9 +107,6 @@ void PhysicsSystem::updateContinuous(int entity_id, PhysicsComponent& physics, T
         }
     }
     if (physics.vx < 0) { // Moving left
-        if (physics.flipX)
-            transform.x_direction = Direction::NEGATIVE;
-
         auto collision = collision_detector.detectContinuousCollision(entity_id, Axis::X, Direction::NEGATIVE);
 
         if (collision.space_left == 0 && !collision.opposite->is_trigger) {
@@ -116,9 +124,6 @@ void PhysicsSystem::updateContinuous(int entity_id, PhysicsComponent& physics, T
         }
     }
     if (physics.vy > 0) { // Moving down
-        if (physics.flipY)
-            transform.y_direction = Direction::POSITIVE;
-
         auto collision = collision_detector.detectContinuousCollision(entity_id, Axis::Y, Direction::POSITIVE);
 
         if (collision.space_left == 0 && !collision.opposite->is_trigger) {
@@ -136,9 +141,6 @@ void PhysicsSystem::updateContinuous(int entity_id, PhysicsComponent& physics, T
         }
     }
     if (physics.vy < 0) { // Moving up
-        if (physics.flipY)
-            transform.y_direction = Direction::NEGATIVE;
-
         auto collision = collision_detector.detectContinuousCollision(entity_id, Axis::Y, Direction::NEGATIVE);
 
         if (collision.space_left == 0 && !collision.opposite->is_trigger) {

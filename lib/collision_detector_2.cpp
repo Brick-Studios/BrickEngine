@@ -85,68 +85,69 @@ ContinuousCollision CollisionDetector2::detectContinuousCollision(int entity_id,
         if (entity_parent && *entity_parent == opposite_id) continue;
         if (entity_children.count(opposite_id)) continue;
         if (opposite_id == entity_id) continue;
+        if (opposite_collider->is_trigger) continue;
 
-        auto [ other_position, other_scale ] = em.getAbsoluteTransform(opposite_id);
+        auto [ opposite_position, opposite_scale ] = em.getAbsoluteTransform(opposite_id);
 
         if (axis == Axis::X) {
             int entity_y_start = entity_position.y - ((entity_scale.y * entity_collider->y_scale) / 2);
             int entity_y_end = entity_position.y + ((entity_scale.y * entity_collider->y_scale) / 2);
-            int opposite_y_start = other_position.y - ((other_scale.y * opposite_collider->y_scale) / 2);
-            int opposite_y_end = other_position.y + ((other_scale.y * opposite_collider->y_scale) / 2);
+            int opposite_y_start = opposite_position.y - ((opposite_scale.y * opposite_collider->y_scale) / 2);
+            int opposite_y_end = opposite_position.y + ((opposite_scale.y * opposite_collider->y_scale) / 2);
 
             if (direction == Direction::POSITIVE) { // Right
-                if (entity_y_start < opposite_y_end && opposite_id < entity_y_end) {
-                    double opposite_hit_wall = other_position.x - ((other_scale.x * opposite_collider->x_scale) / 2);
+                if (entity_y_start < opposite_y_end && opposite_y_start < entity_y_end) {
+                    double opposite_hit_wall = opposite_position.x - ((opposite_scale.x * opposite_collider->x_scale) / 2);
                     double entity_hit_wall = entity_position.x + ((entity_scale.x * entity_collider->x_scale) / 2);
 
                     double difference = opposite_hit_wall - entity_hit_wall;
 
                     if(difference >= 0 && collision.space_left > difference) {
                         collision.space_left = difference;
-                        collision.opposite = EntityWithIsTrigger(opposite_id, opposite_collider);
+                        collision.opposite = EntityWithIsTrigger(opposite_id, opposite_collider->is_trigger);
                     }
                 }
             } else if (direction == Direction::NEGATIVE) { // Left
-                if (entity_y_start < entity_y_end && opposite_y_start < opposite_y_end) {
-                    double opposite_hit_wall = other_position.x + ((other_scale.x * opposite_collider->x_scale) / 2);
+                if (entity_y_start < opposite_y_end && opposite_y_start < entity_y_end) {
+                    double opposite_hit_wall = opposite_position.x + ((opposite_scale.x * opposite_collider->x_scale) / 2);
                     double entity_hit_wall = entity_position.x - ((entity_scale.x * entity_collider->x_scale) / 2);
 
                     double difference = opposite_hit_wall - entity_hit_wall;
 
                     if (difference <= 0 && collision.space_left < difference) {
                         collision.space_left = difference;
-                        collision.opposite = EntityWithIsTrigger(opposite_id, opposite_collider);
+                        collision.opposite = EntityWithIsTrigger(opposite_id, opposite_collider->is_trigger);
                     }
                 }
             }
         } else if (axis == Axis::Y) {
             int entity_x_start = entity_position.x - ((entity_scale.x * entity_collider->x_scale) / 2);
             int entity_x_end = entity_position.x + ((entity_scale.x * entity_collider->x_scale) / 2);
-            int opposite_x_start = other_position.x - ((other_scale.x * opposite_collider->x_scale) / 2);
-            int opposite_x_end = other_position.x + ((other_scale.x * opposite_collider->x_scale) / 2);
+            int opposite_x_start = opposite_position.x - ((opposite_scale.x * opposite_collider->x_scale) / 2);
+            int opposite_x_end = opposite_position.x + ((opposite_scale.x * opposite_collider->x_scale) / 2);
 
             if (direction == Direction::POSITIVE) { // Down
-                if (entity_x_start < entity_x_end && opposite_x_start < opposite_x_end) {
-                    double opposite_hit_wall = other_position.y - ((other_scale.y * opposite_collider->y_scale) / 2);
+                if (entity_x_start < opposite_x_end && opposite_x_start < entity_x_end) {
+                    double opposite_hit_wall = opposite_position.y - ((opposite_scale.y * opposite_collider->y_scale) / 2);
                     double entity_hit_wall = entity_position.y + ((entity_scale.y * entity_collider->y_scale) / 2);
 
                     double difference = opposite_hit_wall - entity_hit_wall;
 
                     if (difference >= 0 && collision.space_left > difference) {
                         collision.space_left = difference;
-                        collision.opposite = EntityWithIsTrigger(opposite_id, opposite_collider);
+                        collision.opposite = EntityWithIsTrigger(opposite_id, opposite_collider->is_trigger);
                     }
                 }
             } else if (direction == Direction::NEGATIVE) { // Up
-                if(entity_x_start < entity_x_end && opposite_x_start < opposite_x_end) {
-                    double opposite_hit_wall = other_position.y + ((other_scale.y * opposite_collider->y_scale) / 2);
+                if(entity_x_start < opposite_x_end && opposite_x_start < entity_x_end) {
+                    double opposite_hit_wall = opposite_position.y + ((opposite_scale.y * opposite_collider->y_scale) / 2);
                     double entity_hit_wall = entity_position.y - ((entity_scale.y * entity_collider->y_scale) / 2);
 
                     double difference = opposite_hit_wall - entity_hit_wall;
 
                     if (difference <= 0 && collision.space_left < difference) {
                         collision.space_left = difference;
-                        collision.opposite = EntityWithIsTrigger(opposite_id, opposite_collider);
+                        collision.opposite = EntityWithIsTrigger(opposite_id, opposite_collider->is_trigger);
                     }
                 } 
             }

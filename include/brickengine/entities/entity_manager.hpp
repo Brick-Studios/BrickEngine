@@ -226,11 +226,11 @@ public:
         return std::make_pair(position, scale);
     }
 
-    std::optional<std::set<std::string>> getTags(int entity) {
+    std::set<std::string> getTags(int entity) {
         if (tagging_entities.count(entity))
             return tagging_entities.at(entity);
         else
-            return std::nullopt;
+            return std::set<std::string>();
     }
     void setTag(int entity, std::string tag) {
         if (!tagging_entities.count(entity))
