@@ -24,16 +24,16 @@ std::vector<DiscreteCollision> CollisionDetector2::detectDiscreteCollision(int e
         double entity_down = entity_position.y + ((entity_scale.y * entity_collider->y_scale) / 2);
         double entity_up = entity_position.y - ((entity_scale.y * entity_collider->y_scale) / 2);
 
-        double opposible_left = opposite_position.x - ((opposite_scale.x * opposite_collider->x_scale) / 2);
-        double opposible_right = opposite_position.x + ((opposite_scale.x * opposite_collider->x_scale) / 2);
-        double opposible_down = opposite_position.y - ((opposite_scale.y * opposite_collider->y_scale) / 2);
-        double opposible_up = opposite_position.y + ((opposite_scale.y * opposite_collider->y_scale) / 2);
+        double opposite_left = opposite_position.x - ((opposite_scale.x * opposite_collider->x_scale) / 2);
+        double opposite_right = opposite_position.x + ((opposite_scale.x * opposite_collider->x_scale) / 2);
+        double opposite_down = opposite_position.y - ((opposite_scale.y * opposite_collider->y_scale) / 2);
+        double opposite_up = opposite_position.y + ((opposite_scale.y * opposite_collider->y_scale) / 2);
 
         // Check if you are inside the x and y of the collidable
-        if(entity_left >= opposible_left 
-            && entity_right <= opposible_right
-            && entity_down >= opposible_down
-            && entity_up <= opposible_up) {
+        if(entity_left >= opposite_left 
+            && entity_right <= opposite_right
+            && entity_down >= opposite_down
+            && entity_up <= opposite_up) {
             collisions.emplace_back(EntityWithIsTrigger(entity_id, entity_collider->is_trigger),
                                     EntityWithIsTrigger(opposite_id, opposite_collider->is_trigger));
         }
