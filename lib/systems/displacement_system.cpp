@@ -2,7 +2,7 @@
 #include "brickengine/components/colliders/rectangle_collider_component.hpp"
 #include "brickengine/components/physics_component.hpp"
 
-DisplacementSystem::DisplacementSystem(std::shared_ptr<EntityManager> em, CollisionDetector2& cd)
+DisplacementSystem::DisplacementSystem(CollisionDetector2& cd, std::shared_ptr<EntityManager> em)
     : System(em), collision_detector(cd) {}
 
 void DisplacementSystem::update(double) {
@@ -22,33 +22,18 @@ void DisplacementSystem::update(double) {
         // No collisions? Just continue
         if (collisions.empty()) continue;
 
-        auto [ entity_position, entity_scale ] = entityManager->getAbsoluteTransform(entity_id);
+        auto entity_transform = entityManager->getComponent<TransformComponent>(entity_id);
 
         for (DiscreteCollision& collision : collisions) {
             if (collision.opposite.is_trigger) continue;
 
-            auto opposite_collider = entityManager->getComponent<RectangleColliderComponent>(collision.opposite.id);
-            auto [ opposite_position, opposite_scale ] = entityManager->getAbsoluteTransform(collision.opposite.id);
+            entity_transform->x_pos += collision.delta.x;
+            entity_transform->y_pos += collision.delta.y;
 
-            double entity_left = entity_position.x + ((entity_scale.x * entity_collider->x_scale) / 2);
-            double entity_right = entity_position.x - ((entity_scale.x * entity_collider->x_scale) / 2);
-            double entity_down = entity_position.y + ((entity_scale.y * entity_collider->y_scale) / 2);
-            double entity_up = entity_position.y - ((entity_scale.y * entity_collider->y_scale) / 2);
-
-            double opposite_left = opposite_position.x - ((opposite_scale.x * opposite_collider->x_scale) / 2);
-            double opposite_right = opposite_position.x + ((opposite_scale.x * opposite_collider->x_scale) / 2);
-            double opposite_down = opposite_position.y - ((opposite_scale.y * opposite_collider->y_scale) / 2);
-            double opposite_up = opposite_position.y + ((opposite_scale.y * opposite_collider->y_scale) / 2);
-
-            double time_x_collision = (entity_left - opposite_right) / - entity_physics->vx;
-            double time_y_collision = (opposite_down - entity_up) / -entity_physics->vy;
-
-            if (time_x_collision < time_y_collision) {
-                // time_x_collision was faster
-            } else {
-                // time_y_collision was faster      
-            }
+            if (collision.delta.x != 0)
+                entity_physics->vx = 0;
+            if (collision.delta.y != 0)
+                entity_physics->vy = 0;
         }
-
     }
 }

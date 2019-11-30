@@ -6,7 +6,7 @@
 
 class DisplacementSystem : public System {
 public:
-    DisplacementSystem(std::shared_ptr<EntityManager> em, CollisionDetector2& cd);
+    DisplacementSystem(CollisionDetector2& cd, std::shared_ptr<EntityManager> em);
     void update(double deltatime);
 private:
     CollisionDetector2& collision_detector;

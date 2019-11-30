@@ -43,10 +43,20 @@ struct EntityWithIsTrigger {
 };
 
 struct DiscreteCollision {
-    DiscreteCollision(EntityWithIsTrigger entity, EntityWithIsTrigger opposite)
-        : entity(entity), opposite(opposite) {}
+    DiscreteCollision(EntityWithIsTrigger entity, EntityWithIsTrigger opposite,
+                      Position position, Position delta, Position normal)
+        : entity(entity), opposite(opposite), position(position),
+          delta(delta), normal(normal) {}
     EntityWithIsTrigger entity;
     EntityWithIsTrigger opposite;
+
+    // The point of contact between the two objects
+    Position position;
+    // The overlap between the two objects, and is a vector that can be added
+    // to the colliding object’s position to move it back to a non-colliding state
+    Position delta;
+    // The surface normal at the point of contact
+    Position normal;
 };
 
 struct ContinuousCollision {

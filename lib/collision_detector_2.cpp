@@ -1,6 +1,8 @@
 #include "brickengine/collision_detector_2.hpp"
 #include "brickengine/components/colliders/rectangle_collider_component.hpp"
 #include "brickengine/components/physics_component.hpp"
+#include "brickengine/std/sign.hpp"
+#include <cmath>
 
 std::vector<DiscreteCollision> CollisionDetector2::detectDiscreteCollision(int entity_id) {
     // Entity
@@ -14,28 +16,47 @@ std::vector<DiscreteCollision> CollisionDetector2::detectDiscreteCollision(int e
     std::vector<DiscreteCollision> collisions;
 
     for (auto& [ opposite_id, opposite_collider] : opposite_entities_with_collider) {
+        // Can't collide with yourself
+        if (opposite_id == entity_id) continue;
         auto [ opposite_position, opposite_scale ] = em.getAbsoluteTransform(opposite_id);
         // Can't collide with family
         if (entity_parent && *entity_parent == opposite_id) continue;
         if (entity_children.count(opposite_id)) continue;
 
-        double entity_left = entity_position.x + ((entity_scale.x * entity_collider->x_scale) / 2);
-        double entity_right = entity_position.x - ((entity_scale.x * entity_collider->x_scale) / 2);
-        double entity_down = entity_position.y + ((entity_scale.y * entity_collider->y_scale) / 2);
-        double entity_up = entity_position.y - ((entity_scale.y * entity_collider->y_scale) / 2);
+        const double entity_half_x = (entity_scale.x * entity_collider->x_scale) / 2;
+        const double entity_half_y = (entity_scale.y * entity_collider->y_scale) / 2;
+        const double opposite_half_x = (opposite_scale.x * opposite_collider->x_scale) / 2;
+        const double opposite_half_y = (opposite_scale.y * opposite_collider->y_scale) / 2;
 
-        double opposite_left = opposite_position.x - ((opposite_scale.x * opposite_collider->x_scale) / 2);
-        double opposite_right = opposite_position.x + ((opposite_scale.x * opposite_collider->x_scale) / 2);
-        double opposite_down = opposite_position.y - ((opposite_scale.y * opposite_collider->y_scale) / 2);
-        double opposite_up = opposite_position.y + ((opposite_scale.y * opposite_collider->y_scale) / 2);
+        // Check if there is a collision in the x axis
+        const double delta_x = entity_position.x - opposite_position.x;
+        const double pos_x = (entity_half_x + opposite_half_x) - std::abs(delta_x);
+        if (pos_x <= 0) continue;
 
-        // Check if you are inside the x and y of the collidable
-        if(entity_left >= opposite_left 
-            && entity_right <= opposite_right
-            && entity_down >= opposite_down
-            && entity_up <= opposite_up) {
-            collisions.emplace_back(EntityWithIsTrigger(entity_id, entity_collider->is_trigger),
-                                    EntityWithIsTrigger(opposite_id, opposite_collider->is_trigger));
+        // Check if there is a collision in the y axis
+        const double delta_y = entity_position.y - opposite_position.y;
+        const double pos_y = (entity_half_y + opposite_half_y) - std::abs(delta_y);
+        if (pos_y <= 0) continue;
+        
+        // x axis collision
+        if (pos_x < pos_y) {
+            const double sign_x = sign(delta_x);
+            Position position = Position(opposite_position.x + (opposite_half_x * sign_x), entity_position.y);
+            Position delta = Position(pos_x * sign_x, 0);
+            Position normal = Position(sign_x, 0);
+            collisions.emplace_back(
+                EntityWithIsTrigger(entity_id, entity_collider->is_trigger),
+                EntityWithIsTrigger(opposite_id, opposite_collider->is_trigger),
+                position, delta, normal);
+        } else { // y axis collision
+            const double sign_y = sign(delta_y);
+            Position position = Position(entity_position.x, opposite_position.y + (opposite_half_y * sign_y));
+            Position delta = Position(0, pos_y * sign_y);
+            Position normal = Position(0, sign_y);
+            collisions.emplace_back(
+                EntityWithIsTrigger(entity_id, entity_collider->is_trigger),
+                EntityWithIsTrigger(opposite_id, opposite_collider->is_trigger),
+                position, delta, normal);
         }
     }
     return collisions;

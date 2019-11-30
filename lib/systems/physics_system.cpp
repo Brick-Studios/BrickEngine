@@ -22,13 +22,17 @@ void PhysicsSystem::update(double deltatime) {
         double mass = physics->mass;
 
         // Gravity
-        if (physics->gravity) {
-            double slow_down_amount = (GRAVITY * mass) * deltatime;
-            double vy_gravity = physics->vy + slow_down_amount;
+        double space_left = collision_detector.detectContinuousCollision(entity_id, Axis::Y, Direction::POSITIVE).space_left;
+        std::cout << space_left << std::endl;
+        if (space_left != 0) {
+            if (physics->gravity) {
+                double slow_down_amount = (GRAVITY * mass) * deltatime;
+                double vy_gravity = physics->vy + slow_down_amount;
 
-            if (vy_gravity > TERMINAL_VELOCITY)
-                vy_gravity = TERMINAL_VELOCITY;
-            physics->vy = vy_gravity;
+                if (vy_gravity > TERMINAL_VELOCITY)
+                    vy_gravity = TERMINAL_VELOCITY;
+                physics->vy = vy_gravity;
+            }
         }
 
         // Drag
