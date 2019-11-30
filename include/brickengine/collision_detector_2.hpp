@@ -36,19 +36,14 @@
    - Indiana Jones and the Temple of Collisions
 */
 
-struct EntityWithIsTrigger {
-    EntityWithIsTrigger(int id, bool is_trigger) : id(id), is_trigger(is_trigger) {}
-    int id;
-    bool is_trigger;
-};
-
 struct DiscreteCollision {
-    DiscreteCollision(EntityWithIsTrigger entity, EntityWithIsTrigger opposite,
+    DiscreteCollision(int entity_id, int opposite_id, bool is_trigger,
                       Position position, Position delta, Position normal)
-        : entity(entity), opposite(opposite), position(position),
-          delta(delta), normal(normal) {}
-    EntityWithIsTrigger entity;
-    EntityWithIsTrigger opposite;
+        : entity_id(entity_id), opposite_id(opposite_id), is_trigger(is_trigger),
+          position(position), delta(delta), normal(normal) {}
+    int entity_id;
+    int opposite_id;
+    bool is_trigger;
 
     // The point of contact between the two objects
     Position position;
@@ -60,21 +55,23 @@ struct DiscreteCollision {
 };
 
 struct ContinuousCollision {
-    ContinuousCollision(EntityWithIsTrigger entity, std::optional<EntityWithIsTrigger> opposite, double space_left)
-        : entity(entity), opposite(opposite), space_left(space_left) {}
-    EntityWithIsTrigger entity;
-    std::optional<EntityWithIsTrigger> opposite;
+    ContinuousCollision(int entity_id, std::optional<int> opposite_id, bool is_trigger, double space_left)
+        : entity_id(entity_id), opposite_id(opposite_id), is_trigger(is_trigger), space_left(space_left) {}
+    int entity_id;
+    std::optional<int> opposite_id;
+    bool is_trigger;
     double space_left;
 };
 
 class CollisionDetector2 {
 public:
-    CollisionDetector2(EntityManager& em) : em(em) {};
-
+    CollisionDetector2(std::unordered_map<std::string, std::set<std::string>> is_trigger_tag_exceptions, EntityManager& em);
+    bool findDisplacementException(std::set<std::string> tags_1, std::set<std::string> tags_2);
     std::vector<DiscreteCollision> detectDiscreteCollision(int entity_id);
     ContinuousCollision detectContinuousCollision(int entity_id, Axis axis, Direction direction);
 private:
     EntityManager& em;
+    std::unordered_map<std::string, std::set<std::string>> is_trigger_tag_exceptions;
 };
 
 #endif // FILE_COLLISION_DETECTOR_2_HPP

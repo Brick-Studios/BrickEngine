@@ -4,6 +4,32 @@
 #include "brickengine/std/sign.hpp"
 #include <cmath>
 
+
+CollisionDetector2::CollisionDetector2(std::unordered_map<std::string, std::set<std::string>> is_trigger_tag_exceptions,
+                                       EntityManager& em) : em(em), is_trigger_tag_exceptions(is_trigger_tag_exceptions) {}
+
+bool CollisionDetector2::findDisplacementException(std::set<std::string> tags_1, std::set<std::string> tags_2) {
+    for (const std::string& tag_1 : tags_1) {
+        if (is_trigger_tag_exceptions.count(tag_1)) {
+            for (const std::string& tag_2 : tags_2) {
+                if (is_trigger_tag_exceptions.at(tag_1).count(tag_2)) {
+                    return true;
+                }
+            }
+        }
+    }
+    for (const std::string& tag_2 : tags_2) {
+        if (is_trigger_tag_exceptions.count(tag_2)) {
+            for (const std::string& tag_1 : tags_1) {
+                if (is_trigger_tag_exceptions.at(tag_2).count(tag_1)) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
 std::vector<DiscreteCollision> CollisionDetector2::detectDiscreteCollision(int entity_id) {
     // Entity
     auto entity_collider = em.getComponent<RectangleColliderComponent>(entity_id);
@@ -22,6 +48,16 @@ std::vector<DiscreteCollision> CollisionDetector2::detectDiscreteCollision(int e
         // Can't collide with family
         if (entity_parent && *entity_parent == opposite_id) continue;
         if (entity_children.count(opposite_id)) continue;
+
+        bool is_trigger = false;
+        if (entity_collider->is_trigger || opposite_collider->is_trigger) {
+            // If there are no is_trigger_exceptions for these colliding entities,
+            // just continue, because is trigger needs to go through everything except
+            // some things
+            if (!findDisplacementException(em.getTags(entity_id),
+                em.getTags(opposite_id)))
+                is_trigger = true;
+        }
 
         const double entity_half_x = (entity_scale.x * entity_collider->x_scale) / 2;
         const double entity_half_y = (entity_scale.y * entity_collider->y_scale) / 2;
@@ -44,19 +80,15 @@ std::vector<DiscreteCollision> CollisionDetector2::detectDiscreteCollision(int e
             Position position = Position(opposite_position.x + (opposite_half_x * sign_x), entity_position.y);
             Position delta = Position(pos_x * sign_x, 0);
             Position normal = Position(sign_x, 0);
-            collisions.emplace_back(
-                EntityWithIsTrigger(entity_id, entity_collider->is_trigger),
-                EntityWithIsTrigger(opposite_id, opposite_collider->is_trigger),
-                position, delta, normal);
+            collisions.emplace_back(entity_id, opposite_id, is_trigger,
+                                    position, delta, normal);
         } else { // y axis collision
             const double sign_y = sign(delta_y);
             Position position = Position(entity_position.x, opposite_position.y + (opposite_half_y * sign_y));
             Position delta = Position(0, pos_y * sign_y);
             Position normal = Position(0, sign_y);
-            collisions.emplace_back(
-                EntityWithIsTrigger(entity_id, entity_collider->is_trigger),
-                EntityWithIsTrigger(opposite_id, opposite_collider->is_trigger),
-                position, delta, normal);
+            collisions.emplace_back(entity_id, opposite_id, is_trigger,
+                                    position, delta, normal);
         }
     }
     return collisions;
@@ -77,15 +109,13 @@ ContinuousCollision CollisionDetector2::detectContinuousCollision(int entity_id,
     else
         space_left_start_value = std::numeric_limits<double>::infinity();
 
-    ContinuousCollision collision { EntityWithIsTrigger(entity_id, entity_collider->is_trigger),
-                                    std::nullopt, space_left_start_value };
+    ContinuousCollision collision { entity_id, std::nullopt, false, space_left_start_value };
 
     for (auto& [ opposite_id, opposite_collider ] : opposite_entities_with_collider) {
         // You cannot collide with family
         if (entity_parent && *entity_parent == opposite_id) continue;
         if (entity_children.count(opposite_id)) continue;
         if (opposite_id == entity_id) continue;
-        if (opposite_collider->is_trigger) continue;
 
         auto [ opposite_position, opposite_scale ] = em.getAbsoluteTransform(opposite_id);
 
@@ -102,9 +132,17 @@ ContinuousCollision CollisionDetector2::detectContinuousCollision(int entity_id,
 
                     double difference = opposite_hit_wall - entity_hit_wall;
 
-                    if(difference >= 0 && collision.space_left > difference) {
+                    bool is_trigger = false;
+                    if (entity_collider->is_trigger || opposite_collider->is_trigger) {
+                        if (!findDisplacementException(em.getTags(entity_id),
+                            em.getTags(*collision.opposite_id))) {
+                            is_trigger = true;
+                        }
+                    }
+                    if(difference >= 0 && (collision.space_left > difference || (collision.is_trigger && !is_trigger))) {
+                        collision.is_trigger = is_trigger;
                         collision.space_left = difference;
-                        collision.opposite = EntityWithIsTrigger(opposite_id, opposite_collider->is_trigger);
+                        collision.opposite_id = opposite_id;
                     }
                 }
             } else if (direction == Direction::NEGATIVE) { // Left
@@ -114,9 +152,17 @@ ContinuousCollision CollisionDetector2::detectContinuousCollision(int entity_id,
 
                     double difference = opposite_hit_wall - entity_hit_wall;
 
-                    if (difference <= 0 && collision.space_left < difference) {
+                    bool is_trigger = false;
+                    if (entity_collider->is_trigger || opposite_collider->is_trigger) {
+                        if (!findDisplacementException(em.getTags(entity_id),
+                            em.getTags(*collision.opposite_id))) {
+                            is_trigger = true;
+                        }
+                    }
+                    if (difference <= 0 && (collision.space_left < difference || (collision.is_trigger && !is_trigger))) {
+                        collision.is_trigger = is_trigger;
                         collision.space_left = difference;
-                        collision.opposite = EntityWithIsTrigger(opposite_id, opposite_collider->is_trigger);
+                        collision.opposite_id = opposite_id;
                     }
                 }
             }
@@ -133,9 +179,17 @@ ContinuousCollision CollisionDetector2::detectContinuousCollision(int entity_id,
 
                     double difference = opposite_hit_wall - entity_hit_wall;
 
-                    if (difference >= 0 && collision.space_left > difference) {
+                    bool is_trigger = false;
+                    if (entity_collider->is_trigger || opposite_collider->is_trigger) {
+                        if (!findDisplacementException(em.getTags(entity_id),
+                            em.getTags(*collision.opposite_id))) {
+                            is_trigger = true;
+                        }
+                    }
+                    if (difference >= 0 && (collision.space_left > difference || (collision.is_trigger && !is_trigger))) {
+                        collision.is_trigger = is_trigger;
                         collision.space_left = difference;
-                        collision.opposite = EntityWithIsTrigger(opposite_id, opposite_collider->is_trigger);
+                        collision.opposite_id = opposite_id;
                     }
                 }
             } else if (direction == Direction::NEGATIVE) { // Up
@@ -145,13 +199,21 @@ ContinuousCollision CollisionDetector2::detectContinuousCollision(int entity_id,
 
                     double difference = opposite_hit_wall - entity_hit_wall;
 
-                    if (difference <= 0 && collision.space_left < difference) {
+                    bool is_trigger = false;
+                    if (entity_collider->is_trigger || opposite_collider->is_trigger) {
+                        if (!findDisplacementException(em.getTags(entity_id),
+                            em.getTags(*collision.opposite_id))) {
+                            is_trigger = true;
+                        }
+                    }
+                    if (difference <= 0 &&  (collision.space_left < difference || (collision.is_trigger && !is_trigger))) {
+                        collision.is_trigger = is_trigger;
                         collision.space_left = difference;
-                        collision.opposite = EntityWithIsTrigger(opposite_id, opposite_collider->is_trigger);
+                        collision.opposite_id = opposite_id;
                     }
                 } 
             }
-        }        
-    }    
+        }
+    }
     return collision;
 }

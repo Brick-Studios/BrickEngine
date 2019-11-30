@@ -2,30 +2,10 @@
 #include "brickengine/components/colliders/rectangle_collider_component.hpp"
 #include "brickengine/components/physics_component.hpp"
 
-DisplacementSystem::DisplacementSystem(std::unordered_map<std::string, std::set<std::string>> is_trigger_tag_exceptions, CollisionDetector2& cd, std::shared_ptr<EntityManager> em)
-    : System(em), collision_detector(cd), is_trigger_tag_exceptions(is_trigger_tag_exceptions) {}
+DisplacementSystem::DisplacementSystem(CollisionDetector2& cd, std::shared_ptr<EntityManager> em)
+    : System(em), collision_detector(cd) {}
 
-bool DisplacementSystem::findDisplacementException(std::set<std::string> tags_1, std::set<std::string> tags_2) {
-    for (const std::string& tag_1 : tags_1) {
-        if (is_trigger_tag_exceptions.count(tag_1)) {
-            for (const std::string& tag_2 : tags_2) {
-                if (is_trigger_tag_exceptions.at(tag_1).count(tag_2)) {
-                    return true;
-                }
-            }
-        }
-    }
-    for (const std::string& tag_2 : tags_2) {
-        if (is_trigger_tag_exceptions.count(tag_2)) {
-            for (const std::string& tag_1 : tags_1) {
-                if (is_trigger_tag_exceptions.at(tag_2).count(tag_1)) {
-                    return true;
-                }
-            }
-        }
-    }
-    return false;
-}
+
 
 void DisplacementSystem::update(double) {
     auto entities_with_collider = entityManager->getEntitiesByComponent<RectangleColliderComponent>();
@@ -45,14 +25,7 @@ void DisplacementSystem::update(double) {
         auto entity_transform = entityManager->getComponent<TransformComponent>(entity_id);
 
         for (const DiscreteCollision& collision : collisions) {
-            if (collision.entity.is_trigger || collision.opposite.is_trigger) {
-                // If there are no is_trigger_exceptions for these colliding entities,
-                // just continue, because is trigger needs to go through everything except
-                // some things
-                if (!findDisplacementException(entityManager->getTags(collision.entity.id),
-                                              entityManager->getTags(collision.opposite.id)))
-                    continue;
-            }
+            if (collision.is_trigger) continue;
 
             entity_transform->x_pos += collision.delta.x;
             entity_transform->y_pos += collision.delta.y;
