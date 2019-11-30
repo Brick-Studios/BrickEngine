@@ -35,8 +35,16 @@ public:
             }
         }
         scene_ref.start();
-        game_state_manager.setState(scene_ref.getSystemState());
-    }
+
+        // Do not change state if it is the same game state but different from the primary layer.
+        // e.g. The intermission screen is the same game state but on the secondary layer -> no change of state
+        // e.g. The pause screen is a different game state and on the secondary layer -> change the state
+        // e.g. New primary scene -> always change the game state.
+        if(scenes.count(SceneLayer::Primary))
+            if((scenes.at(SceneLayer::Primary)->getSystemState() != scene_ref.getSystemState() && scene_ref.getLayer() != SceneLayer::Primary)
+                || scene_ref.getLayer() == SceneLayer::Primary)
+                game_state_manager.setState(scene_ref.getSystemState());
+   }
     template <typename T, typename... Args, typename = std::enable_if_t<std::is_base_of_v<Scene<State>, T>>>
     void createScene(Args &&... args) {
         auto scene = std::make_unique<T>(std::forward<Args>(args)...);
@@ -45,7 +53,6 @@ public:
     void destroyScene(SceneLayer layer) {
         if (!scenes.count(layer)) return;
 
-        scenes.at(layer)->leave();
         scenes.at(layer)->leave();
         entity_manager.removeEntitiesWithTag(scenes.at(layer)->getTag());
         scenes.erase(layer);
