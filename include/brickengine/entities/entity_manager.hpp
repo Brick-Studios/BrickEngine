@@ -10,6 +10,7 @@
 #include "brickengine/entities/exceptions/grandparents_not_supported.hpp"
 #include "brickengine/entities/exceptions/entity_not_found.hpp"
 #include "brickengine/entities/exceptions/component_not_found.hpp"
+#include "brickengine/entities/exceptions/child_already_has_parent_exception.hpp"
 
 #include <iostream>
 #include <string>
@@ -73,6 +74,9 @@ public:
     template <typename T, typename = std::enable_if_t<std::is_base_of_v<Component, T>>>
     void removeComponentFromEntity(const int entity_id){
         std::string component_type = T::getNameStatic();
+
+        if (!components_by_class.count(component_type) || !components_by_class.at(component_type).count(entity_id))
+            return;
 
         components_by_class.at(component_type).erase(entity_id);
     }
@@ -147,6 +151,8 @@ public:
     void setParent(int child_id, int parent_id, bool transform_is_relative) {
         if (getParent(parent_id))
             throw GrandparentsNotSupportedException();
+        if (getParent(child_id))
+            throw ChildAlreadyHasParentException();
 
         auto child_transform = getComponent<TransformComponent>(child_id);
         auto child_physics = getComponent<PhysicsComponent>(child_id);
@@ -256,6 +262,10 @@ public:
         std::set<int> entities_to_delete = tagging_tags.at(tag);
         for (auto& entity : entities_to_delete)
             removeEntity(entity);
+    }
+    bool hasTag(int entity, std::string tag) {
+        if (!tagging_tags.count(tag)) return false;
+        return tagging_tags.at(tag).count(entity);
     }
 private:
     int lowest_unassigned_entity_id;
