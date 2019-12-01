@@ -56,6 +56,9 @@ enum class InputKeyCode {
     EKey_space,
     Ekey_enter,
     EKey_backspace,
+    EKey_pagedown,
+    EKey_pageup,
+    EKey_home,
 
     // Mouse
     EKey_mouse_left,
