@@ -1,6 +1,7 @@
 #include <string>
 #include <vector>
 #include <exception>
+#include <iomanip>
 
 #include "brickengine/json/json.hpp"
 #include "brickengine/extern/nlohmann_json.hpp"
@@ -24,6 +25,11 @@ Json::Json(std::string source, bool isString) {
 
 Json::Json(nlohmann::json source) {
     this->external_json = source;
+}
+
+Json::Json() {
+    nlohmann::json json;
+    this->external_json = json;
 }
 
 const std::string Json::getString(std::string const name) const {
@@ -84,4 +90,25 @@ const std::vector<std::string> Json::getStringVector(std::string const name) con
     } catch(...) {
         throw ObjectOrTypeException("string vector");
     }
+}
+
+void Json::setString(std::string key, std::string value) {
+    external_json[key] = value; 
+}
+
+void Json::setInt(std::string key, int value) {
+    external_json[key] = value;
+}
+
+int Json::getIntFromObject(std::string object, std::string key) { 
+    return external_json[object][key];
+}
+
+void Json::addIntToObject(std::string object, std::string key, int value) {
+    external_json[object][key] = value;
+}
+
+std::ostream& operator<< (std::ostream& ostream, const Json& json) {
+    // Write it pretty to output
+    return ostream << std::setw(4) << json.external_json;
 }
