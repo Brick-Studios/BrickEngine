@@ -10,6 +10,7 @@
 #include "brickengine/entities/exceptions/grandparents_not_supported.hpp"
 #include "brickengine/entities/exceptions/entity_not_found.hpp"
 #include "brickengine/entities/exceptions/component_not_found.hpp"
+#include "brickengine/entities/exceptions/child_already_has_parent_exception.hpp"
 
 #include <iostream>
 #include <string>
@@ -19,24 +20,38 @@
 #include <type_traits>
 #include <utility>
 #include <set>
+#include <functional>
 
-class EntityManager{
+class EntityManager {
 public:
-    EntityManager() {
-        lowest_unassigned_entity_id = -1;
-    };
+    EntityManager()
+        : lowest_unassigned_entity_id(-1) {}
     ~EntityManager() = default;
+
+    void setGetCurrentSceneTagFunction(std::function<std::optional<std::string>()> fn) {
+        get_current_scene_tag_function = fn;
+    }
 
     // the int in the optional pair is the parent id
     // the bool in the optional pair is whether the transform is already relative
-    int createEntity(const std::unique_ptr<std::vector<std::unique_ptr<Component>>> components, std::optional<std::pair<int,bool>> parentOpt = std::nullopt){
+    int createEntity(const std::unique_ptr<std::vector<std::unique_ptr<Component>>> components,
+                     std::optional<std::pair<int,bool>> parentOpt = std::nullopt,
+                     std::optional<std::string> scene_tag = std::nullopt) {
         int entity_id = ++lowest_unassigned_entity_id;
 
-        for(auto& c : *components)
+        for (auto& c : *components)
             addComponentToEntity(lowest_unassigned_entity_id, std::move(c));
 
-        if(parentOpt)
+        if (parentOpt)
             setParent(entity_id, parentOpt.value().first, parentOpt.value().second);
+
+        if (get_current_scene_tag_function && !scene_tag) {
+            if (auto current_scene_tag = (*get_current_scene_tag_function)()) {
+                setTag(entity_id, *current_scene_tag);
+            }
+        } else if (scene_tag) {
+            setTag(entity_id, *scene_tag);
+        }
 
         return entity_id;
     }
@@ -59,6 +74,9 @@ public:
     template <typename T, typename = std::enable_if_t<std::is_base_of_v<Component, T>>>
     void removeComponentFromEntity(const int entity_id){
         std::string component_type = T::getNameStatic();
+
+        if (!components_by_class.count(component_type) || !components_by_class.at(component_type).count(entity_id))
+            return;
 
         components_by_class.at(component_type).erase(entity_id);
     }
@@ -115,22 +133,26 @@ public:
 
         // Move out of a parents house(if it has one)
         moveOutOfParentsHouse(entity_id);
-            
-        // if this entity has tags
-        if (tagging_entities.count(entity_id)) {
-            for (auto& tag : tagging_entities.at(entity_id)) {
-                tagging_tags.erase(tag);
+
+        // Remove all those tags
+        if(tagging_entities.count(entity_id)) {
+            std::set<std::string> tags_to_delete = tagging_entities.at(entity_id);
+            for (auto& tag : tags_to_delete) {
+                tagging_tags.at(tag).erase(entity_id);
+                tagging_entities.at(entity_id).erase(tag);
             }
-            tagging_entities.erase(entity_id);
         }
 
-        for(auto& component : components_by_class)
+        for(auto& component : components_by_class) {
             component.second.erase(entity_id);
+        }
     }
 
     void setParent(int child_id, int parent_id, bool transform_is_relative) {
         if (getParent(parent_id))
             throw GrandparentsNotSupportedException();
+        if (getParent(child_id))
+            throw ChildAlreadyHasParentException();
 
         auto child_transform = getComponent<TransformComponent>(child_id);
         auto child_physics = getComponent<PhysicsComponent>(child_id);
@@ -226,18 +248,30 @@ public:
     }
     void removeTag(int entity, std::string tag) {
         if (!tagging_entities.count(entity)) return;
-        tagging_entities.erase(entity);
-        tagging_tags.erase(tag);
+        tagging_entities.at(entity).erase(tag);
+        tagging_tags.at(tag).erase(entity);
     }
     std::set<int> getEntitiesWithTag(std::string tag) {
         if (!tagging_tags.count(tag))
             return std::set<int>();
         return tagging_tags.at(tag);
     }
+    void removeEntitiesWithTag(std::string tag) {
+        if (!tagging_tags.count(tag)) return;
+        
+        std::set<int> entities_to_delete = tagging_tags.at(tag);
+        for (auto& entity : entities_to_delete)
+            removeEntity(entity);
+    }
+    bool hasTag(int entity, std::string tag) {
+        if (!tagging_tags.count(tag)) return false;
+        return tagging_tags.at(tag).count(entity);
+    }
 private:
     int lowest_unassigned_entity_id;
+    std::optional<std::function<std::optional<std::string>()>> get_current_scene_tag_function;
     std::unordered_map<std::string, std::unordered_map<int, std::unique_ptr<Component>>> components_by_class;
-    // Families, Parent-Child
+    // Families, Parent-child
     std::unordered_map<int, int> family_hierarchy_parents;
     std::unordered_map<int, std::set<int>> family_hierarchy_children;
     // Tagging, tags

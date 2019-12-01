@@ -4,8 +4,7 @@
 #include "brickengine/components/component.hpp"
 
 template<class ComponentType>
-class ComponentImpl : public Component
-{
+class ComponentImpl : public Component {
 public:
     virtual std::string getName()
     {
