@@ -36,12 +36,17 @@
    - Indiana Jones and the Temple of Collisions
 */
 
+struct Collision {
+    Collision(int opposite_id, bool is_trigger) : opposite_id(opposite_id), is_trigger(is_trigger) {}
+    int opposite_id;
+    bool is_trigger;
+};
+
 struct DiscreteCollision {
-    DiscreteCollision(int entity_id, int opposite_id, bool is_trigger,
+    DiscreteCollision(int opposite_id, bool is_trigger,
                       Position position, Position delta, Position normal)
-        : entity_id(entity_id), opposite_id(opposite_id), is_trigger(is_trigger),
+        : opposite_id(opposite_id), is_trigger(is_trigger),
           position(position), delta(delta), normal(normal) {}
-    int entity_id;
     int opposite_id;
     bool is_trigger;
 
@@ -55,23 +60,39 @@ struct DiscreteCollision {
 };
 
 struct ContinuousCollision {
-    ContinuousCollision(int entity_id, std::optional<int> opposite_id, bool is_trigger, double space_left)
-        : entity_id(entity_id), opposite_id(opposite_id), is_trigger(is_trigger), space_left(space_left) {}
-    int entity_id;
+    ContinuousCollision(std::optional<int> opposite_id, bool is_trigger, double space_left)
+        : opposite_id(opposite_id), is_trigger(is_trigger), space_left(space_left) {}
     std::optional<int> opposite_id;
     bool is_trigger;
     double space_left;
 };
 
+struct CollisionDetector2CacheInfo {
+    int discrete_calculated_counter;
+    int discrete_cache_hits;
+    int continuous_calculations_counter;
+    int continuous_cache_hits;
+};
+
 class CollisionDetector2 {
 public:
     CollisionDetector2(std::unordered_map<std::string, std::set<std::string>> is_trigger_tag_exceptions, EntityManager& em);
-    bool findDisplacementException(std::set<std::string> tags_1, std::set<std::string> tags_2);
+    bool findDisplacementException(std::set<std::string> tags_1, std::set<std::string> tags_2) const;
     std::vector<DiscreteCollision> detectDiscreteCollision(int entity_id);
     ContinuousCollision detectContinuousCollision(int entity_id, Axis axis, Direction direction);
+    std::vector<Collision> detectCollision(int entity_id);
+
+    // This returns a copy of the cache info
+    CollisionDetector2CacheInfo getCacheInfo() const;
+    void invalidateCache();
 private:
     EntityManager& em;
     std::unordered_map<std::string, std::set<std::string>> is_trigger_tag_exceptions;
+
+    // Cache
+    std::unordered_map<int, std::vector<DiscreteCollision>> discrete_cache;
+    std::unordered_map<int, std::unordered_map<Axis, std::unordered_map<Direction, ContinuousCollision>>> continuous_cache;
+    CollisionDetector2CacheInfo cache_info;
 };
 
 #endif // FILE_COLLISION_DETECTOR_2_HPP

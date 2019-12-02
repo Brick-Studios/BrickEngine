@@ -3,12 +3,50 @@
 #include "brickengine/components/physics_component.hpp"
 #include "brickengine/std/sign.hpp"
 #include <cmath>
+#include <algorithm>
 
 
 CollisionDetector2::CollisionDetector2(std::unordered_map<std::string, std::set<std::string>> is_trigger_tag_exceptions,
                                        EntityManager& em) : em(em), is_trigger_tag_exceptions(is_trigger_tag_exceptions) {}
 
-bool CollisionDetector2::findDisplacementException(std::set<std::string> tags_1, std::set<std::string> tags_2) {
+std::vector<Collision> CollisionDetector2::detectCollision(int entity_id) {
+    auto physics = em.getComponent<PhysicsComponent>(entity_id);
+    std::vector<Collision> collisions;
+    if (physics->collision_detection == CollisionDetectionType::Discrete) {
+        auto discrete_collisions = this->detectDiscreteCollision(entity_id);
+        std::for_each(discrete_collisions.begin(), discrete_collisions.end(), [&collisions](DiscreteCollision& dc) {
+            collisions.push_back(Collision(dc.opposite_id, dc.is_trigger));
+        });
+    } else if (physics->collision_detection == CollisionDetectionType::Continuous) {
+        {
+            auto collision = this->detectContinuousCollision(entity_id, Axis::X, Direction::NEGATIVE);
+            if (collision.space_left >= 0 && collision.opposite_id && !collision.is_trigger) {
+                collisions.push_back(Collision(*collision.opposite_id, collision.is_trigger));
+            }
+        }
+        {
+            auto collision = this->detectContinuousCollision(entity_id, Axis::X, Direction::POSITIVE);
+            if (collision.space_left <= 0 && collision.opposite_id && !collision.is_trigger) {
+                collisions.push_back(Collision(*collision.opposite_id, collision.is_trigger));
+            }
+        }
+        {
+            auto collision = this->detectContinuousCollision(entity_id, Axis::Y, Direction::NEGATIVE);
+            if (collision.space_left >= 0 && collision.opposite_id && !collision.is_trigger) {
+                collisions.push_back(Collision(*collision.opposite_id, collision.is_trigger));
+            }
+        }
+        {
+            auto collision = this->detectContinuousCollision(entity_id, Axis::Y, Direction::POSITIVE);
+            if (collision.space_left <= 0 && collision.opposite_id && !collision.is_trigger) {
+                collisions.push_back(Collision(*collision.opposite_id, collision.is_trigger));
+            }
+        }
+    }
+    return collisions;
+}
+
+bool CollisionDetector2::findDisplacementException(std::set<std::string> tags_1, std::set<std::string> tags_2) const {
     for (const std::string& tag_1 : tags_1) {
         if (is_trigger_tag_exceptions.count(tag_1)) {
             for (const std::string& tag_2 : tags_2) {
@@ -30,8 +68,23 @@ bool CollisionDetector2::findDisplacementException(std::set<std::string> tags_1,
     return false;
 }
 
+
+CollisionDetector2CacheInfo CollisionDetector2::getCacheInfo() const {
+    return cache_info;
+}
+
+void CollisionDetector2::invalidateCache() {
+    cache_info = CollisionDetector2CacheInfo();
+    discrete_cache.clear();
+    continuous_cache.clear();
+}
+
 std::vector<DiscreteCollision> CollisionDetector2::detectDiscreteCollision(int entity_id) {
-    // Entity
+    if (discrete_cache.count(entity_id)) {
+        ++cache_info.discrete_cache_hits;
+        return discrete_cache.at(entity_id);
+    }
+
     auto entity_collider = em.getComponent<RectangleColliderComponent>(entity_id);
     auto [ entity_position, entity_scale ] = em.getAbsoluteTransform(entity_id);
     auto entity_parent = em.getParent(entity_id);
@@ -59,6 +112,8 @@ std::vector<DiscreteCollision> CollisionDetector2::detectDiscreteCollision(int e
                 is_trigger = true;
         }
 
+        ++this->cache_info.discrete_calculated_counter;
+
         const double entity_half_x = (entity_scale.x * entity_collider->x_scale) / 2;
         const double entity_half_y = (entity_scale.y * entity_collider->y_scale) / 2;
         const double opposite_half_x = (opposite_scale.x * opposite_collider->x_scale) / 2;
@@ -80,21 +135,28 @@ std::vector<DiscreteCollision> CollisionDetector2::detectDiscreteCollision(int e
             Position position = Position(opposite_position.x + (opposite_half_x * sign_x), entity_position.y);
             Position delta = Position(pos_x * sign_x, 0);
             Position normal = Position(sign_x, 0);
-            collisions.emplace_back(entity_id, opposite_id, is_trigger,
+            collisions.emplace_back(opposite_id, is_trigger,
                                     position, delta, normal);
         } else { // y axis collision
             const double sign_y = sign(delta_y);
             Position position = Position(entity_position.x, opposite_position.y + (opposite_half_y * sign_y));
             Position delta = Position(0, pos_y * sign_y);
             Position normal = Position(0, sign_y);
-            collisions.emplace_back(entity_id, opposite_id, is_trigger,
+            collisions.emplace_back(opposite_id, is_trigger,
                                     position, delta, normal);
         }
     }
+    discrete_cache.insert({ entity_id, collisions });
     return collisions;
 }
 
 ContinuousCollision CollisionDetector2::detectContinuousCollision(int entity_id, Axis axis, Direction direction) {
+    if (continuous_cache.count(entity_id) && continuous_cache.at(entity_id).count(axis)
+        && continuous_cache.at(entity_id).at(axis).count(direction)) {
+        ++cache_info.continuous_cache_hits;
+        return continuous_cache.at(entity_id).at(axis).at(direction);
+    }
+    
     // We only support rectangles
     auto entity_collider = em.getComponent<RectangleColliderComponent>(entity_id);
     auto [ entity_position, entity_scale ] = em.getAbsoluteTransform(entity_id);
@@ -109,13 +171,15 @@ ContinuousCollision CollisionDetector2::detectContinuousCollision(int entity_id,
     else
         space_left_start_value = std::numeric_limits<double>::infinity();
 
-    ContinuousCollision collision { entity_id, std::nullopt, false, space_left_start_value };
+    ContinuousCollision collision { std::nullopt, false, space_left_start_value };
 
     for (auto& [ opposite_id, opposite_collider ] : opposite_entities_with_collider) {
         // You cannot collide with family
         if (entity_parent && *entity_parent == opposite_id) continue;
         if (entity_children.count(opposite_id)) continue;
         if (opposite_id == entity_id) continue;
+
+        ++this->cache_info.continuous_calculations_counter;
 
         auto [ opposite_position, opposite_scale ] = em.getAbsoluteTransform(opposite_id);
 
@@ -215,5 +279,8 @@ ContinuousCollision CollisionDetector2::detectContinuousCollision(int entity_id,
             }
         }
     }
+    continuous_cache.insert({ entity_id, std::unordered_map<Axis, std::unordered_map<Direction, ContinuousCollision>>() });
+    continuous_cache.at(entity_id).insert({ axis, std::unordered_map<Direction, ContinuousCollision>() });
+    continuous_cache.at(entity_id).at(axis).insert({ direction, collision });
     return collision;
 }
