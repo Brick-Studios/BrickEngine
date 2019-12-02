@@ -182,6 +182,7 @@ ContinuousCollision CollisionDetector2::detectContinuousCollision(int entity_id,
         ++this->cache_info.continuous_calculations_counter;
 
         auto [ opposite_position, opposite_scale ] = em.getAbsoluteTransform(opposite_id);
+        bool is_trigger = false;
 
         if (axis == Axis::X) {
             int entity_y_start = entity_position.y - ((entity_scale.y * entity_collider->y_scale) / 2);
@@ -193,17 +194,15 @@ ContinuousCollision CollisionDetector2::detectContinuousCollision(int entity_id,
                 if (entity_y_start < opposite_y_end && opposite_y_start < entity_y_end) {
                     double opposite_hit_wall = opposite_position.x - ((opposite_scale.x * opposite_collider->x_scale) / 2);
                     double entity_hit_wall = entity_position.x + ((entity_scale.x * entity_collider->x_scale) / 2);
-
                     double difference = opposite_hit_wall - entity_hit_wall;
 
-                    bool is_trigger = false;
                     if (entity_collider->is_trigger || opposite_collider->is_trigger) {
                         if (!findDisplacementException(em.getTags(entity_id),
                             em.getTags(*collision.opposite_id))) {
                             is_trigger = true;
                         }
                     }
-                    if(difference >= 0 && (collision.space_left > difference || (collision.is_trigger && !is_trigger))) {
+                    if (difference >= 0 && (collision.space_left > difference || (collision.is_trigger && !is_trigger))) {
                         collision.is_trigger = is_trigger;
                         collision.space_left = difference;
                         collision.opposite_id = opposite_id;
@@ -213,10 +212,8 @@ ContinuousCollision CollisionDetector2::detectContinuousCollision(int entity_id,
                 if (entity_y_start < opposite_y_end && opposite_y_start < entity_y_end) {
                     double opposite_hit_wall = opposite_position.x + ((opposite_scale.x * opposite_collider->x_scale) / 2);
                     double entity_hit_wall = entity_position.x - ((entity_scale.x * entity_collider->x_scale) / 2);
-
                     double difference = opposite_hit_wall - entity_hit_wall;
 
-                    bool is_trigger = false;
                     if (entity_collider->is_trigger || opposite_collider->is_trigger) {
                         if (!findDisplacementException(em.getTags(entity_id),
                             em.getTags(*collision.opposite_id))) {
@@ -240,10 +237,8 @@ ContinuousCollision CollisionDetector2::detectContinuousCollision(int entity_id,
                 if (entity_x_start < opposite_x_end && opposite_x_start < entity_x_end) {
                     double opposite_hit_wall = opposite_position.y - ((opposite_scale.y * opposite_collider->y_scale) / 2);
                     double entity_hit_wall = entity_position.y + ((entity_scale.y * entity_collider->y_scale) / 2);
-
                     double difference = opposite_hit_wall - entity_hit_wall;
 
-                    bool is_trigger = false;
                     if (entity_collider->is_trigger || opposite_collider->is_trigger) {
                         if (!findDisplacementException(em.getTags(entity_id),
                             em.getTags(*collision.opposite_id))) {
@@ -260,10 +255,8 @@ ContinuousCollision CollisionDetector2::detectContinuousCollision(int entity_id,
                 if(entity_x_start < opposite_x_end && opposite_x_start < entity_x_end) {
                     double opposite_hit_wall = opposite_position.y + ((opposite_scale.y * opposite_collider->y_scale) / 2);
                     double entity_hit_wall = entity_position.y - ((entity_scale.y * entity_collider->y_scale) / 2);
-
                     double difference = opposite_hit_wall - entity_hit_wall;
 
-                    bool is_trigger = false;
                     if (entity_collider->is_trigger || opposite_collider->is_trigger) {
                         if (!findDisplacementException(em.getTags(entity_id),
                             em.getTags(*collision.opposite_id))) {
