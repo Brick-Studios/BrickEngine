@@ -20,26 +20,26 @@ std::vector<Collision> CollisionDetector2::detectCollision(int entity_id) {
     } else if (physics->collision_detection == CollisionDetectionType::Continuous) {
         {
             auto collision = this->detectContinuousCollision(entity_id, Axis::X, Direction::NEGATIVE);
-            if (collision.space_left >= 0 && collision.opposite_id && !collision.is_trigger) {
-                collisions.push_back(Collision(*collision.opposite_id, collision.is_trigger));
+            if (collision.space_left >= 0 && collision.opposite_id) {
+                collisions.push_back(Collision(*collision.opposite_id, false));
             }
         }
         {
             auto collision = this->detectContinuousCollision(entity_id, Axis::X, Direction::POSITIVE);
-            if (collision.space_left <= 0 && collision.opposite_id && !collision.is_trigger) {
-                collisions.push_back(Collision(*collision.opposite_id, collision.is_trigger));
+            if (collision.space_left <= 0 && collision.opposite_id) {
+                collisions.push_back(Collision(*collision.opposite_id, false));
             }
         }
         {
             auto collision = this->detectContinuousCollision(entity_id, Axis::Y, Direction::NEGATIVE);
-            if (collision.space_left >= 0 && collision.opposite_id && !collision.is_trigger) {
-                collisions.push_back(Collision(*collision.opposite_id, collision.is_trigger));
+            if (collision.space_left >= 0 && collision.opposite_id) {
+                collisions.push_back(Collision(*collision.opposite_id, false));
             }
         }
         {
             auto collision = this->detectContinuousCollision(entity_id, Axis::Y, Direction::POSITIVE);
-            if (collision.space_left <= 0 && collision.opposite_id && !collision.is_trigger) {
-                collisions.push_back(Collision(*collision.opposite_id, collision.is_trigger));
+            if (collision.space_left <= 0 && collision.opposite_id) {
+                collisions.push_back(Collision(*collision.opposite_id, false));
             }
         }
     }
@@ -151,11 +151,11 @@ std::vector<DiscreteCollision> CollisionDetector2::detectDiscreteCollision(int e
 }
 
 ContinuousCollision CollisionDetector2::detectContinuousCollision(int entity_id, Axis axis, Direction direction) {
-    if (continuous_cache.count(entity_id) && continuous_cache.at(entity_id).count(axis)
-        && continuous_cache.at(entity_id).at(axis).count(direction)) {
-        ++cache_info.continuous_cache_hits;
-        return continuous_cache.at(entity_id).at(axis).at(direction);
-    }
+    //if (continuous_cache.count(entity_id) && continuous_cache.at(entity_id).count(axis)
+    //    && continuous_cache.at(entity_id).at(axis).count(direction)) {
+    //    ++cache_info.continuous_cache_hits;
+    //    return continuous_cache.at(entity_id).at(axis).at(direction);
+    //}
     
     // We only support rectangles
     auto entity_collider = em.getComponent<RectangleColliderComponent>(entity_id);
@@ -171,7 +171,7 @@ ContinuousCollision CollisionDetector2::detectContinuousCollision(int entity_id,
     else
         space_left_start_value = std::numeric_limits<double>::infinity();
 
-    ContinuousCollision collision { std::nullopt, false, space_left_start_value };
+    ContinuousCollision collision { std::nullopt, space_left_start_value };
 
     for (auto& [ opposite_id, opposite_collider ] : opposite_entities_with_collider) {
         // You cannot collide with family
@@ -182,7 +182,6 @@ ContinuousCollision CollisionDetector2::detectContinuousCollision(int entity_id,
         ++this->cache_info.continuous_calculations_counter;
 
         auto [ opposite_position, opposite_scale ] = em.getAbsoluteTransform(opposite_id);
-        bool is_trigger = false;
 
         if (axis == Axis::X) {
             int entity_y_start = entity_position.y - ((entity_scale.y * entity_collider->y_scale) / 2);
@@ -198,12 +197,11 @@ ContinuousCollision CollisionDetector2::detectContinuousCollision(int entity_id,
 
                     if (entity_collider->is_trigger || opposite_collider->is_trigger) {
                         if (!findDisplacementException(em.getTags(entity_id),
-                            em.getTags(*collision.opposite_id))) {
-                            is_trigger = true;
+                            em.getTags(opposite_id))) {
+                            continue;
                         }
                     }
-                    if (difference >= 0 && (collision.space_left > difference || (collision.is_trigger && !is_trigger))) {
-                        collision.is_trigger = is_trigger;
+                    if (difference >= 0 && collision.space_left > difference) {
                         collision.space_left = difference;
                         collision.opposite_id = opposite_id;
                     }
@@ -216,12 +214,11 @@ ContinuousCollision CollisionDetector2::detectContinuousCollision(int entity_id,
 
                     if (entity_collider->is_trigger || opposite_collider->is_trigger) {
                         if (!findDisplacementException(em.getTags(entity_id),
-                            em.getTags(*collision.opposite_id))) {
-                            is_trigger = true;
+                            em.getTags(opposite_id))) {
+                            continue;
                         }
                     }
-                    if (difference <= 0 && (collision.space_left < difference || (collision.is_trigger && !is_trigger))) {
-                        collision.is_trigger = is_trigger;
+                    if (difference <= 0 && collision.space_left < difference) {
                         collision.space_left = difference;
                         collision.opposite_id = opposite_id;
                     }
@@ -241,12 +238,11 @@ ContinuousCollision CollisionDetector2::detectContinuousCollision(int entity_id,
 
                     if (entity_collider->is_trigger || opposite_collider->is_trigger) {
                         if (!findDisplacementException(em.getTags(entity_id),
-                            em.getTags(*collision.opposite_id))) {
-                            is_trigger = true;
+                            em.getTags(opposite_id))) {
+                            continue;
                         }
                     }
-                    if (difference >= 0 && (collision.space_left > difference || (collision.is_trigger && !is_trigger))) {
-                        collision.is_trigger = is_trigger;
+                    if (difference >= 0 && collision.space_left > difference) {
                         collision.space_left = difference;
                         collision.opposite_id = opposite_id;
                     }
@@ -259,12 +255,11 @@ ContinuousCollision CollisionDetector2::detectContinuousCollision(int entity_id,
 
                     if (entity_collider->is_trigger || opposite_collider->is_trigger) {
                         if (!findDisplacementException(em.getTags(entity_id),
-                            em.getTags(*collision.opposite_id))) {
-                            is_trigger = true;
+                            em.getTags(opposite_id))) {
+                            continue;
                         }
                     }
-                    if (difference <= 0 &&  (collision.space_left < difference || (collision.is_trigger && !is_trigger))) {
-                        collision.is_trigger = is_trigger;
+                    if (difference <= 0 &&  collision.space_left < difference) {
                         collision.space_left = difference;
                         collision.opposite_id = opposite_id;
                     }

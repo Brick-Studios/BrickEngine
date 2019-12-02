@@ -60,10 +60,9 @@ struct DiscreteCollision {
 };
 
 struct ContinuousCollision {
-    ContinuousCollision(std::optional<int> opposite_id, bool is_trigger, double space_left)
-        : opposite_id(opposite_id), is_trigger(is_trigger), space_left(space_left) {}
+    ContinuousCollision(std::optional<int> opposite_id, double space_left)
+        : opposite_id(opposite_id), space_left(space_left) {}
     std::optional<int> opposite_id;
-    bool is_trigger;
     double space_left;
 };
 
