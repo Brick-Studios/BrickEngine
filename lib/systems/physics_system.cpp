@@ -5,8 +5,8 @@
 #include <iostream>
 #include <exception>
 
-PhysicsSystem::PhysicsSystem(CollisionDetector2& cd, std::shared_ptr<EntityManager> em)
-                : System(em), collision_detector(cd) {}
+PhysicsSystem::PhysicsSystem(CollisionDetector2& cd, std::shared_ptr<EntityManager> em, double &delta_time_modifier)
+                : System(em), collision_detector(cd), delta_time_modifier(delta_time_modifier) {}
 
 void PhysicsSystem::update(double deltatime) {
     auto entities_with_physics = entityManager->getEntitiesByComponent<PhysicsComponent>();
@@ -38,20 +38,21 @@ void PhysicsSystem::update(double deltatime) {
         // This first part of the expresion basicly checks whether we are on the ground right now.
         // It is not 100% correct, but it does increase performance by a ton
         if (physics->drag && (physics->vy > GRAVITY || physics->vy < GRAVITY * -1) && physics->vx != 0) {
-            const double slow_down_amount = (HORIZONTAL_DRAG * mass) * deltatime;
-            double vx_gravity;
+            const double horizontal_drag_with_modifier = HORIZONTAL_DRAG / delta_time_modifier;
+            const double slow_down_amount = (horizontal_drag_with_modifier * mass) * deltatime;
+            double vx_drag;
 
             if (physics->vx < 0) {
-                vx_gravity = physics->vx + slow_down_amount;
-                if(vx_gravity < TERMINAL_VELOCITY * -1)
-                    vx_gravity = TERMINAL_VELOCITY * -1;
+                vx_drag = physics->vx + slow_down_amount;
+                if(vx_drag < TERMINAL_VELOCITY * -1)
+                    vx_drag = TERMINAL_VELOCITY * -1;
             } else {
-                vx_gravity = physics->vx - slow_down_amount;
-                if(vx_gravity > TERMINAL_VELOCITY)
-                    vx_gravity = TERMINAL_VELOCITY;
+                vx_drag = physics->vx - slow_down_amount;
+                if(vx_drag > TERMINAL_VELOCITY)
+                    vx_drag = TERMINAL_VELOCITY;
             }
 
-            physics->vx = vx_gravity;
+            physics->vx = vx_drag;
         }
 
         const double vx = physics->vx * deltatime;
