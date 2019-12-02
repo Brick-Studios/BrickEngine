@@ -148,6 +148,12 @@ public:
         }
     }
 
+    bool entity_exists(int entity_id) const {
+        if (!components_by_class.count(TransformComponent::getNameStatic()))
+            return false;
+        return components_by_class.at(TransformComponent::getNameStatic()).count(entity_id);
+    }
+
     void setParent(int child_id, int parent_id, bool transform_is_relative) {
         if (getParent(parent_id))
             throw GrandparentsNotSupportedException();
