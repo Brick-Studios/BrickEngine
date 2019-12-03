@@ -151,12 +151,12 @@ std::vector<DiscreteCollision> CollisionDetector2::detectDiscreteCollision(int e
 }
 
 ContinuousCollision CollisionDetector2::detectContinuousCollision(int entity_id, Axis axis, Direction direction) {
-    //if (continuous_cache.count(entity_id) && continuous_cache.at(entity_id).count(axis)
-    //    && continuous_cache.at(entity_id).at(axis).count(direction)) {
-    //    ++cache_info.continuous_cache_hits;
-    //    return continuous_cache.at(entity_id).at(axis).at(direction);
-    //}
-    
+    if (continuous_cache.count(entity_id) && continuous_cache.at(entity_id).count(axis)
+        && continuous_cache.at(entity_id).at(axis).count(direction)) {
+        ++cache_info.continuous_cache_hits;
+        return continuous_cache.at(entity_id).at(axis).at(direction);
+    }
+
     // We only support rectangles
     auto entity_collider = em.getComponent<RectangleColliderComponent>(entity_id);
     auto [ entity_position, entity_scale ] = em.getAbsoluteTransform(entity_id);
@@ -165,13 +165,15 @@ ContinuousCollision CollisionDetector2::detectContinuousCollision(int entity_id,
 
     auto opposite_entities_with_collider = em.getEntitiesByComponent<RectangleColliderComponent>();
 
-    double space_left_start_value;
+    double space_left_start_value = 0;
     if (direction == Direction::NEGATIVE)
         space_left_start_value = std::numeric_limits<double>::lowest();
     else
         space_left_start_value = std::numeric_limits<double>::infinity();
 
-    ContinuousCollision collision { std::nullopt, space_left_start_value };
+    std::optional<int> opposite_opt = std::nullopt;
+
+    ContinuousCollision collision { opposite_opt, space_left_start_value };
 
     for (auto& [ opposite_id, opposite_collider ] : opposite_entities_with_collider) {
         // You cannot collide with family
