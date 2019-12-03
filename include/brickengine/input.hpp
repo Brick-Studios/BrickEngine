@@ -185,18 +185,6 @@ public:
                             } else {
                                 inputs[player_id][input_mapping[player_id][InputKeyCode::EController_x_axis]] = new_value_x;
                             }
-
-                            //if (time_to_wait[player_id].count(input_mapping[player_id][InputKeyCode::EController_y_axis])) {
-                            //    auto& time_to_wait_for_key = time_to_wait[player_id][input_mapping[player_id][InputKeyCode::EController_y_axis]];
-                            //    if (time_to_wait_for_key.second >= time_to_wait_for_key.first) {
-                            //        inputs[player_id][input_mapping[player_id][InputKeyCode::EController_y_axis]] = new_value_y;
-                            //        time_to_wait_for_key.second = 0;
-                            //    }
-                            //}
-                            //else {
-                            //    
-                            //    inputs[player_id][input_mapping[player_id][InputKeyCode::EController_y_axis]] = new_value_y;
-                            //}
                             break;
                         }
                     }
@@ -311,8 +299,6 @@ public:
 private:
     // Add deadzone to prevent controller flick issues
     inline static const int JOYSTICK_DEADZONE = 10000;
-    // Deadzone if the axis are handled as buttons (Time To Wait)
-    inline static const int JOYSTICK_DEADZONE_TTW = 5000;
 
     // List of mapped inputs
     // The int key is the player id
