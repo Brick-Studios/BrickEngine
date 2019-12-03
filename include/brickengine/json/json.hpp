@@ -20,9 +20,10 @@ public:
     const std::vector<std::string> getStringVector(std::string const name) const;
     void setString(std::string key, std::string value);
     void setInt(std::string key, int value);
-    int getIntFromObject(std::string object, std::string key);
-    void addStringToObject(std::string object, std::string key, std::string value);
-    void addIntToObject(std::string object, std::string key, int value);
+    Json createObject(std::string key);
+    const Json getObject(std::string key) const;
+    void setObject(std::string key, Json json);
+    const std::unordered_map<std::string, Json> getUnorderedMap() const;
     friend std::ostream& operator<< (std::ostream& ostream, const Json& json);
 private:
     Json(nlohmann::json source);

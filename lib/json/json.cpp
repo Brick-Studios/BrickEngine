@@ -2,6 +2,7 @@
 #include <vector>
 #include <exception>
 #include <iomanip>
+#include <unordered_map>
 
 #include "brickengine/json/json.hpp"
 #include "brickengine/extern/nlohmann_json.hpp"
@@ -78,6 +79,20 @@ const std::vector<Json> Json::getVector(std::string const name) const {
     }
 }
 
+const std::unordered_map<std::string, Json> Json::getUnorderedMap() const {
+    try {
+        std::unordered_map<std::string, Json> map;
+        
+        for(auto part : external_json.items()) {
+            map.insert_or_assign(part.key(), Json(part.value()));
+        }
+        
+        return map;
+    } catch(...) {
+        throw ObjectOrTypeException("unordered_map");
+    }
+}
+
 const std::vector<std::string> Json::getStringVector(std::string const name) const {
     try {
         std::vector<std::string> vector = std::vector<std::string>();
@@ -100,12 +115,12 @@ void Json::setInt(std::string key, int value) {
     external_json[key] = value;
 }
 
-int Json::getIntFromObject(std::string object, std::string key) { 
-    return external_json[object][key];
+const Json Json::getObject(std::string key) const {
+    return Json(external_json[key]);
 }
 
-void Json::addIntToObject(std::string object, std::string key, int value) {
-    external_json[object][key] = value;
+void Json::setObject(std::string key, Json json) {
+    external_json[key] = json.external_json;
 }
 
 std::ostream& operator<< (std::ostream& ostream, const Json& json) {
