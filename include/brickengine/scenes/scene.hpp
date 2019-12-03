@@ -11,7 +11,7 @@
 template<typename State>
 class Scene {
 public:
-    Scene() = default;
+    Scene() : prepared(false) {}
     // Fills the entities
     void prepare() {
         performPrepare();
