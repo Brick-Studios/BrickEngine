@@ -86,10 +86,10 @@ void CollisionDetector2::invalidateCache() {
 }
 
 std::vector<DiscreteCollision> CollisionDetector2::detectDiscreteCollision(int entity_id) {
-    //if (discrete_cache.count(entity_id)) {
-    //    ++cache_info.discrete_cache_hits;
-    //    return discrete_cache.at(entity_id);
-    //}
+    if (discrete_cache.count(entity_id)) {
+       ++cache_info.discrete_cache_hits;
+       return discrete_cache.at(entity_id);
+    }
 
     auto entity_collider = em.getComponent<RectangleColliderComponent>(entity_id);
     auto [ entity_position, entity_scale ] = em.getAbsoluteTransform(entity_id);
@@ -182,6 +182,7 @@ ContinuousCollision CollisionDetector2::detectContinuousCollision(int entity_id,
     ContinuousCollision collision { opposite_opt, space_left_start_value };
 
     for (auto& [ opposite_id, opposite_collider ] : opposite_entities_with_collider) {
+        // TODO: If opposite_id = colliders creator_id (for bullets, when a player/weapon shoots, spawns a bullet, you should not collide with it)
         // You cannot collide with family
         if (entity_parent && *entity_parent == opposite_id) continue;
         if (entity_children.count(opposite_id)) continue;
