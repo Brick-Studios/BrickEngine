@@ -86,10 +86,10 @@ void CollisionDetector2::invalidateCache() {
 }
 
 std::vector<DiscreteCollision> CollisionDetector2::detectDiscreteCollision(int entity_id) {
-    if (discrete_cache.count(entity_id)) {
-        ++cache_info.discrete_cache_hits;
-        return discrete_cache.at(entity_id);
-    }
+    //if (discrete_cache.count(entity_id)) {
+    //    ++cache_info.discrete_cache_hits;
+    //    return discrete_cache.at(entity_id);
+    //}
 
     auto entity_collider = em.getComponent<RectangleColliderComponent>(entity_id);
     auto [ entity_position, entity_scale ] = em.getAbsoluteTransform(entity_id);
@@ -111,8 +111,8 @@ std::vector<DiscreteCollision> CollisionDetector2::detectDiscreteCollision(int e
         bool is_trigger = false;
         if (entity_collider->is_trigger || opposite_collider->is_trigger) {
             // If there are no is_trigger_exceptions for these colliding entities,
-            // just continue, because is trigger needs to go through everything except
-            // some things
+            // put is_trigger on true, because is_trigger needs to go through everything
+            // except some things
             if (!hasTriggerException(em.getTags(entity_id),
                 em.getTags(opposite_id)))
                 is_trigger = true;
