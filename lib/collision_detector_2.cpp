@@ -46,16 +46,22 @@ std::vector<Collision> CollisionDetector2::detectCollision(int entity_id) {
     return collisions;
 }
 
-bool CollisionDetector2::findDisplacementException(std::set<std::string> tags_1, std::set<std::string> tags_2) const {
+bool CollisionDetector2::hasTriggerException(std::set<std::string> tags_1, std::set<std::string> tags_2) const {
+    // For every tag in tags_1
     for (const std::string& tag_1 : tags_1) {
+        // Is the tag in the trigger_tag_exceptions?
         if (is_trigger_tag_exceptions.count(tag_1)) {
+            // For every tag in tags_2
             for (const std::string& tag_2 : tags_2) {
+                // If tag_2 is in the list of tags_1?
                 if (is_trigger_tag_exceptions.at(tag_1).count(tag_2)) {
+                    // This entity should not collide with this trigger
                     return true;
                 }
             }
         }
     }
+    // Same as above but other way around
     for (const std::string& tag_2 : tags_2) {
         if (is_trigger_tag_exceptions.count(tag_2)) {
             for (const std::string& tag_1 : tags_1) {

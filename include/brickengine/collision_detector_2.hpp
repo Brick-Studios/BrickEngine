@@ -76,7 +76,7 @@ struct CollisionDetector2CacheInfo {
 class CollisionDetector2 {
 public:
     CollisionDetector2(std::unordered_map<std::string, std::set<std::string>> is_trigger_tag_exceptions, EntityManager& em);
-    bool findDisplacementException(std::set<std::string> tags_1, std::set<std::string> tags_2) const;
+    bool hasTriggerException(std::set<std::string> tags_1, std::set<std::string> tags_2) const;
     std::vector<DiscreteCollision> detectDiscreteCollision(int entity_id);
     ContinuousCollision detectContinuousCollision(int entity_id, Axis axis, Direction direction);
     std::vector<Collision> detectCollision(int entity_id);
@@ -86,6 +86,7 @@ public:
     void invalidateCache();
 private:
     EntityManager& em;
+    // Trigger exceptions that you still want collidable, left tag will collide with right tag.
     std::unordered_map<std::string, std::set<std::string>> is_trigger_tag_exceptions;
 
     // Cache

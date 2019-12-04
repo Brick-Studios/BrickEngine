@@ -1,7 +1,6 @@
 #include "brickengine/systems/physics_system.hpp"
 #include "brickengine/components/physics_component.hpp"
 #include "brickengine/components/transform_component.hpp"
-#include "brickengine/components/player_component.hpp"
 #include "brickengine/components/colliders/rectangle_collider_component.hpp"
 #include <iostream>
 #include <exception>
