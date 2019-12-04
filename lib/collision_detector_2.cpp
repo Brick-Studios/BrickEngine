@@ -113,7 +113,7 @@ std::vector<DiscreteCollision> CollisionDetector2::detectDiscreteCollision(int e
             // If there are no is_trigger_exceptions for these colliding entities,
             // just continue, because is trigger needs to go through everything except
             // some things
-            if (!findDisplacementException(em.getTags(entity_id),
+            if (!hasTriggerException(em.getTags(entity_id),
                 em.getTags(opposite_id)))
                 is_trigger = true;
         }
@@ -204,7 +204,7 @@ ContinuousCollision CollisionDetector2::detectContinuousCollision(int entity_id,
                     double difference = opposite_hit_wall - entity_hit_wall;
 
                     if (entity_collider->is_trigger || opposite_collider->is_trigger) {
-                        if (!findDisplacementException(em.getTags(entity_id),
+                        if (!hasTriggerException(em.getTags(entity_id),
                             em.getTags(opposite_id))) {
                             continue;
                         }
@@ -221,7 +221,7 @@ ContinuousCollision CollisionDetector2::detectContinuousCollision(int entity_id,
                     double difference = opposite_hit_wall - entity_hit_wall;
 
                     if (entity_collider->is_trigger || opposite_collider->is_trigger) {
-                        if (!findDisplacementException(em.getTags(entity_id),
+                        if (!hasTriggerException(em.getTags(entity_id),
                             em.getTags(opposite_id))) {
                             continue;
                         }
@@ -245,7 +245,7 @@ ContinuousCollision CollisionDetector2::detectContinuousCollision(int entity_id,
                     double difference = opposite_hit_wall - entity_hit_wall;
 
                     if (entity_collider->is_trigger || opposite_collider->is_trigger) {
-                        if (!findDisplacementException(em.getTags(entity_id),
+                        if (!hasTriggerException(em.getTags(entity_id),
                             em.getTags(opposite_id))) {
                             continue;
                         }
@@ -262,7 +262,7 @@ ContinuousCollision CollisionDetector2::detectContinuousCollision(int entity_id,
                     double difference = opposite_hit_wall - entity_hit_wall;
 
                     if (entity_collider->is_trigger || opposite_collider->is_trigger) {
-                        if (!findDisplacementException(em.getTags(entity_id),
+                        if (!hasTriggerException(em.getTags(entity_id),
                             em.getTags(opposite_id))) {
                             continue;
                         }
