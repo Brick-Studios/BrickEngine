@@ -45,6 +45,14 @@ public:
         }
     }
 
+    void setTimeToWait(int player_id, T input, double time_to_wait_value) {
+        time_to_wait[player_id][input] = std::make_pair(time_to_wait_value, time_to_wait_value);
+    }
+
+    void removeTimeToWait(int player_id, T input) {
+        time_to_wait.at(player_id).erase(input);
+    }
+
     // This function is intended for the UI so the game loop is not affected.
     void popInput(int player_id, T const input) {
         if(inputs[player_id].count(input))
@@ -94,7 +102,7 @@ public:
         for (auto& [ player_id, to_wait_map ] : time_to_wait) {
             for (auto& [ input, to_wait ] : to_wait_map) {
                 to_wait.second += deltatime;
-                inputs[player_id][input] = false;
+                    inputs[player_id][input] = false;
             }
         }
         SDL_Event e;
@@ -128,12 +136,17 @@ public:
                                         }
                                         break;
                                     case SDL_KEYUP:
-                                        if(axis_map.count(*input))
-                                            inputs[player_id][input_mapping[player_id][*input]] -= axis_map[*input];
-                                        else
+                                        if(axis_map.count(*input)) {
+                                            if(time_to_wait[player_id].count(input_mapping[player_id][*input])) 
+                                                inputs[player_id][input_mapping[player_id][*input]] = 0;
+                                            else
+                                                inputs[player_id][input_mapping[player_id][*input]] -= axis_map[*input];
+                                        }
+                                        else {
                                             inputs[player_id][input_mapping[player_id][*input]] = false;
+                                        }
                                         break;
-                                    default:
+                                   default:
                                         break;
                                 }
                             }
@@ -145,23 +158,33 @@ public:
                         if(e.jaxis.which == controller) {
                             // For some reason you cannot get the axis of the current joyaxis motion. So we need to calculate both.
 
-                            // Y and X are reversed in a controller
-                            auto y_value = SDL_GameControllerGetAxis(controllers.at(controller), SDL_CONTROLLER_AXIS_LEFTX);
-                            auto x_value = SDL_GameControllerGetAxis(controllers.at(controller), SDL_CONTROLLER_AXIS_LEFTY);
+                            auto y_value = SDL_GameControllerGetAxis(controllers.at(controller), SDL_CONTROLLER_AXIS_LEFTY);
+                            auto x_value = SDL_GameControllerGetAxis(controllers.at(controller), SDL_CONTROLLER_AXIS_LEFTX);
 
                             // Scale the value from the controller range to -1 and 1
                             double old_range = 32767 + 32768;
                             double new_range = 1 + 1;
                             double new_value_x = (((x_value + 32768) * new_range) / old_range) - 1;
                             double new_value_y = (((y_value + 32768) * new_range) / old_range) - 1;
-                             
-                            if(x_value < JOYSTICK_DEADZONE && x_value > -JOYSTICK_DEADZONE)
+
+                            if(x_value < JOYSTICK_DEADZONE && x_value > -JOYSTICK_DEADZONE) {
                                 new_value_x = 0;
-                            if(y_value < JOYSTICK_DEADZONE && y_value > -JOYSTICK_DEADZONE)
+                            }
+                             
+                            if(y_value < JOYSTICK_DEADZONE && y_value > -JOYSTICK_DEADZONE) {
                                 new_value_y = 0; 
-                    
-                            inputs[player_id][input_mapping[player_id][InputKeyCode::EController_x_axis]] = new_value_x;
-                            inputs[player_id][input_mapping[player_id][InputKeyCode::EController_y_axis]] = new_value_y;
+                            }
+                            
+                            if (time_to_wait[player_id].count(input_mapping[player_id][InputKeyCode::EController_x_axis])) {
+                                auto& time_to_wait_for_key = time_to_wait[player_id][input_mapping[player_id][InputKeyCode::EController_x_axis]];
+                                if (time_to_wait_for_key.second >= time_to_wait_for_key.first) {
+                                    auto current_value = inputs[player_id][input_mapping[player_id][InputKeyCode::EController_x_axis]];
+                                    inputs[player_id][input_mapping[player_id][InputKeyCode::EController_x_axis]] = new_value_x;
+                                    time_to_wait_for_key.second = 0;
+                                }
+                            } else {
+                                inputs[player_id][input_mapping[player_id][InputKeyCode::EController_x_axis]] = new_value_x;
+                            }
                             break;
                         }
                     }
@@ -434,6 +457,9 @@ private:
         keycode_mapping.insert({SDLK_SPACE, InputKeyCode::EKey_space});
         keycode_mapping.insert({SDLK_KP_ENTER, InputKeyCode::Ekey_enter});
         keycode_mapping.insert({SDLK_BACKSPACE, InputKeyCode::EKey_backspace});
+        keycode_mapping.insert({SDLK_PAGEDOWN, InputKeyCode::EKey_pagedown});
+        keycode_mapping.insert({SDLK_PAGEUP, InputKeyCode::EKey_pageup});
+        keycode_mapping.insert({SDLK_HOME, InputKeyCode::EKey_home});
 
         // Mouse input
         keycode_mapping.insert({SDL_BUTTON_LEFT, InputKeyCode::EKey_mouse_left});
