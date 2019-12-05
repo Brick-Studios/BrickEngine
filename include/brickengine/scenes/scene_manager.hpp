@@ -31,7 +31,10 @@ public:
         auto entity_comps = scene_ref.getEntityComponents();
         if (entity_comps) {
             for (auto& entity_comps : *entity_comps) {
-                entity_manager.createEntity(std::move(entity_comps), std::nullopt, scene_ref.getTag());
+                auto entity_id = entity_manager.createEntity(std::move(entity_comps.components), std::nullopt, scene_ref.getTag());
+                for(auto& tag : entity_comps.tags) {
+                    entity_manager.setTag(entity_id, tag);
+                }
             }
         }
         scene_ref.start();
