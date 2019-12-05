@@ -115,7 +115,9 @@ void Json::setInt(std::string key, int value) {
     external_json[key] = value;
 }
 
-const Json Json::getObject(std::string key) const {
+const Json Json::getObject(std::string key) {
+    if(external_json[key].empty())
+        external_json[key] = nlohmann::json::object();
     return Json(external_json[key]);
 }
 
