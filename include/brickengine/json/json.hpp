@@ -21,8 +21,9 @@ public:
     void setString(std::string key, std::string value);
     void setInt(std::string key, int value);
     Json createObject(std::string key);
-    const Json getObject(std::string key);
+    Json getObject(std::string key);
     void setObject(std::string key, Json json);
+    bool empty();
     const std::unordered_map<std::string, Json> getUnorderedMap() const;
     friend std::ostream& operator<< (std::ostream& ostream, const Json& json);
 private:

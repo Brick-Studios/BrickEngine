@@ -115,7 +115,7 @@ void Json::setInt(std::string key, int value) {
     external_json[key] = value;
 }
 
-const Json Json::getObject(std::string key) {
+Json Json::getObject(std::string key) {
     if(external_json[key].empty())
         external_json[key] = nlohmann::json::object();
     return Json(external_json[key]);
@@ -123,6 +123,10 @@ const Json Json::getObject(std::string key) {
 
 void Json::setObject(std::string key, Json json) {
     external_json[key] = json.external_json;
+}
+
+bool Json::empty() {
+    return external_json.empty();
 }
 
 std::ostream& operator<< (std::ostream& ostream, const Json& json) {
