@@ -9,6 +9,7 @@
 
 /* Collision Detector 2
    Also better known as:
+   - The one that replaces the old Collision Detector
    - Collision II
    - Inspector Collision Detector 2
    - The Sequel
