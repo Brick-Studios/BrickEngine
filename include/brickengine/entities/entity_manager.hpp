@@ -254,6 +254,7 @@ public:
     }
     void removeTag(int entity, std::string tag) {
         if (!tagging_entities.count(entity)) return;
+        if (!tagging_entities.at(entity).count(tag)) return;
         tagging_entities.at(entity).erase(tag);
         tagging_tags.at(tag).erase(entity);
     }

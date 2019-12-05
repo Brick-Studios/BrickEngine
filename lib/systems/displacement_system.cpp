@@ -6,8 +6,6 @@
 DisplacementSystem::DisplacementSystem(CollisionDetector2& cd, std::shared_ptr<EntityManager> em)
     : System(em), collision_detector(cd) {}
 
-
-
 void DisplacementSystem::update(double) {
     auto entities_with_collider = entityManager->getEntitiesByComponent<RectangleColliderComponent>();
 
@@ -19,6 +17,7 @@ void DisplacementSystem::update(double) {
         if (entity_physics->collision_detection != CollisionDetectionType::Discrete) continue;
         // If the entity is standing was standing still, there is no use in going any further
         if (entity_physics->vx == 0 && entity_physics->vy == 0) continue;
+        if (!entity_collider->should_displace) continue;
 
         std::vector<DiscreteCollision> collisions = collision_detector.detectDiscreteCollision(entity_id);
         // No collisions? Just continue
@@ -28,7 +27,8 @@ void DisplacementSystem::update(double) {
 
         for (const DiscreteCollision& collision : collisions) {
             if (collision.is_trigger) continue;
-
+            auto opposite_collider = entityManager->getComponent<RectangleColliderComponent>(collision.opposite_id);
+            if (!opposite_collider->should_displace) continue;
             entity_transform->x_pos += collision.delta.x;
             entity_transform->y_pos += collision.delta.y;
 
