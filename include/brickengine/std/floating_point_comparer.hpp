@@ -8,11 +8,10 @@
 #include <type_traits>
 #include <algorithm>
 
- 
 class FloatingPointComparer {
 public:
     static bool is_equal_to_zero(double f) {
-        return f < 1e-10;
+        return std::fabs(f) < 1e-10;
     }
 };
 
