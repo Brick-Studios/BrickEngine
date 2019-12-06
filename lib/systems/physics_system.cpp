@@ -2,6 +2,7 @@
 #include "brickengine/components/physics_component.hpp"
 #include "brickengine/components/transform_component.hpp"
 #include "brickengine/components/colliders/rectangle_collider_component.hpp"
+#include "brickengine/std/floating_point_comparer.hpp"
 #include <iostream>
 #include <exception>
 
@@ -93,11 +94,11 @@ void PhysicsSystem::updateContinuous(int entity_id, TransformComponent& transfor
     if (physics.vx > 0) { // Moving right
         const auto collision = collision_detector.detectContinuousCollision(entity_id, Axis::X, Direction::POSITIVE);
 
-        if (collision.space_left == 0) {
+        if (FloatingPointComparer::is_equal_to_zero(collision.space_left)) {
             physics.vx = 0;
         } else {
             double to_move = vx;
-            if (to_move >= collision.space_left) {
+            if (to_move > collision.space_left || FloatingPointComparer::is_equal_to_zero(collision.space_left)) {
                 to_move = collision.space_left;
             }
             else 
@@ -109,11 +110,11 @@ void PhysicsSystem::updateContinuous(int entity_id, TransformComponent& transfor
     if (physics.vx < 0) { // Moving left
         const auto collision = collision_detector.detectContinuousCollision(entity_id, Axis::X, Direction::NEGATIVE);
 
-        if (collision.space_left == 0) {
+        if (FloatingPointComparer::is_equal_to_zero(collision.space_left)) {
             physics.vx = 0;
         } else {
             double to_move = vx;
-            if (to_move <= collision.space_left){
+            if (to_move < collision.space_left || FloatingPointComparer::is_equal_to_zero(collision.space_left)){
                 to_move = collision.space_left;
             }
             else 
@@ -125,11 +126,11 @@ void PhysicsSystem::updateContinuous(int entity_id, TransformComponent& transfor
     if (physics.vy > 0) { // Moving down
         const auto collision = collision_detector.detectContinuousCollision(entity_id, Axis::Y, Direction::POSITIVE);
 
-        if (collision.space_left == 0) {
+        if (FloatingPointComparer::is_equal_to_zero(collision.space_left)) {
             physics.vy = 0;
         } else {
             double to_move = vy;
-            if (to_move >= collision.space_left){
+            if (to_move > collision.space_left || FloatingPointComparer::is_equal_to_zero(collision.space_left)){
                  to_move = collision.space_left;
             }
             else 
@@ -141,11 +142,11 @@ void PhysicsSystem::updateContinuous(int entity_id, TransformComponent& transfor
     if (physics.vy < 0) { // Moving up
         const auto collision = collision_detector.detectContinuousCollision(entity_id, Axis::Y, Direction::NEGATIVE);
 
-        if (collision.space_left == 0) {
+        if (FloatingPointComparer::is_equal_to_zero(collision.space_left)) {
             physics.vy = 0;
         } else {
             double to_move = vy;
-            if (to_move <= collision.space_left){
+            if (to_move < collision.space_left || FloatingPointComparer::is_equal_to_zero(collision.space_left)){
                 to_move = collision.space_left;
             }
             else 
