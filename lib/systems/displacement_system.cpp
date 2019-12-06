@@ -34,9 +34,9 @@ void DisplacementSystem::update(double) {
             entity_transform->x_pos += collision.delta.x;
             entity_transform->y_pos += collision.delta.y;
 
-            if (collision.delta.x != 0)
+            if (!FloatingPointComparer::is_equal_to_zero(collision.delta.x))
                 entity_physics->vx = 0;
-            if (collision.delta.y != 0)
+            if (!FloatingPointComparer::is_equal_to_zero(collision.delta.y))
                 entity_physics->vy = 0;
         }
     }

@@ -24,7 +24,7 @@ void PhysicsSystem::update(double deltatime) {
 
         // Gravity
         const ContinuousCollision collision = collision_detector.detectContinuousCollision(entity_id, Axis::Y, Direction::POSITIVE);
-        if (collision.space_left != 0) {
+        if (!FloatingPointComparer::is_equal_to_zero(collision.space_left)) {
             if (physics->gravity) {
                 double slow_down_amount = (GRAVITY * mass) * deltatime;
                 double vy_gravity = physics->vy + slow_down_amount;
@@ -38,7 +38,7 @@ void PhysicsSystem::update(double deltatime) {
         // Drag
         // This first part of the expresion basicly checks whether we are on the ground right now.
         // It is not 100% correct, but it does increase performance by a ton
-        if (physics->drag && (physics->vy > GRAVITY || physics->vy < GRAVITY * -1) && physics->vx != 0) {
+        if (physics->drag && (physics->vy > GRAVITY || physics->vy < GRAVITY * -1) && !FloatingPointComparer::is_equal_to_zero(physics->vx)) {
             double horizontal_drag_with_modifier = HORIZONTAL_DRAG / delta_time_modifier;
             const double slow_down_amount = (horizontal_drag_with_modifier * mass) * deltatime;
             double vx_drag;
