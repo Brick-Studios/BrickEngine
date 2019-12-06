@@ -1,6 +1,8 @@
 #include "brickengine/collision_detector_2.hpp"
 #include "brickengine/components/colliders/rectangle_collider_component.hpp"
 #include "brickengine/components/physics_component.hpp"
+#include "brickengine/components/player_component.hpp"
+#include "brickengine/std/floating_point_comparer.hpp"
 #include "brickengine/std/sign.hpp"
 #include <cmath>
 #include <algorithm>
@@ -20,25 +22,25 @@ std::vector<Collision> CollisionDetector2::detectCollision(int entity_id) {
     } else if (physics->collision_detection == CollisionDetectionType::Continuous) {
         {
             auto collision = this->detectContinuousCollision(entity_id, Axis::X, Direction::NEGATIVE);
-            if (collision.space_left >= 0 && collision.opposite_id) {
+            if ((collision.space_left > 0 || FloatingPointComparer::is_equal_to_zero(collision.space_left)) && collision.opposite_id) {
                 collisions.push_back(Collision(*collision.opposite_id, false));
             }
         }
         {
             auto collision = this->detectContinuousCollision(entity_id, Axis::X, Direction::POSITIVE);
-            if (collision.space_left <= 0 && collision.opposite_id) {
+            if ((collision.space_left < 0 || FloatingPointComparer::is_equal_to_zero(collision.space_left)) && collision.opposite_id) {
                 collisions.push_back(Collision(*collision.opposite_id, false));
             }
         }
         {
             auto collision = this->detectContinuousCollision(entity_id, Axis::Y, Direction::NEGATIVE);
-            if (collision.space_left >= 0 && collision.opposite_id) {
+            if ((collision.space_left > 0 || FloatingPointComparer::is_equal_to_zero(collision.space_left)) && collision.opposite_id) {
                 collisions.push_back(Collision(*collision.opposite_id, false));
             }
         }
         {
             auto collision = this->detectContinuousCollision(entity_id, Axis::Y, Direction::POSITIVE);
-            if (collision.space_left <= 0 && collision.opposite_id) {
+            if ((collision.space_left < 0 || FloatingPointComparer::is_equal_to_zero(collision.space_left)) && collision.opposite_id) {
                 collisions.push_back(Collision(*collision.opposite_id, false));
             }
         }
@@ -86,10 +88,10 @@ void CollisionDetector2::invalidateCache() {
 }
 
 std::vector<DiscreteCollision> CollisionDetector2::detectDiscreteCollision(int entity_id) {
-    if (discrete_cache.count(entity_id)) {
-       ++cache_info.discrete_cache_hits;
-       return discrete_cache.at(entity_id);
-    }
+    //if (discrete_cache.count(entity_id)) {
+    //   ++cache_info.discrete_cache_hits;
+    //   return discrete_cache.at(entity_id);
+    //}
 
     auto entity_collider = em.getComponent<RectangleColliderComponent>(entity_id);
     auto [ entity_position, entity_scale ] = em.getAbsoluteTransform(entity_id);
@@ -157,11 +159,11 @@ std::vector<DiscreteCollision> CollisionDetector2::detectDiscreteCollision(int e
 }
 
 ContinuousCollision CollisionDetector2::detectContinuousCollision(int entity_id, Axis axis, Direction direction) {
-    if (continuous_cache.count(entity_id) && continuous_cache.at(entity_id).count(axis)
-        && continuous_cache.at(entity_id).at(axis).count(direction)) {
-        ++cache_info.continuous_cache_hits;
-        return continuous_cache.at(entity_id).at(axis).at(direction);
-    }
+    //if (continuous_cache.count(entity_id) && continuous_cache.at(entity_id).count(axis)
+    //    && continuous_cache.at(entity_id).at(axis).count(direction)) {
+    //    ++cache_info.continuous_cache_hits;
+    //    return continuous_cache.at(entity_id).at(axis).at(direction);
+    //}
 
     // We only support rectangles
     auto entity_collider = em.getComponent<RectangleColliderComponent>(entity_id);
@@ -240,6 +242,8 @@ ContinuousCollision CollisionDetector2::detectContinuousCollision(int entity_id,
 
             if (direction == Direction::POSITIVE) { // Down
                 if (entity_x_start < opposite_x_end && opposite_x_start < entity_x_end) {
+                    double x = 0;
+                    x++;
                     double opposite_hit_wall = opposite_position.y - ((opposite_scale.y * opposite_collider->y_scale) / 2);
                     double entity_hit_wall = entity_position.y + ((entity_scale.y * entity_collider->y_scale) / 2);
                     double difference = opposite_hit_wall - entity_hit_wall;

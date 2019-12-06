@@ -5,7 +5,7 @@
 #include <vector>
 #include <memory>
 
-#include "brickengine/components/component.hpp"
+#include "data/entity_components.hpp"
 #include "enums/scene_layer.hpp"
 
 template<typename State>
@@ -22,7 +22,7 @@ public:
     virtual State getSystemState() const = 0;
     virtual std::string getTag() const = 0;
     virtual SceneLayer getLayer() const = 0;
-    std::unique_ptr<std::vector<std::unique_ptr<std::vector<std::unique_ptr<Component>>>>> getEntityComponents() {
+    std::unique_ptr<std::vector<EntityComponents>> getEntityComponents() {
         prepared = false;
         return std::move(entity_components);
     }
@@ -33,7 +33,7 @@ public:
 protected:
     virtual void performPrepare() = 0;
     // This can be nullptr as not all scenes actually use entity_components
-    std::unique_ptr<std::vector<std::unique_ptr<std::vector<std::unique_ptr<Component>>>>> entity_components;
+    std::unique_ptr<std::vector<EntityComponents>> entity_components;
     bool prepared;
 };
 

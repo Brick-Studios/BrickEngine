@@ -2,6 +2,7 @@
 #include "brickengine/components/physics_component.hpp"
 #include "brickengine/components/transform_component.hpp"
 #include "brickengine/components/colliders/rectangle_collider_component.hpp"
+#include "brickengine/std/floating_point_comparer.hpp"
 #include <iostream>
 #include <exception>
 
@@ -23,7 +24,7 @@ void PhysicsSystem::update(double deltatime) {
 
         // Gravity
         const ContinuousCollision collision = collision_detector.detectContinuousCollision(entity_id, Axis::Y, Direction::POSITIVE);
-        if (collision.space_left != 0) {
+        if (!FloatingPointComparer::is_equal_to_zero(collision.space_left)) {
             if (physics->gravity) {
                 double slow_down_amount = (GRAVITY * mass) * deltatime;
                 double vy_gravity = physics->vy + slow_down_amount;
@@ -37,7 +38,7 @@ void PhysicsSystem::update(double deltatime) {
         // Drag
         // This first part of the expresion basicly checks whether we are on the ground right now.
         // It is not 100% correct, but it does increase performance by a ton
-        if (physics->drag && (physics->vy > GRAVITY || physics->vy < GRAVITY * -1) && physics->vx != 0) {
+        if (physics->drag && (physics->vy > GRAVITY || physics->vy < GRAVITY * -1) && !FloatingPointComparer::is_equal_to_zero(physics->vx)) {
             double horizontal_drag_with_modifier = HORIZONTAL_DRAG / delta_time_modifier;
             const double slow_down_amount = (horizontal_drag_with_modifier * mass) * deltatime;
             double vx_drag;
@@ -93,11 +94,11 @@ void PhysicsSystem::updateContinuous(int entity_id, TransformComponent& transfor
     if (physics.vx > 0) { // Moving right
         const auto collision = collision_detector.detectContinuousCollision(entity_id, Axis::X, Direction::POSITIVE);
 
-        if (collision.space_left == 0) {
+        if (FloatingPointComparer::is_equal_to_zero(collision.space_left)) {
             physics.vx = 0;
         } else {
             double to_move = vx;
-            if (to_move >= collision.space_left) {
+            if (to_move > collision.space_left || FloatingPointComparer::is_equal_to_zero(collision.space_left)) {
                 to_move = collision.space_left;
             }
             else 
@@ -109,11 +110,11 @@ void PhysicsSystem::updateContinuous(int entity_id, TransformComponent& transfor
     if (physics.vx < 0) { // Moving left
         const auto collision = collision_detector.detectContinuousCollision(entity_id, Axis::X, Direction::NEGATIVE);
 
-        if (collision.space_left == 0) {
+        if (FloatingPointComparer::is_equal_to_zero(collision.space_left)) {
             physics.vx = 0;
         } else {
             double to_move = vx;
-            if (to_move <= collision.space_left){
+            if (to_move < collision.space_left || FloatingPointComparer::is_equal_to_zero(collision.space_left)){
                 to_move = collision.space_left;
             }
             else 
@@ -125,11 +126,11 @@ void PhysicsSystem::updateContinuous(int entity_id, TransformComponent& transfor
     if (physics.vy > 0) { // Moving down
         const auto collision = collision_detector.detectContinuousCollision(entity_id, Axis::Y, Direction::POSITIVE);
 
-        if (collision.space_left == 0) {
+        if (FloatingPointComparer::is_equal_to_zero(collision.space_left)) {
             physics.vy = 0;
         } else {
             double to_move = vy;
-            if (to_move >= collision.space_left){
+            if (to_move > collision.space_left || FloatingPointComparer::is_equal_to_zero(collision.space_left)){
                  to_move = collision.space_left;
             }
             else 
@@ -141,11 +142,11 @@ void PhysicsSystem::updateContinuous(int entity_id, TransformComponent& transfor
     if (physics.vy < 0) { // Moving up
         const auto collision = collision_detector.detectContinuousCollision(entity_id, Axis::Y, Direction::NEGATIVE);
 
-        if (collision.space_left == 0) {
+        if (FloatingPointComparer::is_equal_to_zero(collision.space_left)) {
             physics.vy = 0;
         } else {
             double to_move = vy;
-            if (to_move <= collision.space_left){
+            if (to_move < collision.space_left || FloatingPointComparer::is_equal_to_zero(collision.space_left)){
                 to_move = collision.space_left;
             }
             else 
