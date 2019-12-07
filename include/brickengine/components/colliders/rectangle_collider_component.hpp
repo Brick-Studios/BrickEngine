@@ -5,7 +5,7 @@
 
 class RectangleColliderComponent : public ComponentImpl<RectangleColliderComponent> {
 public:
-    RectangleColliderComponent(double x_scale, double y_scale, double z_scale, bool is_trigger);
+    RectangleColliderComponent(double x_scale, double y_scale, double z_scale, bool is_trigger, bool should_displace);
     static std::string getNameStatic();
 
     // Data
@@ -13,6 +13,7 @@ public:
     double y_scale;
     double z_scale;
     bool is_trigger; // If the component is able to be moved through and only be used as a "trigger"
+    bool should_displace;
 };
 
 #endif // FILE_RECTANGLE_COLLISION_COMPONENT_HPP
