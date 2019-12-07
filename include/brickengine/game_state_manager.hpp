@@ -22,17 +22,12 @@ public:
         // Check whether the state exists in the reset on set state.
         if (!reset_on_set_state.count(state))
             throw ResetOnSetStateNotSetException<State>(state);
-        // if (0!reset_on_set_state.count(current_state))
-        //     throw ResetOnSetStateNotSetException<State>(current_state);
         
         // Checks whether the state has systems affiliated with it.
         if (!state_systems->count(state))
             throw StateSystemsNotSet<State>(state);
-        // if (!state_systems->count(current_state))
-        //     throw StateSystemsNotSet<State>(current_state);
 
         // Reset systems
-        // if (reset_on_set_state.at(state) && reset_on_set_state.at(current_state)) {
         if (reset_on_set_state.at(state)) {
             for (auto& system : *state_systems->at(state)) {
                 system->reset();
