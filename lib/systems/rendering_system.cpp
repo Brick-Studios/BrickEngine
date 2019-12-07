@@ -1,23 +1,38 @@
 #include "brickengine/systems/rendering_system.hpp"
 #include "brickengine/components/transform_component.hpp"
+#include "brickengine/components/animation_component.hpp"
 #include "brickengine/components/renderables/texture_component.hpp"
 #include <iostream>
 
 RenderingSystem::RenderingSystem(std::shared_ptr<EntityManager> entityManager, Renderer& renderer)
                 : System(entityManager), renderer(renderer) {}
 
-void RenderingSystem::update(double){
+void RenderingSystem::update(double deltatime){
     auto entitiesWithTexture = entityManager->getEntitiesByComponent<TextureComponent>();
 
     for(auto& [entityId, texture] : entitiesWithTexture) {
         auto transform = entityManager->getComponent<TransformComponent>(entityId);
+        auto animation = entityManager->getComponent<AnimationComponent>(entityId);
 
         auto dst = texture->getTexture()->getDstRect();
         auto [ position, scale ] = entityManager->getAbsoluteTransform(entityId);
         dst->x = position.x - (scale.x / 2);
         dst->y = position.y - (scale.y / 2);
         dst->w = scale.x;
-        dst->h = scale.y;        
+        dst->h = scale.y;
+        
+        if (animation) {
+            animation->time += deltatime;
+            if (animation->time >= animation->update_time){
+                animation->seconds++;
+                animation->time = 0;
+            }
+            animation->sprite = animation->seconds % animation->sprite_size;
+            auto src = texture->getTexture()->getSrcRect();
+            if (src) {
+                src->x = animation->sprite * src->w;
+            }
+        }
 
         texture->getTexture()->setFlip(SDL_FLIP_NONE);
         SDL_RendererFlip flip = SDL_FLIP_NONE;

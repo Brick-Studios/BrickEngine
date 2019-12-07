@@ -17,7 +17,7 @@ public:
     std::unique_ptr<Texture> createImage(std::string path, int layer, std::unique_ptr<Rect> dst, int alpha) const;
     // dst = where the image should be drawn
     // src = what part of the image should be drawn
-    std::unique_ptr<Texture> createImage(std::string path, int layer, std::unique_ptr<Rect> dst, std::unique_ptr<Rect> src) const;
+    std::unique_ptr<Texture> createImage(std::string path, int layer, std::unique_ptr<Rect> dst, std::unique_ptr<Rect> src, int alpha) const;
     std::unique_ptr<Circle> createCircle(int x, int y, int radius, bool filled, Color color, int layer) const;
     std::unique_ptr<Line> createLine(int x1, int y1, int x2, int y2, Color color, int layer) const;
 private:
