@@ -398,6 +398,9 @@ private:
         sdl_mapping.insert({InputKeyCode::Ekey_enter, SDLK_KP_ENTER});
         sdl_mapping.insert({InputKeyCode::EKey_backspace, SDLK_BACKSPACE});
 
+        // F keys
+        sdl_mapping.insert({InputKeyCode::EKey_f5, SDLK_F5});
+
         // Mouse input
         sdl_mapping.insert({InputKeyCode::EKey_mouse_left, SDL_BUTTON_LEFT});
         sdl_mapping.insert({InputKeyCode::EKey_mouse_right, SDL_BUTTON_RIGHT});
@@ -460,6 +463,9 @@ private:
         keycode_mapping.insert({SDLK_PAGEDOWN, InputKeyCode::EKey_pagedown});
         keycode_mapping.insert({SDLK_PAGEUP, InputKeyCode::EKey_pageup});
         keycode_mapping.insert({SDLK_HOME, InputKeyCode::EKey_home});
+
+        // F keys
+        keycode_mapping.insert({SDLK_F5, InputKeyCode::EKey_f5});
 
         // Mouse input
         keycode_mapping.insert({SDL_BUTTON_LEFT, InputKeyCode::EKey_mouse_left});
