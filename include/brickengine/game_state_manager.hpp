@@ -19,16 +19,24 @@ public:
         : state_systems(std::move(state_systems)), reset_on_set_state(reset_on_set_state), current_state(begin_state) {}
 
     void setState(State state) {
-        // Check whether the state exists in the reset on set state.
-        if (!reset_on_set_state.count(state))
-            throw ResetOnSetStateNotSetException<State>(state);
-        
-        // Checks whether the state has systems affiliated with it.
-        if (!state_systems->count(state))
-            throw StateSystemsNotSet<State>(state);
+        bool reset_systems = true;
+
+        // The game is initialized and has a current_state.
+        if((int)current_state != 0){                
+            // Check whether the state exists in the reset on set state.
+            if (!reset_on_set_state.count(state))
+                throw ResetOnSetStateNotSetException<State>(state);
+            
+            // Checks whether the state has systems affiliated with it.
+            if (!state_systems->count(state))
+                throw StateSystemsNotSet<State>(state);
+
+            reset_systems = reset_on_set_state.at(state);
+        }
+
 
         // Reset systems
-        if (reset_on_set_state.at(state)) {
+        if (reset_systems) {
             for (auto& system : *state_systems->at(state)) {
                 system->reset();
             }
