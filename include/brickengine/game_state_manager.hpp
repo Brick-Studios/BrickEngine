@@ -33,8 +33,7 @@ public:
         // The game is initialized and has a current_state.
         if((int)current_state != 0){
             // Check whether the current scene should be resetted on start.
-            if(!reset_on_set_state.at(current_state).reset_on_start ||
-            !reset_on_set_state.at(current_state).reset_on_end)
+            if(!reset_on_set_state.at(current_state).reset_on_end)
                 reset_systems = false;
         }
 
