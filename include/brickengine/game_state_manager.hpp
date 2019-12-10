@@ -17,8 +17,12 @@ public:
     using Systems = std::vector<std::unique_ptr<System>>;
     using StateSystems = std::unordered_map<State, std::unique_ptr<Systems>>;
 
-    GameStateManager(std::unique_ptr<StateSystems> state_systems, std::unordered_map<State, SceneResetState> reset_on_set_state, State begin_state)
-        : state_systems(std::move(state_systems)), reset_on_set_state(reset_on_set_state), current_state(begin_state), next_state(std::nullopt) {}
+    GameStateManager(std::unordered_map<State, SceneResetState> reset_on_set_state, State begin_state)
+        : reset_on_set_state(reset_on_set_state), current_state(begin_state), next_state(std::nullopt) {}
+
+    void setStateSystems(std::unique_ptr<StateSystems> state_systems) {
+        this->state_systems.swap(state_systems);
+    }
 
     // The actual state switch will happen in the next frame, when getSystems is called.
     void setState(State state) {
@@ -34,6 +38,8 @@ public:
 
     std::vector<std::unique_ptr<System>>& getSystems() {
         if (next_state) {
+            // Reset works as a AND gate. The inputs are current_state.reset_on_end and 
+            // next_state.reset_on_start.
             bool reset_systems = true;
 
             // The game is initialized and has a current_state.
@@ -43,7 +49,7 @@ public:
                     reset_systems = false;
             }
 
-            if(!reset_systems)
+            if(reset_systems)
                 reset_systems = reset_on_set_state.at(*next_state).reset_on_start;
 
             // Reset systems
