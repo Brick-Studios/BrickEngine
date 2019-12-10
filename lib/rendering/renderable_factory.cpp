@@ -21,8 +21,8 @@ std::unique_ptr<Texture> RenderableFactory::createImage(std::string path, int la
     return std::make_unique<Texture>(std::move(shared_texture), layer, alpha, std::move(dst));
 }
 
-std::unique_ptr<Texture> RenderableFactory::createText(std::string text, int font_size, Color color, int layer, std::unique_ptr<Rect> dst) const {
-    TTF_Font* roboto = TTF_OpenFont("./assets/fonts/Roboto-Bold.ttf", font_size);
+std::unique_ptr<Texture> RenderableFactory::createText(std::string font_path, std::string text, int font_size, Color color, int layer, std::unique_ptr<Rect> dst) const {
+    TTF_Font* roboto = TTF_OpenFont(font_path.c_str(), font_size);
 
     SDL_Color sdlColor;
     sdlColor.r = color.r;

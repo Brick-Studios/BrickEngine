@@ -14,7 +14,7 @@
 #include "SDL2/SDL_ttf.h"
 #include "SDL2/SDL_image.h"
 
-BrickEngine::BrickEngine(const std::string window_name, const int window_width, const int window_height, std::vector<int> layers, int fps_cap) : fps_cap(fps_cap), window(nullptr, nullptr) {
+BrickEngine::BrickEngine(const std::string window_name, const int window_width, const int window_height, std::vector<int> layers, int fps_cap, std::string font_path) : fps_cap(fps_cap), font_path(font_path), window(nullptr, nullptr) {
     this->fps = 5;
     this->layers = layers;
     this->top_layer = layers.back();
@@ -105,7 +105,7 @@ void BrickEngine::delay(std::chrono::time_point<std::chrono::high_resolution_clo
 
 void BrickEngine::drawFpsCounter() {
     auto dst = std::unique_ptr<Rect>(new Rect { 0, 0, 75, 75});
-    this->fps_counter = this->getRenderableFactory()->createText(std::to_string(this->fps), 24, { 0, 255, 0, 0}, this->top_layer, std::move(dst));
+    this->fps_counter = this->getRenderableFactory()->createText(this->font_path, std::to_string(this->fps), 24, { 0, 255, 0, 0}, this->top_layer, std::move(dst));
     this->getRenderer()->queueRenderable(fps_counter.get());
 }
 
