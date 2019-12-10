@@ -398,6 +398,19 @@ private:
         sdl_mapping.insert({InputKeyCode::Ekey_enter, SDLK_KP_ENTER});
         sdl_mapping.insert({InputKeyCode::EKey_backspace, SDLK_BACKSPACE});
 
+        sdl_mapping.insert({InputKeyCode::EKey_f1, SDLK_F1});
+        sdl_mapping.insert({InputKeyCode::EKey_f2, SDLK_F2});
+        sdl_mapping.insert({InputKeyCode::EKey_f3, SDLK_F3});
+        sdl_mapping.insert({InputKeyCode::EKey_f4, SDLK_F4});
+        sdl_mapping.insert({InputKeyCode::EKey_f5, SDLK_F5});
+        sdl_mapping.insert({InputKeyCode::EKey_f6, SDLK_F6});
+        sdl_mapping.insert({InputKeyCode::EKey_f7, SDLK_F7});
+        sdl_mapping.insert({InputKeyCode::EKey_f8, SDLK_F8});
+        sdl_mapping.insert({InputKeyCode::EKey_f9, SDLK_F9});
+        sdl_mapping.insert({InputKeyCode::EKey_f10, SDLK_F10});
+        sdl_mapping.insert({InputKeyCode::EKey_f11, SDLK_F11});
+        sdl_mapping.insert({InputKeyCode::EKey_f12, SDLK_F12});
+
         // Mouse input
         sdl_mapping.insert({InputKeyCode::EKey_mouse_left, SDL_BUTTON_LEFT});
         sdl_mapping.insert({InputKeyCode::EKey_mouse_right, SDL_BUTTON_RIGHT});
@@ -460,6 +473,19 @@ private:
         keycode_mapping.insert({SDLK_PAGEDOWN, InputKeyCode::EKey_pagedown});
         keycode_mapping.insert({SDLK_PAGEUP, InputKeyCode::EKey_pageup});
         keycode_mapping.insert({SDLK_HOME, InputKeyCode::EKey_home});
+
+        keycode_mapping.insert({SDLK_F1, InputKeyCode::EKey_f1});
+        keycode_mapping.insert({SDLK_F2, InputKeyCode::EKey_f2});
+        keycode_mapping.insert({SDLK_F3, InputKeyCode::EKey_f3});
+        keycode_mapping.insert({SDLK_F4, InputKeyCode::EKey_f4});
+        keycode_mapping.insert({SDLK_F5, InputKeyCode::EKey_f5});
+        keycode_mapping.insert({SDLK_F6, InputKeyCode::EKey_f6});
+        keycode_mapping.insert({SDLK_F7, InputKeyCode::EKey_f7});
+        keycode_mapping.insert({SDLK_F8, InputKeyCode::EKey_f8});
+        keycode_mapping.insert({SDLK_F9, InputKeyCode::EKey_f9});
+        keycode_mapping.insert({SDLK_F10, InputKeyCode::EKey_f10});
+        keycode_mapping.insert({SDLK_F11, InputKeyCode::EKey_f11});
+        keycode_mapping.insert({SDLK_F12, InputKeyCode::EKey_f12});
 
         // Mouse input
         keycode_mapping.insert({SDL_BUTTON_LEFT, InputKeyCode::EKey_mouse_left});
