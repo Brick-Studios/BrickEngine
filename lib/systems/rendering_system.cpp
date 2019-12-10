@@ -30,7 +30,7 @@ void RenderingSystem::update(double deltatime){
             animation->sprite = animation->seconds % animation->sprite_size;
             auto src = texture->getTexture()->getSrcRect();
             if (src) {
-                src->x = animation->sprite * src->w;
+                src->x = abs(animation->sprite * src->w);
             }
         }
 
