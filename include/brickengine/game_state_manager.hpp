@@ -38,13 +38,13 @@ public:
 
     std::vector<std::unique_ptr<System>>& getSystems() {
         if (next_state) {
-            // Reset works as a AND gate. The inputs are current_state.reset_on_end and 
+            // Reset works as an AND gate. The inputs are current_state.reset_on_end and 
             // next_state.reset_on_start.
             bool reset_systems = true;
 
             // The game is initialized and has a current_state.
             if((int)current_state != 0){
-                // Check whether the current scene should be resetted on start.
+                // Check whether the current scene should be reset on start.
                 if(!reset_on_set_state.at(current_state).reset_on_end)
                     reset_systems = false;
             }
