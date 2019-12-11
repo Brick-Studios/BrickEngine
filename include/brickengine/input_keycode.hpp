@@ -61,6 +61,20 @@ enum class InputKeyCode {
     EKey_home,
     EKey_escape,
 
+    // F keys
+    EKey_f1,
+    EKey_f2,
+    EKey_f3,
+    EKey_f4,
+    EKey_f5,
+    EKey_f6,
+    EKey_f7,
+    EKey_f8,
+    EKey_f9,
+    EKey_f10,
+    EKey_f11,
+    EKey_f12 ,
+
     // Mouse
     EKey_mouse_left,
     EKey_mouse_right,
