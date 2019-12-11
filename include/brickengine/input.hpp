@@ -341,6 +341,7 @@ private:
         controller_button_mapping.insert({InputKeyCode::EController_b, SDL_CONTROLLER_BUTTON_B});
         controller_button_mapping.insert({InputKeyCode::EController_x, SDL_CONTROLLER_BUTTON_X});
         controller_button_mapping.insert({InputKeyCode::EController_y, SDL_CONTROLLER_BUTTON_Y});
+        controller_button_mapping.insert({InputKeyCode::EController_start, SDL_CONTROLLER_BUTTON_START});
 
         // Mapping for the SDL_mapping unordered_map
         // Numbers
@@ -397,6 +398,8 @@ private:
         sdl_mapping.insert({InputKeyCode::EKey_space, SDLK_SPACE});
         sdl_mapping.insert({InputKeyCode::Ekey_enter, SDLK_KP_ENTER});
         sdl_mapping.insert({InputKeyCode::EKey_backspace, SDLK_BACKSPACE});
+        sdl_mapping.insert({InputKeyCode::EKey_escape, SDLK_ESCAPE});
+
 
 
         // F keys
@@ -475,6 +478,7 @@ private:
         keycode_mapping.insert({SDLK_PAGEDOWN, InputKeyCode::EKey_pagedown});
         keycode_mapping.insert({SDLK_PAGEUP, InputKeyCode::EKey_pageup});
         keycode_mapping.insert({SDLK_HOME, InputKeyCode::EKey_home});
+        keycode_mapping.insert({SDLK_ESCAPE, InputKeyCode::EKey_escape});
 
         // F keys
         keycode_mapping.insert({SDLK_F1, InputKeyCode::EKey_f1});

@@ -59,6 +59,7 @@ enum class InputKeyCode {
     EKey_pagedown,
     EKey_pageup,
     EKey_home,
+    EKey_escape,
 
     // F keys
     EKey_f1,
@@ -84,7 +85,8 @@ enum class InputKeyCode {
     EController_a,
     EController_b,
     EController_x,
-    EController_y
+    EController_y,
+    EController_start
 };
 
  #endif // FILE_INPUT_KEYCODE_HPP 
