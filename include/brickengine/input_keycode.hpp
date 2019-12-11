@@ -75,9 +75,6 @@ enum class InputKeyCode {
     EKey_f11,
     EKey_f12 ,
 
-    // F keys
-    EKey_f5,
-
     // Mouse
     EKey_mouse_left,
     EKey_mouse_right,
