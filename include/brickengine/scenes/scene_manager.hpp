@@ -84,6 +84,13 @@ public:
                 return std::nullopt;
         };
     }
+    State getLayerState(SceneLayer layer){
+        if(scenes.count(layer))
+            return scenes.at(layer)->getSystemState();
+
+        // When the layer does not exist in scenes, return the first layer from the enum.
+        return (State)0;
+    }
 private:
     EntityManager& entity_manager;
     GameStateManager<State>& game_state_manager;

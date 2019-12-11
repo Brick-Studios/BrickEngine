@@ -10,7 +10,7 @@ class Texture : public Renderable {
 public:
     Texture(std::shared_ptr<SDL_Texture> texture, int layer, std::unique_ptr<Rect> dst);
     Texture(std::shared_ptr<SDL_Texture> texture, int layer, int alpha, std::unique_ptr<Rect> dst);
-    Texture(std::shared_ptr<SDL_Texture> texture, int layer, std::unique_ptr<Rect> dst, std::unique_ptr<Rect> src);
+    Texture(std::shared_ptr<SDL_Texture> texture, int layer, int alpha, std::unique_ptr<Rect> dst, std::unique_ptr<Rect> src);
     Texture(const Texture& other);
     Texture(Texture&& other) noexcept = delete;
     Texture& operator=(Texture&& other) = delete;

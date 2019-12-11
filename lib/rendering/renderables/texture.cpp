@@ -12,8 +12,8 @@ Texture::Texture(std::shared_ptr<SDL_Texture> texture, int layer, int alpha, std
     dst(std::move(dst)), flip(SDL_FLIP_NONE) {}
 
 
-Texture::Texture(std::shared_ptr<SDL_Texture> texture, int layer, std::unique_ptr<Rect> dst, std::unique_ptr<Rect> src) :
-    Renderable(layer), texture(std::move(texture)),
+Texture::Texture(std::shared_ptr<SDL_Texture> texture, int layer, int alpha, std::unique_ptr<Rect> dst, std::unique_ptr<Rect> src) :
+    Renderable(layer, alpha), texture(std::move(texture)),
     src(std::move(src)), dst(std::move(dst)), flip(SDL_FLIP_NONE) {}
 
 Texture::Texture(const Texture& other) : Renderable(other.layer) {

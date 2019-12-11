@@ -341,6 +341,7 @@ private:
         controller_button_mapping.insert({InputKeyCode::EController_b, SDL_CONTROLLER_BUTTON_B});
         controller_button_mapping.insert({InputKeyCode::EController_x, SDL_CONTROLLER_BUTTON_X});
         controller_button_mapping.insert({InputKeyCode::EController_y, SDL_CONTROLLER_BUTTON_Y});
+        controller_button_mapping.insert({InputKeyCode::EController_start, SDL_CONTROLLER_BUTTON_START});
 
         // Mapping for the SDL_mapping unordered_map
         // Numbers
@@ -397,6 +398,23 @@ private:
         sdl_mapping.insert({InputKeyCode::EKey_space, SDLK_SPACE});
         sdl_mapping.insert({InputKeyCode::Ekey_enter, SDLK_KP_ENTER});
         sdl_mapping.insert({InputKeyCode::EKey_backspace, SDLK_BACKSPACE});
+        sdl_mapping.insert({InputKeyCode::EKey_escape, SDLK_ESCAPE});
+
+
+
+        // F keys
+        sdl_mapping.insert({InputKeyCode::EKey_f1, SDLK_F1});
+        sdl_mapping.insert({InputKeyCode::EKey_f2, SDLK_F2});
+        sdl_mapping.insert({InputKeyCode::EKey_f3, SDLK_F3});
+        sdl_mapping.insert({InputKeyCode::EKey_f4, SDLK_F4});
+        sdl_mapping.insert({InputKeyCode::EKey_f5, SDLK_F5});
+        sdl_mapping.insert({InputKeyCode::EKey_f6, SDLK_F6});
+        sdl_mapping.insert({InputKeyCode::EKey_f7, SDLK_F7});
+        sdl_mapping.insert({InputKeyCode::EKey_f8, SDLK_F8});
+        sdl_mapping.insert({InputKeyCode::EKey_f9, SDLK_F9});
+        sdl_mapping.insert({InputKeyCode::EKey_f10, SDLK_F10});
+        sdl_mapping.insert({InputKeyCode::EKey_f11, SDLK_F11});
+        sdl_mapping.insert({InputKeyCode::EKey_f12, SDLK_F12});
 
         // F keys
         sdl_mapping.insert({InputKeyCode::EKey_f5, SDLK_F5});
@@ -463,6 +481,21 @@ private:
         keycode_mapping.insert({SDLK_PAGEDOWN, InputKeyCode::EKey_pagedown});
         keycode_mapping.insert({SDLK_PAGEUP, InputKeyCode::EKey_pageup});
         keycode_mapping.insert({SDLK_HOME, InputKeyCode::EKey_home});
+        keycode_mapping.insert({SDLK_ESCAPE, InputKeyCode::EKey_escape});
+
+        // F keys
+        keycode_mapping.insert({SDLK_F1, InputKeyCode::EKey_f1});
+        keycode_mapping.insert({SDLK_F2, InputKeyCode::EKey_f2});
+        keycode_mapping.insert({SDLK_F3, InputKeyCode::EKey_f3});
+        keycode_mapping.insert({SDLK_F4, InputKeyCode::EKey_f4});
+        keycode_mapping.insert({SDLK_F5, InputKeyCode::EKey_f5});
+        keycode_mapping.insert({SDLK_F6, InputKeyCode::EKey_f6});
+        keycode_mapping.insert({SDLK_F7, InputKeyCode::EKey_f7});
+        keycode_mapping.insert({SDLK_F8, InputKeyCode::EKey_f8});
+        keycode_mapping.insert({SDLK_F9, InputKeyCode::EKey_f9});
+        keycode_mapping.insert({SDLK_F10, InputKeyCode::EKey_f10});
+        keycode_mapping.insert({SDLK_F11, InputKeyCode::EKey_f11});
+        keycode_mapping.insert({SDLK_F12, InputKeyCode::EKey_f12});
 
         // F keys
         keycode_mapping.insert({SDLK_F5, InputKeyCode::EKey_f5});
