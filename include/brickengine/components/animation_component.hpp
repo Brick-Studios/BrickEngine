@@ -10,10 +10,10 @@ public:
     static std::string getNameStatic();
 
     // Time passed
-    double time;
-    int seconds;
+    double time = 0;
+    int seconds = 0;
     // Current sprite
-    int sprite;
+    int sprite = 0;
     // How often it should swap between sprites
     double update_time;
     // How many sprites are in the spritesheet
