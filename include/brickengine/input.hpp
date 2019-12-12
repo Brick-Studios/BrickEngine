@@ -400,8 +400,6 @@ private:
         sdl_mapping.insert({InputKeyCode::EKey_backspace, SDLK_BACKSPACE});
         sdl_mapping.insert({InputKeyCode::EKey_escape, SDLK_ESCAPE});
 
-
-
         // F keys
         sdl_mapping.insert({InputKeyCode::EKey_f1, SDLK_F1});
         sdl_mapping.insert({InputKeyCode::EKey_f2, SDLK_F2});
