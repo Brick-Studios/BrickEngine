@@ -35,6 +35,8 @@ Json::Json() {
 
 const std::string Json::getString(std::string const name) const {
     try {
+        if (!external_json.count(name))
+            throw ObjectOrTypeException("string");
         return std::string(external_json[name]);
     } catch(...) {
         throw ObjectOrTypeException("string");
@@ -43,6 +45,8 @@ const std::string Json::getString(std::string const name) const {
 
 int Json::getInt(std::string const name) const {
     try {
+        if (!external_json.count(name))
+            throw ObjectOrTypeException("int");
         return int(external_json[name]);
     } catch(...) {
         throw ObjectOrTypeException("int");
@@ -51,6 +55,8 @@ int Json::getInt(std::string const name) const {
 
 double Json::getDouble(std::string const name) const {
     try {
+        if (!external_json.count(name))
+            throw ObjectOrTypeException("double");
         return double(external_json[name]);
     } catch(...) {
         throw ObjectOrTypeException("double");
@@ -59,6 +65,8 @@ double Json::getDouble(std::string const name) const {
 
 bool Json::getBool(std::string const name) const {
     try {
+        if (!external_json.count(name))
+            throw ObjectOrTypeException("int");
         return bool(external_json[name]);
     } catch(...) {
         throw ObjectOrTypeException("bool");
@@ -67,6 +75,8 @@ bool Json::getBool(std::string const name) const {
 
 const std::vector<Json> Json::getVector(std::string const name) const {
     try {
+        if (!external_json.count(name))
+            throw ObjectOrTypeException("vector");
         std::vector<Json> vector = std::vector<Json>();
         
         for(nlohmann::json part : external_json[name]) {
@@ -95,6 +105,9 @@ const std::unordered_map<std::string, Json> Json::getUnorderedMap() const {
 
 const std::vector<std::string> Json::getStringVector(std::string const name) const {
     try {
+        if (!external_json.count(name))
+            throw ObjectOrTypeException("string vector");
+
         std::vector<std::string> vector = std::vector<std::string>();
         
         for(std::string part : external_json[name]) {
