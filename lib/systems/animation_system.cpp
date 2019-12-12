@@ -14,7 +14,7 @@ void AnimationSystem::update(double deltatime){
         if (animation) {
             animation->time += deltatime;
             if (animation->time >= animation->update_time){
-                animation->seconds++;
+                ++animation->seconds;
                 animation->time = 0;
             }
             animation->sprite = animation->seconds % animation->sprite_size;
