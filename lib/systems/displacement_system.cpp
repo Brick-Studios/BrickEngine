@@ -15,7 +15,7 @@ void DisplacementSystem::update(double) {
         auto entity_physics = entityManager->getComponent<PhysicsComponent>(entity_id);
         if (!entity_physics) continue;
         // We only displace entities that use Discrete collision detection - Collision Detector 2 ©
-        if (entity_physics->collision_detection != CollisionDetectionType::Discrete) continue;
+        if (!entity_physics->collision_detection.isDiscrete() || entity_physics->collision_detection.isContinuous()) continue;
         // If the entity is standing was standing still, there is no use in going any further
         if (FloatingPointComparer::is_equal_to_zero(entity_physics->vx) && FloatingPointComparer::is_equal_to_zero(entity_physics->vy))
             continue;

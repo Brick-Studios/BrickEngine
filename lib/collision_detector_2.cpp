@@ -14,12 +14,13 @@ CollisionDetector2::CollisionDetector2(std::unordered_map<std::string, std::set<
 std::vector<Collision> CollisionDetector2::detectCollision(int entity_id) {
     auto physics = em.getComponent<PhysicsComponent>(entity_id);
     std::vector<Collision> collisions;
-    if (physics->collision_detection == CollisionDetectionType::Discrete) {
+    if (physics->collision_detection.isDiscrete()) {
         auto discrete_collisions = this->detectDiscreteCollision(entity_id);
         std::for_each(discrete_collisions.begin(), discrete_collisions.end(), [&collisions](DiscreteCollision& dc) {
             collisions.push_back(Collision(dc.opposite_id, dc.is_trigger));
         });
-    } else if (physics->collision_detection == CollisionDetectionType::Continuous) {
+    }
+    if (physics->collision_detection.isContinuous()) {
         {
             auto collision = this->detectContinuousCollision(entity_id, Axis::X, Direction::NEGATIVE);
             if ((collision.space_left > 0 || FloatingPointComparer::is_equal_to_zero(collision.space_left)) && collision.opposite_id) {

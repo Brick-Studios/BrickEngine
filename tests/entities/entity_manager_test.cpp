@@ -11,7 +11,7 @@ TEST(EntityManager, create_entity_and_get_comp) {
     auto comps = std::make_unique<std::vector<std::unique_ptr<Component>>>();
     comps->push_back(std::make_unique<TransformComponent>(0, 0, 0, 0, Direction::NEGATIVE, Direction::NEGATIVE));
     comps->push_back(std::make_unique<PhysicsComponent>(0, 0, 0, 0, false, Kinematic::IS_NOT_KINEMATIC,
-                                                        false, false, CollisionDetectionType::Discrete));
+                                                        false, false, CollisionDetectionType(true, false));
     int id = em.createEntity(std::move(comps), std::nullopt);
 
     auto comp = em.getComponent<TransformComponent>(id);

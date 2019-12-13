@@ -16,8 +16,10 @@ void PhysicsSystem::update(double deltatime) {
     std::sort(entities_with_physics.begin(), entities_with_physics.end(), [](const auto& lhs, const auto& rhs) -> bool {
         auto lhs_physics = lhs.second;
         auto rhs_physics = rhs.second;
-        return lhs_physics->collision_detection < rhs_physics->collision_detection;
+        return (lhs_physics->collision_detection.isDiscrete() && !lhs_physics->collision_detection.isContinuous()) > !rhs_physics->collision_detection.isDiscrete();
     });
+
+    std::cout << "begin physics" << std::endl;
 
     for(auto [entity_id, physics] : entities_with_physics){
         if (physics->kinematic != Kinematic::IS_NOT_KINEMATIC) {
@@ -25,6 +27,8 @@ void PhysicsSystem::update(double deltatime) {
             physics->vy = 0;
             continue;
         }
+        std::cout << "isDiscrete: " << physics->collision_detection.isDiscrete() << std::endl;
+        std::cout << "isContinuous: " << physics->collision_detection.isContinuous() << std::endl;
 
         auto transform = entityManager->getComponent<TransformComponent>(entity_id);
         const double mass = physics->mass;
@@ -65,10 +69,10 @@ void PhysicsSystem::update(double deltatime) {
 
         const double vx = physics->vx * deltatime;
         const double vy = physics->vy * deltatime;
-        if (physics->collision_detection == CollisionDetectionType::Discrete) {
-            updateDiscrete(*transform, vx, vy);
-        } else if (physics->collision_detection == CollisionDetectionType::Continuous) {
+        if (physics->collision_detection.isContinuous()) {
             updateContinuous(entity_id, *transform, *physics, vx, vy);
+        } else if (physics->collision_detection.isDiscrete()) {
+            updateDiscrete(*transform, vx, vy);
         }
         updateDirection(entity_id, *transform, *physics);
     }
