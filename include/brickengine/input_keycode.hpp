@@ -86,7 +86,14 @@ enum class InputKeyCode {
     EController_b,
     EController_x,
     EController_y,
-    EController_start
+    EController_start,
+    EController_select,
+    EController_dpad_up,
+    EController_dpad_left,
+    EController_dpad_right,
+    EController_dpad_down,
+    EController_shoulder_left,
+    EController_shoulder_right
 };
 
  #endif // FILE_INPUT_KEYCODE_HPP 
