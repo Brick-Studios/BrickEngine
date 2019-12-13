@@ -19,16 +19,12 @@ void PhysicsSystem::update(double deltatime) {
         return (lhs_physics->collision_detection.isDiscrete() && !lhs_physics->collision_detection.isContinuous()) > !rhs_physics->collision_detection.isDiscrete();
     });
 
-    std::cout << "begin physics" << std::endl;
-
     for(auto [entity_id, physics] : entities_with_physics){
         if (physics->kinematic != Kinematic::IS_NOT_KINEMATIC) {
             physics->vx = 0;
             physics->vy = 0;
             continue;
         }
-        std::cout << "isDiscrete: " << physics->collision_detection.isDiscrete() << std::endl;
-        std::cout << "isContinuous: " << physics->collision_detection.isContinuous() << std::endl;
 
         auto transform = entityManager->getComponent<TransformComponent>(entity_id);
         const double mass = physics->mass;

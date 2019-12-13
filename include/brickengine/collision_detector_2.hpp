@@ -67,11 +67,9 @@ struct ContinuousCollision {
     double space_left;
 };
 
-struct CollisionDetector2CacheInfo {
+struct CollisionDetector2Info {
     int discrete_calculated_counter;
-    int discrete_cache_hits;
     int continuous_calculations_counter;
-    int continuous_cache_hits;
 };
 
 class CollisionDetector2 {
@@ -82,8 +80,8 @@ public:
     std::vector<Collision> detectCollision(int entity_id);
 
     // This returns a copy of the cache info
-    CollisionDetector2CacheInfo getCacheInfo() const;
-    void invalidateCache();
+    CollisionDetector2Info getInfo() const;
+    void invalidateInfo();
 private:
     bool hasTriggerException(std::set<std::string> tags_1, std::set<std::string> tags_2) const;
 
@@ -91,10 +89,7 @@ private:
     // Trigger exceptions that you still want collidable, left tag will collide with right tag.
     std::unordered_map<std::string, std::set<std::string>> is_trigger_tag_exceptions;
 
-    // Cache
-    std::unordered_map<int, std::vector<DiscreteCollision>> discrete_cache;
-    std::unordered_map<int, std::unordered_map<Axis, std::unordered_map<Direction, ContinuousCollision>>> continuous_cache;
-    CollisionDetector2CacheInfo cache_info;
+    CollisionDetector2Info info;
 };
 
 #endif // FILE_COLLISION_DETECTOR_2_HPP
