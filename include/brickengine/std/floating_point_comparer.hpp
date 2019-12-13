@@ -12,7 +12,6 @@ class FloatingPointComparer {
 public:
     // Yes this implementation probably isn't correct,
     // However, this shit is hard and we need to ship working code and this works.
-    // We will ask a professor ASAP about how to do this correctly.
     static inline bool is_equal_to_zero(double f) {
         return std::fabs(f) < 1e-10;
     }
