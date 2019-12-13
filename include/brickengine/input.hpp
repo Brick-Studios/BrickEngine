@@ -190,6 +190,7 @@ public:
                     }
                     break;
                 }
+                case SDL_JOYHATMOTION:
                 case SDL_JOYBUTTONDOWN: {
                     for(auto [player_id, controller] : player_controller_mapping) {
                         if(e.jbutton.which == controller) {
@@ -342,6 +343,13 @@ private:
         controller_button_mapping.insert({InputKeyCode::EController_x, SDL_CONTROLLER_BUTTON_X});
         controller_button_mapping.insert({InputKeyCode::EController_y, SDL_CONTROLLER_BUTTON_Y});
         controller_button_mapping.insert({InputKeyCode::EController_start, SDL_CONTROLLER_BUTTON_START});
+        controller_button_mapping.insert({InputKeyCode::EController_select, SDL_CONTROLLER_BUTTON_BACK});
+        controller_button_mapping.insert({InputKeyCode::EController_dpad_up, SDL_CONTROLLER_BUTTON_DPAD_UP});
+        controller_button_mapping.insert({InputKeyCode::EController_dpad_left, SDL_CONTROLLER_BUTTON_DPAD_LEFT});
+        controller_button_mapping.insert({InputKeyCode::EController_dpad_right, SDL_CONTROLLER_BUTTON_DPAD_RIGHT});
+        controller_button_mapping.insert({InputKeyCode::EController_dpad_down, SDL_CONTROLLER_BUTTON_DPAD_DOWN});
+        controller_button_mapping.insert({InputKeyCode::EController_shoulder_left, SDL_CONTROLLER_BUTTON_LEFTSHOULDER});
+        controller_button_mapping.insert({InputKeyCode::EController_shoulder_right, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER});
 
         // Mapping for the SDL_mapping unordered_map
         // Numbers
