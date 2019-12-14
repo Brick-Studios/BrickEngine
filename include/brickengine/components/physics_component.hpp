@@ -3,7 +3,17 @@
 
 #include "brickengine/components/component_impl.hpp"
 #include "brickengine/components/enums/kinematic.hpp"
-#include "brickengine/components/enums/collision_detection_type.hpp"
+
+class CollisionDetectionType {
+public:
+    CollisionDetectionType(bool discrete, bool continuous) : discrete(discrete), continuous(continuous) {}
+    bool isDiscrete() const { return discrete; }
+    bool isContinuous() const { return continuous; }
+    bool isBoth() const { return discrete && continuous; }
+private:
+    bool discrete;
+    bool continuous;
+};
 
 class PhysicsComponent : public ComponentImpl<PhysicsComponent> {
 public:

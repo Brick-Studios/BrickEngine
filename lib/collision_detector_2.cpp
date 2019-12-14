@@ -14,12 +14,13 @@ CollisionDetector2::CollisionDetector2(std::unordered_map<std::string, std::set<
 std::vector<Collision> CollisionDetector2::detectCollision(int entity_id) {
     auto physics = em.getComponent<PhysicsComponent>(entity_id);
     std::vector<Collision> collisions;
-    if (physics->collision_detection == CollisionDetectionType::Discrete) {
+    if (physics->collision_detection.isDiscrete()) {
         auto discrete_collisions = this->detectDiscreteCollision(entity_id);
         std::for_each(discrete_collisions.begin(), discrete_collisions.end(), [&collisions](DiscreteCollision& dc) {
             collisions.push_back(Collision(dc.opposite_id, dc.is_trigger));
         });
-    } else if (physics->collision_detection == CollisionDetectionType::Continuous) {
+    }
+    if (physics->collision_detection.isContinuous()) {
         {
             auto collision = this->detectContinuousCollision(entity_id, Axis::X, Direction::NEGATIVE);
             if ((collision.space_left > 0 || FloatingPointComparer::is_equal_to_zero(collision.space_left)) && collision.opposite_id) {
@@ -77,22 +78,15 @@ bool CollisionDetector2::hasTriggerException(std::set<std::string> tags_1, std::
 }
 
 
-CollisionDetector2CacheInfo CollisionDetector2::getCacheInfo() const {
-    return cache_info;
+CollisionDetector2Info CollisionDetector2::getInfo() const {
+    return info;
 }
 
-void CollisionDetector2::invalidateCache() {
-    cache_info = CollisionDetector2CacheInfo();
-    discrete_cache.clear();
-    continuous_cache.clear();
+void CollisionDetector2::invalidateInfo() {
+    info = CollisionDetector2Info();
 }
 
 std::vector<DiscreteCollision> CollisionDetector2::detectDiscreteCollision(int entity_id) {
-    //if (discrete_cache.count(entity_id)) {
-    //   ++cache_info.discrete_cache_hits;
-    //   return discrete_cache.at(entity_id);
-    //}
-
     auto entity_collider = em.getComponent<RectangleColliderComponent>(entity_id);
     auto [ entity_position, entity_scale ] = em.getAbsoluteTransform(entity_id);
     auto entity_parent = em.getParent(entity_id);
@@ -120,7 +114,7 @@ std::vector<DiscreteCollision> CollisionDetector2::detectDiscreteCollision(int e
                 is_trigger = true;
         }
 
-        ++this->cache_info.discrete_calculated_counter;
+        ++this->info.discrete_calculated_counter;
 
         const double entity_half_x = (entity_scale.x * entity_collider->x_scale) / 2;
         const double entity_half_y = (entity_scale.y * entity_collider->y_scale) / 2;
@@ -154,17 +148,10 @@ std::vector<DiscreteCollision> CollisionDetector2::detectDiscreteCollision(int e
                                     position, delta, normal);
         }
     }
-    discrete_cache.insert({ entity_id, collisions });
     return collisions;
 }
 
 ContinuousCollision CollisionDetector2::detectContinuousCollision(int entity_id, Axis axis, Direction direction) {
-    //if (continuous_cache.count(entity_id) && continuous_cache.at(entity_id).count(axis)
-    //    && continuous_cache.at(entity_id).at(axis).count(direction)) {
-    //    ++cache_info.continuous_cache_hits;
-    //    return continuous_cache.at(entity_id).at(axis).at(direction);
-    //}
-
     // We only support rectangles
     auto entity_collider = em.getComponent<RectangleColliderComponent>(entity_id);
     auto [ entity_position, entity_scale ] = em.getAbsoluteTransform(entity_id);
@@ -189,7 +176,7 @@ ContinuousCollision CollisionDetector2::detectContinuousCollision(int entity_id,
         if (entity_children.count(opposite_id)) continue;
         if (opposite_id == entity_id) continue;
 
-        ++this->cache_info.continuous_calculations_counter;
+        ++this->info.continuous_calculations_counter;
 
         auto [ opposite_position, opposite_scale ] = em.getAbsoluteTransform(opposite_id);
 
@@ -279,8 +266,5 @@ ContinuousCollision CollisionDetector2::detectContinuousCollision(int entity_id,
             }
         }
     }
-    continuous_cache.insert({ entity_id, std::unordered_map<Axis, std::unordered_map<Direction, ContinuousCollision>>() });
-    continuous_cache.at(entity_id).insert({ axis, std::unordered_map<Direction, ContinuousCollision>() });
-    continuous_cache.at(entity_id).at(axis).insert({ direction, collision });
     return collision;
 }

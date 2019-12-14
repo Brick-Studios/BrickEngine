@@ -5,12 +5,19 @@
 #include "brickengine/std/floating_point_comparer.hpp"
 #include <iostream>
 #include <exception>
+#include <tuple>
 
 PhysicsSystem::PhysicsSystem(CollisionDetector2& cd, std::shared_ptr<EntityManager> em, double &delta_time_modifier)
                 : System(em), collision_detector(cd), delta_time_modifier(delta_time_modifier) {}
 
 void PhysicsSystem::update(double deltatime) {
     auto entities_with_physics = entityManager->getEntitiesByComponent<PhysicsComponent>();
+
+    std::sort(entities_with_physics.begin(), entities_with_physics.end(), [](const auto& lhs, const auto& rhs) -> bool {
+        auto lhs_physics = lhs.second;
+        auto rhs_physics = rhs.second;
+        return (lhs_physics->collision_detection.isDiscrete() && !lhs_physics->collision_detection.isContinuous()) > !rhs_physics->collision_detection.isDiscrete();
+    });
 
     for(auto [entity_id, physics] : entities_with_physics){
         if (physics->kinematic != Kinematic::IS_NOT_KINEMATIC) {
@@ -58,10 +65,10 @@ void PhysicsSystem::update(double deltatime) {
 
         const double vx = physics->vx * deltatime;
         const double vy = physics->vy * deltatime;
-        if (physics->collision_detection == CollisionDetectionType::Discrete) {
-            updateDiscrete(*transform, vx, vy);
-        } else if (physics->collision_detection == CollisionDetectionType::Continuous) {
+        if (physics->collision_detection.isContinuous()) {
             updateContinuous(entity_id, *transform, *physics, vx, vy);
+        } else if (physics->collision_detection.isDiscrete()) {
+            updateDiscrete(*transform, vx, vy);
         }
         updateDirection(entity_id, *transform, *physics);
     }
@@ -100,6 +107,7 @@ void PhysicsSystem::updateContinuous(int entity_id, TransformComponent& transfor
             double to_move = vx;
             if (to_move > collision.space_left || FloatingPointComparer::is_equal_to_zero(collision.space_left)) {
                 to_move = collision.space_left;
+                physics.vx = 0;
             }
             else 
                 to_move = vx;
@@ -116,6 +124,7 @@ void PhysicsSystem::updateContinuous(int entity_id, TransformComponent& transfor
             double to_move = vx;
             if (to_move < collision.space_left || FloatingPointComparer::is_equal_to_zero(collision.space_left)){
                 to_move = collision.space_left;
+                physics.vx = 0;
             }
             else 
                 to_move = vx;
@@ -131,7 +140,8 @@ void PhysicsSystem::updateContinuous(int entity_id, TransformComponent& transfor
         } else {
             double to_move = vy;
             if (to_move > collision.space_left || FloatingPointComparer::is_equal_to_zero(collision.space_left)){
-                 to_move = collision.space_left;
+                to_move = collision.space_left;
+                physics.vy = 0;
             }
             else 
                 to_move = vy;
@@ -148,6 +158,7 @@ void PhysicsSystem::updateContinuous(int entity_id, TransformComponent& transfor
             double to_move = vy;
             if (to_move < collision.space_left || FloatingPointComparer::is_equal_to_zero(collision.space_left)){
                 to_move = collision.space_left;
+                physics.vy = 0;
             }
             else 
                 to_move = vy;
