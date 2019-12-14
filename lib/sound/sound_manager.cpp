@@ -16,6 +16,7 @@ SoundManager::SoundManager() {
     if(Mix_Init(flags) != flags) {
         std::cout << "Mixer failed to init! Mix_Error: " << Mix_GetError() << std::endl; 
     }
+
     Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096);
 }
 
@@ -52,6 +53,12 @@ bool SoundManager::isPlaying() const {
         }
     }
     return false;
+}
+
+void SoundManager::playSound(std::string path){    
+    const std::string full_path = "assets/sound/effects/" + path;
+    sound_effect = Mix_LoadWAV(full_path.c_str());
+    Mix_PlayChannel(-1, sound_effect, 1);
 }
 
 SoundManager::~SoundManager() {

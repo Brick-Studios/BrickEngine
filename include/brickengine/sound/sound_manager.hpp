@@ -14,8 +14,10 @@ public:
     void toggleMusic(const bool pause) const;
     void stopMusic();
     bool isPlaying() const;
+    void playSound(std::string path);
 private:
     Mix_Music* current_music = nullptr;
+    Mix_Chunk* sound_effect = nullptr;
 };
 
 #endif // FILE_SOUND_MANAGER_HPP
