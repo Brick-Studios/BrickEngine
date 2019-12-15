@@ -46,12 +46,8 @@ void SoundManager::stopMusic() {
 }
 
 bool SoundManager::isPlaying() const {
-    if(current_music != nullptr) {
-        if(Mix_PlayingMusic() == 1) {
-            return true;
-        }
-    }
-    return false;
+    if (current_music == nullptr) return false;
+    return Mix_PlayingMusic() == 1;
 }
 
 SoundManager::~SoundManager() {
