@@ -15,14 +15,11 @@ void PhysicsSystem::update(double deltatime) {
 
     std::for_each(entities_with_physics.begin(), entities_with_physics.end(), [](const auto& lhs) {
         auto& lhs_physics = lhs.second;
-        std::cout << &lhs_physics->collision_detection << std::endl;
     });
 
     std::stable_sort(entities_with_physics.begin(), entities_with_physics.end(), [](const auto& lhs, const auto& rhs) {
         auto& lhs_physics = lhs.second;
         auto& rhs_physics = rhs.second;
-        std::cout << &lhs_physics->collision_detection << std::endl;
-        std::cout << &rhs_physics->collision_detection << std::endl;
         return (lhs_physics->collision_detection.isDiscrete() && !lhs_physics->collision_detection.isContinuous()) > !rhs_physics->collision_detection.isDiscrete();
     });
 
