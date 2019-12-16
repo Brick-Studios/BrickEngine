@@ -138,8 +138,8 @@ public:
                                         break;
                                     case SDL_KEYUP:
                                         if(recently_reset_ttw.count(player_id)) {
-                                            if(recently_reset_ttw.at(player_id).at(input_mapping.at(player_id).at(*input))) {
-                                                recently_reset_ttw.at(player_id).at(input_mapping.at(player_id).at(*input)) = false;
+                                            if(recently_reset_ttw.at(player_id)[input_mapping[player_id][*input]]) {
+                                                recently_reset_ttw.at(player_id)[input_mapping[player_id][*input]] = false;
                                                 inputs[player_id][input_mapping[player_id][*input]] = 0;
                                                 break;
                                             }
@@ -299,7 +299,9 @@ public:
             }
         }
         for(auto [player_id, mapping] : inputs) {
-            recently_reset_ttw.erase(player_id);
+            if (recently_reset_ttw.count(player_id))
+                for(auto [key, value] : recently_reset_ttw.at(player_id))
+                    value = false;
         }
     }
 
