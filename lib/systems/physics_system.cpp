@@ -13,9 +13,9 @@ PhysicsSystem::PhysicsSystem(CollisionDetector2& cd, std::shared_ptr<EntityManag
 void PhysicsSystem::update(double deltatime) {
     auto entities_with_physics = entityManager->getEntitiesByComponent<PhysicsComponent>();
 
-    std::sort(entities_with_physics.begin(), entities_with_physics.end(), [](const auto& lhs, const auto& rhs) -> bool {
-        auto lhs_physics = lhs.second;
-        auto rhs_physics = rhs.second;
+    std::stable_sort(entities_with_physics.begin(), entities_with_physics.end(), [](const auto& lhs, const auto& rhs) {
+        auto& lhs_physics = lhs.second;
+        auto& rhs_physics = rhs.second;
         return (lhs_physics->collision_detection.isDiscrete() && !lhs_physics->collision_detection.isContinuous()) > !rhs_physics->collision_detection.isDiscrete();
     });
 
