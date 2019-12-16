@@ -25,7 +25,7 @@ jobs:
       run: |
         sudo apt-get install cmake
     - name: Install SDL dependencies
-      run: sudo apt-get install libsdl2-dev libsdl2-gfx-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-net-dev libsdl2-ttf-dev
+      run: sudo apt-get install libsdl2-dev libsdl2-gfx-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev
     - name: Build with G++ and Clang++
       if: github.event_name == 'pull_request'
       run: |
