@@ -51,7 +51,7 @@ public:
 
     void removeTimeToWait(int player_id, T input) {
         time_to_wait.at(player_id).erase(input);
-        recently_reset_ttw[input] = true;
+        recently_reset_ttw[player_id][input] = true;
     }
 
     // This function is intended for the UI so the game loop is not affected.
@@ -137,9 +137,9 @@ public:
                                         }
                                         break;
                                     case SDL_KEYUP:
-                                        if(recently_reset_ttw.count(input_mapping[player_id][*input])) {
-                                            if(recently_reset_ttw.at(input_mapping[player_id][*input])) {
-                                                recently_reset_ttw.at(input_mapping[player_id][*input]) = false;
+                                        if(recently_reset_ttw.count(player_id)) {
+                                            if(recently_reset_ttw.at(player_id).at(input_mapping.at(player_id).at(*input))) {
+                                                recently_reset_ttw.at(player_id).at(input_mapping.at(player_id).at(*input)) = false;
                                                 inputs[player_id][input_mapping[player_id][*input]] = 0;
                                                 break;
                                             }
@@ -298,6 +298,9 @@ public:
                 break;
             }
         }
+        for(auto [player_id, mapping] : inputs) {
+            recently_reset_ttw.erase(player_id);
+        }
     }
 
     std::pair<int, int> getMousePosition() {
@@ -325,7 +328,7 @@ private:
     // These values are in seconds of deltatime
     std::unordered_map<int, std::unordered_map<T, std::pair<double, double>>> time_to_wait;
     // Debounce inputs if time to wait was reset
-    std::unordered_map<T, bool> recently_reset_ttw;
+    std::unordered_map<int, std::unordered_map<T, bool>> recently_reset_ttw;
     // Controller list
     std::unordered_map<SDL_JoystickID, SDL_GameController*> controllers;
     // Player id to controller id mapping
