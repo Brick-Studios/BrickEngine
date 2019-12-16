@@ -134,6 +134,10 @@ public:
                                             else
                                                 inputs[player_id][input_mapping[player_id][*input]] = true;
                                         }
+                                        if(inputs[player_id][input_mapping[player_id][*input]] > 1)
+                                            inputs[player_id][input_mapping[player_id][*input]] = 1;
+                                        if(inputs[player_id][input_mapping[player_id][*input]] < -1)
+                                            inputs[player_id][input_mapping[player_id][*input]] = -1;
                                         break;
                                     case SDL_KEYUP:
                                         if(axis_map.count(*input)) {
@@ -145,6 +149,10 @@ public:
                                         else {
                                             inputs[player_id][input_mapping[player_id][*input]] = false;
                                         }
+                                        if(inputs[player_id][input_mapping[player_id][*input]] > 1)
+                                            inputs[player_id][input_mapping[player_id][*input]] = 1;
+                                        if(inputs[player_id][input_mapping[player_id][*input]] < -1)
+                                            inputs[player_id][input_mapping[player_id][*input]] = -1;
                                         break;
                                    default:
                                         break;
