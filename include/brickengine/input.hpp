@@ -51,7 +51,6 @@ public:
 
     void removeTimeToWait(int player_id, T input) {
         time_to_wait.at(player_id).erase(input);
-        recently_reset_ttw[player_id][input] = true;
     }
 
     // This function is intended for the UI so the game loop is not affected.
@@ -120,6 +119,7 @@ public:
                             if(input_mapping.at(player_id).count(*input) && e.key.repeat == 0 && !player_controller_mapping.count(player_id)) {
                                 switch(e.type) {
                                     case SDL_KEYDOWN:
+                                       
                                         if (time_to_wait[player_id].count(input_mapping[player_id][*input])) {
                                             auto& time_to_wait_for_key = time_to_wait[player_id][input_mapping[player_id][*input]];
                                             if (time_to_wait_for_key.second >= time_to_wait_for_key.first) {
@@ -135,15 +135,12 @@ public:
                                             else
                                                 inputs[player_id][input_mapping[player_id][*input]] = true;
                                         }
+                                        if(inputs[player_id][input_mapping[player_id][*input]] > 1)
+                                            inputs[player_id][input_mapping[player_id][*input]] = 1;
+                                        if(inputs[player_id][input_mapping[player_id][*input]] < -1)
+                                            inputs[player_id][input_mapping[player_id][*input]] = -1;
                                         break;
                                     case SDL_KEYUP:
-                                        if(recently_reset_ttw.count(player_id)) {
-                                            if(recently_reset_ttw.at(player_id)[input_mapping[player_id][*input]]) {
-                                                recently_reset_ttw.at(player_id)[input_mapping[player_id][*input]] = false;
-                                                inputs[player_id][input_mapping[player_id][*input]] = 0;
-                                                break;
-                                            }
-                                        }
                                         if(axis_map.count(*input)) {
                                             if(time_to_wait[player_id].count(input_mapping[player_id][*input])) 
                                                 inputs[player_id][input_mapping[player_id][*input]] = 0;
@@ -153,6 +150,10 @@ public:
                                         else {
                                             inputs[player_id][input_mapping[player_id][*input]] = false;
                                         }
+                                        if(inputs[player_id][input_mapping[player_id][*input]] > 1)
+                                            inputs[player_id][input_mapping[player_id][*input]] = 1;
+                                        if(inputs[player_id][input_mapping[player_id][*input]] < -1)
+                                            inputs[player_id][input_mapping[player_id][*input]] = -1;
                                         break;
                                    default:
                                         break;
@@ -298,11 +299,6 @@ public:
                 break;
             }
         }
-        for(auto [player_id, mapping] : inputs) {
-            if (recently_reset_ttw.count(player_id))
-                for(auto [key, value] : recently_reset_ttw.at(player_id))
-                    value = false;
-        }
     }
 
     std::pair<int, int> getMousePosition() {
@@ -329,8 +325,6 @@ private:
     // The second value is how long the keybinding is currently waiting.
     // These values are in seconds of deltatime
     std::unordered_map<int, std::unordered_map<T, std::pair<double, double>>> time_to_wait;
-    // Debounce inputs if time to wait was reset
-    std::unordered_map<int, std::unordered_map<T, bool>> recently_reset_ttw;
     // Controller list
     std::unordered_map<SDL_JoystickID, SDL_GameController*> controllers;
     // Player id to controller id mapping
