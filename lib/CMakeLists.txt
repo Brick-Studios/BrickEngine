@@ -1,7 +1,6 @@
 file(GLOB_RECURSE BRICKENGINE_SRC_FILES RELATIVE ${CMAKE_CURRENT_LIST_DIR} *.c[p]*)
 
 find_package(SDL2 REQUIRED)
-find_package(SDL2_net REQUIRED)
 find_package(SDL2_gfx REQUIRED)
 find_package(SDL2_ttf REQUIRED)
 find_package(SDL2_image REQUIRED)
@@ -24,7 +23,6 @@ endif()
 target_include_directories(BrickEngine PUBLIC ../include)
 target_link_libraries(BrickEngine
     PRIVATE SDL2::Main
-    PRIVATE SDL2::Net
     PRIVATE SDL2::GFX
     PRIVATE SDL2::TTF
     PRIVATE SDL2::Image
