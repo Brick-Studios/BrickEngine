@@ -23,7 +23,7 @@ public:
 class DirectionConverter {
 public:
     static Direction convertInt(int i) {
-        if (i < 0 || i > 8)
+        if (i < 0 || i > 1)
             throw UnknownDirectionException(i);
         return static_cast<Direction>(i);
     }
